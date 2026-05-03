@@ -13,6 +13,7 @@
 | 工程实践 | [[engineering/|engineering]] | Bug修复、架构决策、代码规范 |
 | 爬虫 | [[crawler/|crawler]] | 反爬、数据清洗、平台适配 |
 | 图像生成 | [[image-gen/|image-gen]] | Imagen3、提示词、风格约束 |
+| 集成适配 | [[integrations/|integrations]] | Notion 格式转换、跨系统适配器模式 |
 
 ## 使用方式
 
