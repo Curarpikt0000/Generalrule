@@ -4,5 +4,4 @@
 
 ## 页面列表
 
-- [[gcp-cloud-run-deployment]] - GCP Cloud Run 源码部署最佳实践
-- [[gcp-iam-runtime-permissions]] - GCP IAM 运行时权限补全规范
+_暂无内容，等待第一条 lesson 升级_
