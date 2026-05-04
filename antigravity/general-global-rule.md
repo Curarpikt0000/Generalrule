@@ -131,10 +131,31 @@
 
 ### §4.9 前端富文本渲染管道（有前端的项目必须遵守）
 
-- 严禁将 LLM 返回的 Markdown 原生字符串**裸露**给前端渲染或剪贴板操作
-- 必须通过 `marked.js` 等库解析为标准 HTML 后再渲染
-- 剪贴板写入必须使用 `Clipboard API (text/html)` + Blob 对象，并提供纯文本降级兜底
-- 来源：L-2026-04-24-003
+|- 严禁将 LLM 返回的 Markdown 原生字符串**裸露**给前端渲染或剪贴板操作
+|- 必须通过 `marked.js` 等库解析为标准 HTML 后再渲染
+|- 剪贴板写入必须使用 `Clipboard API (text/html)` + Blob 对象，并提供纯文本降级兜底
+|- 来源：L-2026-04-24-003
+
+### §4.10 Notion 数据验证必须循环翻页
+
+Notion API 的 `get_block_children` 默认返回前 100 个 blocks。验证数据完整性时必须使用 `has_more` + `next_cursor` 循环翻页，不得仅查询首页。
+
+→ 详见 Wiki: `wiki/engineering/notion-pagination-validation.md`
+→ 来源: L-2026-05-04-003
+
+### §4.11 新功能开发前检查现有 Skill
+
+任何新功能实现前必须执行 `hermes skills search <关键词>` 检查现有 skill 库和开源方案。禁止重复造轮子。
+
+→ 详见 Wiki: `wiki/engineering/skill-check-before-coding.md`
+→ 来源: L-2026-05-04-005
+
+### §4.12 严格使用用户提供的 URL
+
+AI 或工具不得自作聪明替换用户的 URL。内容提取失败时应如实报告原因，询问用户是否尝试其他方式，而不是偷偷换 URL 继续。
+
+→ 详见 Wiki: `wiki/engineering/url-fidelity.md`
+→ 来源: L-2026-05-04-006
 
 ---
 
