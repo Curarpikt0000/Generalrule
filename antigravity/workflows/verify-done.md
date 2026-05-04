@@ -39,6 +39,64 @@ TODO 核对
 
 ---
 
+## 第 0.5 步：TDD 前置检查（核心业务逻辑改动必做）
+
+依照 `general-global-rule.md §2.6` 的 Test-First 原则，在跑 lint / 测试之前，先确认本次改动是否**应该**有测试。
+
+### 0.5.1 判断改动类型
+
+根据 `tasks/todo.md` 里"实际改动文件"清单，对照下表：
+
+| 改动涉及 | 是否必须 TDD | 处理方式 |
+|---|---|---|
+| LLM fallback / 调度逻辑 | ✅ 必须 | 进入 0.5.2 |
+| 爬虫管道、数据清洗核心流程 | ✅ 必须 | 进入 0.5.2 |
+| Pydantic Schema 修改影响线上数据 | ✅ 必须 | 进入 0.5.2 |
+| 关键 bug 修复（业务流程中断、数据丢失） | ✅ 必须 | 进入 0.5.2 |
+| 配置项调整、文档、UI 微调 | ❌ 豁免 | 跳过本步骤，明确声明"豁免理由：<类型>" |
+| Trivial 档任务 | ❌ 豁免 | 跳过本步骤，明确声明"Trivial 档豁免" |
+
+### 0.5.2 检查测试是否先于业务代码存在
+
+执行：
+
+```bash
+ls tests/ 2>/dev/null
+```
+
+**判断分支**：
+
+- **`tests/` 目录不存在** → ⚠️ **停下汇报用户**：
+  > "本次改动属于核心业务逻辑（<具体类型>），但项目无 tests/ 目录，违反 §2.6 Test-First 原则。是否：(a) 现在补 tests/ 目录和测试用例 (b) 用户确认豁免本次 TDD（需说明理由）"
+  
+- **`tests/` 目录存在但本次改动无对应测试** → ⚠️ **停下汇报用户**：
+  > "改动涉及 <文件名>，但未发现对应的测试用例（搜索 tests/ 下没有 test_<模块名>.py）。是否：(a) 现在补测试 (b) 用户确认豁免"
+
+- **`tests/` 目录存在且有对应测试** → ✅ 进入 0.5.3
+
+### 0.5.3 验证测试与代码的时间顺序
+
+执行（针对每个核心改动文件）：
+
+```bash
+git log --diff-filter=A --pretty=format:"%h %ad %s" --date=short -- tests/test_<模块名>.py | head -1
+git log --diff-filter=AM --pretty=format:"%h %ad %s" --date=short -- <文件名> | head -1
+```
+
+**理想情况**：测试文件的首次提交时间 ≤ 业务代码本次改动时间。
+
+**容忍情况**：测试文件较新但**先于本次业务改动 commit**（比如同一次 commit 里 test 写在前 N 行、code 写在后 N 行）。
+
+**违反情况**：业务代码已经写完才补测试 → 警告用户"本次未严格走 TDD 顺序，建议下次先写 failing test"，但不阻止流程继续。
+
+### 0.5.4 反模式
+
+- ❌ 跳过 TDD 检查只因为"我看代码没问题"
+- ❌ 用一个 `assert True` 的空测试糊弄
+- ❌ 在 0.5.2 报警后用户不答应豁免却继续往下走
+
+---
+
 ## 第 1 步：静态检查（Ruff）
 
 ### 1.1 Lint 检查
@@ -231,6 +289,68 @@ path/b.py: ...
 
 **关键约定**：此自动触发不需要用户额外敲 `/promote-lessons`，是 verify-done 完成流程的最后一个动作。
 
+---
+
+## 第 7 步：验证失败的自治反思路径（Reflexion Loop）
+
+依照 `general-global-rule.md §4.10` 的自治反思内循环规则。
+
+### 7.1 触发条件
+
+第 1-4 步任意一步**失败**时，**不要立刻停下问用户**，而是按以下流程：
+
+| 失败步骤 | 是否触发 Reflexion |
+|---|---|
+| 第 1 步 Ruff lint/format | ✅ 自动修复后触发（`ruff check --fix .` + `ruff format .`） |
+| 第 2 步 Pytest | ✅ 触发 Reflexion Loop |
+| 第 3 步 场景化验证 | ✅ 触发 Reflexion Loop |
+| 第 4 步 高级工程师审查 | ⚠️ 仅 ⚠️ 项触发（✅ 项不触发） |
+
+### 7.2 Reflexion Loop 执行
+
+调用 `/self-correct` Workflow（详见 `workflows/self-correct.md`），传入：
+
+- 失败的具体步骤
+- 报错信息全文
+- 当前 todo.md 的任务上下文
+
+`/self-correct` 会按 MAX_ITERATIONS=3 自动尝试修复，并在退出时返回三种状态之一：
+
+- **SUCCESS**：修复成功，回到第 1 步重新跑 verify-done 全流程
+- **DRIFT_DETECTED**：触发 anti-drift 短路，停下汇报用户
+- **MAX_REACHED**：3 次都失败，停下汇报用户并附上完整尝试历史
+
+### 7.3 不可触发自治重试的例外
+
+依照 `general-global-rule.md §4.10` 末尾的例外条款：
+
+- ❌ 涉及 `git push` / `git reset --hard` / `rm` / 删除数据库记录等不可逆动作
+- ❌ 涉及 LLM API 真实付费调用（如 fallback 验证已经触发计费）
+- ❌ 涉及外部系统副作用（发邮件、推送通知、写线上数据库）
+
+以上情况**必须立即停下**，向用户报告：「检测到不可逆动作失败，禁止自治重试，需要您介入」。
+
+### 7.4 Reflexion 失败后的回滚选项
+
+如果 `/self-correct` 返回 MAX_REACHED 或 DRIFT_DETECTED，提示用户两个选项：
+
+1. **手动接手**：用户阅读尝试历史后亲自修复
+2. **回滚到检查点**：调用 `/rollback`（详见 `workflows/rollback.md`），回到 `/plan-task` 第 0.5 步建立的 Git checkpoint
+
+输出格式：
+
+```
+🚨 Verify 失败且 Reflexion Loop 已用尽
+
+失败步骤：<step>
+最终错误：<error>
+尝试历史：<3 次的 reflection + 修改差异>
+
+请选择：
+(a) 我要手动接手修复
+(b) 回滚到 checkpoint <hash>，重新规划
+(c) 其他方案（请说明）
+```
 
 ---
 

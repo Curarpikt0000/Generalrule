@@ -33,6 +33,62 @@
 
 ---
 
+## 第 0.5 步：Git 安全快照（Normal/Complex 必做，Trivial 可跳过）
+
+依照 `general-global-rule.md §5.6` 的"Snapshot & Rollback"规则，在写任何代码前必须建立 Git 检查点。
+
+### 0.5.1 检查工作区状态
+
+执行：
+
+```bash
+git status --short
+```
+
+**判断分支**：
+
+| 工作区状态 | 处理方式 |
+|---|---|
+| 干净（无输出） | ✅ 直接进入 0.5.2 |
+| 有未提交改动 | ⚠️ **停下询问用户**：「检测到未提交改动：<改动列表>。是否：(a) 先 commit (b) 先 stash (c) 直接覆盖（不推荐）？」 |
+| 不在 Git 仓库内 | ⚠️ **停下询问用户**：「当前目录不是 Git 仓库，本次任务无回滚保护。是否仍要继续？」 |
+
+**不要**在工作区不干净时直接动手——一旦失败无法干净回滚。
+
+### 0.5.2 创建 Auto-checkpoint
+
+工作区干净后，执行：
+
+```bash
+git commit --allow-empty -m "Auto-checkpoint before <task-name>"
+```
+
+记录返回的 commit hash，写入 `tasks/todo.md` 的"任务"段落顶部：
+
+```markdown
+**Checkpoint**: <short-hash> (auto-created at YYYY-MM-DD HH:MM)
+```
+
+### 0.5.3 回滚指引
+
+在计划摘要的末尾，提示用户：
+
+> 💾 已建立 Git 检查点 `<short-hash>`。如本次任务执行失败且 `/self-correct` 也无法修复，可调用 `/rollback` 或手动执行 `git reset --hard <hash>` 回到任务开始前。
+
+### 0.5.4 例外说明
+
+**Trivial 档**可跳过本步骤（改动小，回滚成本不如直接重新改），但必须在计划摘要中明确声明"Trivial 档跳过 Git checkpoint"。
+
+**纯文档/配置改动**（无业务逻辑）也可跳过，但同样要明确声明。
+
+### 0.5.5 反模式
+
+- ❌ 工作区有未提交改动时直接 commit 进 checkpoint（会污染历史）
+- ❌ checkpoint 后忘记把 hash 写入 todo.md（失败后找不到回滚点）
+- ❌ 静默跳过此步骤（必须明确声明跳过及原因）
+
+---
+
 ## 第 1 步：读取历史经验（强制）
 
 **无论轻量/完整都必须执行。**
