@@ -245,3 +245,55 @@ TODO 清单已写入 tasks/todo.md。
 | 日期 | 变更 | 原因 |
 |---|---|---|
 | 2026-04-22 | 初版建立 | 规则体系搭建 |
+
+---
+
+## 第 7 步：任务完成后 Wiki Ingest 判断（Normal/Complex 必做）
+
+任务成功结束、宣称完成前，自问以下三个问题：
+
+1. **公网搜索是否找到有价值的现成方案？**
+   - 是 → ingest 到 Wiki 对应领域
+2. **是否解决了一个复杂 bug，方案值得复用？**
+   - 是 → ingest 到 Wiki
+3. **是否发现了新工具 / 新 API / 新模型用法？**
+   - 是 → ingest 到 Wiki
+
+### Ingest 标准操作
+
+1. 判断领域（engineering / llm / crawler / frontend / image-gen / design-patterns）
+2. 在 `wiki/<领域>/` 下新建 `<kebab-case-名字>.md`
+3. 顶部加 YAML frontmatter：
+
+```yaml
+---
+title: <页面标题>
+domain: <领域>
+keywords: [关键词1, 关键词2]
+source: <URL 或 lesson ID>
+created: YYYY-MM-DD
+last_updated: YYYY-MM-DD
+---
+```
+
+4. 内容结构：核心规则 → 错误行为 → 正确做法 → 适用场景
+5. 更新 `wiki/index.md` 索引和 `wiki/<领域>/README.md`
+6. Git commit + push：
+
+```bash
+cd /Users/chaojin/Antigravity Projects/Generalrule
+git add wiki/
+git commit -m "[Wiki] <一句话描述>"
+git push origin main
+```
+
+### 反模式
+- ❌ 找到现成方案后只在 lessons.md 记录，不进 Wiki
+- ❌ 没有 frontmatter
+- ❌ 没有更新 index.md
+
+### 与 promote-lessons 的区别
+- **plan-task 第 7 步**：实时 ingest 任务过程中获得的新知识
+- **promote-lessons**：定期清理 lessons.md，把 lesson 升级到 Wiki
+
+两个机制互补：实时 + 周期性。
