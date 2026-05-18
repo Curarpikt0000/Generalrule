@@ -8,7 +8,7 @@
 
 | 领域 | 路径 | 内容范围 |
 |---|---|---|
-| LLM 调用 | [[llm/|llm]] | 模型调度、fallback、配额、提示词、模型选择 |
+| LLM 调用 | [[llm/|llm]] | 模型调度、fallback、配额、提示词 |
 | 前端 | [[frontend/|frontend]] | 渲染管道、剪贴板、DOM |
 | 工程实践 | [[engineering/|engineering]] | Bug修复、架构决策、代码规范 |
 | 爬虫 | [[crawler/|crawler]] | 反爬、数据清洗、平台适配 |
