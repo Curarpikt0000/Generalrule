@@ -2,7 +2,7 @@
 
 > 本文件是 AI Agent 的**行为根规范**。所有其他文件（workflows、AGENTS.md、lessons.md）均在本文件的前提下工作。
 > 更新后需手动复制粘贴到 Antigravity 的 User Rules 设置界面使其生效。
-> 最后更新：2026-04-22
+> 最后更新：2026-05-18
 
 ---
 
@@ -437,4 +437,54 @@ source_lesson: <来源 lesson ID，如有>
 created: YYYY-MM-DD
 last_updated: YYYY-MM-DD
 ---
+
+## §11 模型选择规则（Agent 调用 LLM 专属）
+
+Agent 根据任务复杂度自动选择 DeepSeek 模型，无需手动切换：
+
+### §11.1 模型速查
+
+| 模型 ID | 适用场景 |
+|---------|---------|
+| deepseek-v4-flash | 简单问答、工具调用、单次查询、日常对话 |
+| deepseek-v4-pro | debug、代码审查、架构设计、复杂多步推理 |
+
+### §11.2 触发 pro 的场景
+以下情况强制自动切换到 deepseek-v4-pro：
+- 复杂 debug / 报错分析
+- 代码审查、架构设计
+- 涉及 5+ 文件的大规模修改
+- 用户明确要求高质量输出
+
+### §11.3 切换方式
+通过 /model deepseek-v4-pro 或 /model deepseek-v4-flash 临时切换，无需重启会话。
+
+→ 详见 Wiki: wiki/llm/model-selection.md
+→ 来源: L-2026-05-18-003
 ```
+
+---
+
+## §11 新 Skill 创建规范
+
+需要创建新 Skill 时，**必须先调用 skill-creator**，不要从零手写 SKILL.md。
+
+### Hermes 调用方式
+```bash
+hermes skills install skills-sh/anthropics/skills/skill-creator
+```
+然后触发：`@skill-creator <需求描述>`
+
+### Claude Code 调用方式
+skill-creator 已在 `~/.claude/skills/` 目录下可用，直接说：
+「使用 skill-creator 创建一个关于 <需求> 的 skill」
+
+### 触发条件
+- 用户说"创建一个新 skill"
+- 发现某个工作流值得固化为可复用 skill
+- `/promote-lessons` 判定某条 lesson 适合固化为 skill
+
+### 禁止行为
+- ❌ 不调用 skill-creator 直接手写 SKILL.md
+- ❌ 创建的 skill 没有 YAML frontmatter
+- ❌ skill 描述不包含触发条件
