@@ -52,3 +52,10 @@ Workflow 文件：/Users/chaojin/Antigravity Projects/Generalrule/antigravity/wo
 6. **最终验证** → 确认通过率达标后保存
 
 禁止手动裸写 Skill.md 跳过评估流程。
+
+## §12 模型选择规则
+- 默认（通用/简单任务）：`deepseek-chat`（对应 `deepseek-v4-flash` 非思考模式）
+- 复杂任务（推理模式）：`deepseek-reasoner`（对应 `deepseek-v4-flash` 思考模式）
+- 适用场景：复杂 debug / 代码审查 / 架构设计 / 5+ 文件修改 / 用户要求高质量
+- 切换：`/model deepseek-reasoner` 或 `/model deepseek-chat`
+- ⚠️ 2026/07/24 后废弃，届时迁移至 `deepseek-v4-flash` + thinking 参数
