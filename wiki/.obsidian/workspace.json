@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d08f4242fa2dbe1d",
+        "id": "7afe16124a367f6c",
         "type": "tabs",
         "children": [
           {
-            "id": "ff896d67f3d25295",
+            "id": "fdc1926cbc507b63",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -179,6 +179,8 @@
       "bases:Create new base": false
     }
   },
-  "active": "beaf430110a5b50d",
-  "lastOpenFiles": []
+  "active": "fdc1926cbc507b63",
+  "lastOpenFiles": [
+    "engineering/agent-dedup-double-insurance.md"
+  ]
 }
