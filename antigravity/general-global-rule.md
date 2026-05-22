@@ -56,3 +56,24 @@ Workflow 文件：/Users/chaojin/Antigravity Projects/Generalrule/antigravity/wo
 修改代码后必须触发的审查流程。dispatch 一个独立的 code-reviewer 子 agent，用精准的 git SHA 范围和需求描述作为上下文，把反馈分为 Critical / Important / Minor 三级。
 
 **触发时机**：修改任何核心服务文件后、部署前、完成重大功能后。
+
+@RTK.md
+
+## §12 RTK 自动优化
+
+所有 terminal 命令优先用 `rtk` 代理形式执行以压缩输出：
+
+| 原始命令 | RTK 替代 |
+|---|---|
+| `ls` | `rtk ls` |
+| `cat file` | `rtk read file` |
+| `curl url` | `rtk curl url` |
+| `git ...` | `rtk git ...` |
+| `grep ...` | `rtk grep ...` |
+| `ls -la dir` | `rtk ls -la dir` |
+
+**例外**：`rtk` 自身命令（`rtk init`、`rtk gain`、`rtk --version` 等）不加递归。
+
+**图片分析 fallback**：当前 DeepSeek provider 不支持 vision，收到图片时先用 `tesseract <path> stdout` OCR 提取文字，或尝试通过 Gemini/Claude API 分析。不问用户「这是什么」。
+
+**状态**：RTK v0.40.0 已安装 (`/opt/homebrew/Cellar/rtk/0.40.0`)，`rtk init -g` 已完成。
