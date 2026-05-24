@@ -154,5 +154,6 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 | Wiki 写入（ingest）操作指南 | `wiki/agent-rules/wiki-ingest-guide.md` |
 | 项目标准结构 + 初始化 | `wiki/agent-rules/project-template.md` |
 | 三 Agent 的 Skill 清单 | `wiki/agent-rules/skill-registry.md` |
+| RTK 终端 token 优化 | `wiki/agent-rules/rtk-usage.md` |
 | 完整流程 SOP | `wiki/agent-rules/five-step-pipeline.md` |
 | 踩坑教训（按领域） | `wiki/engineering/`、`wiki/crawler/`、`wiki/llm/` 等 |
