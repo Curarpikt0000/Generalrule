@@ -2,7 +2,7 @@
 title: 三 Agent Skill 清单与统一管理
 domain: agent-rules
 type: entity
-keywords: [skill, registry, 清单, 全局化, superpowers, llmwiki, rtk, 三agent]
+keywords: [skill, registry, 清单, 全局化, superpowers, wiki-update, rtk, 三agent]
 tags: [skill-registry, skills, global-skills]
 source: 三 agent skill 盘点 2026-05-24
 sources: [conversation-2026-05-24]
@@ -35,7 +35,7 @@ last_updated: 2026-05-24
 
 | Skill | 作用 | Hermes | Claude Code | Antigravity | 待办 |
 |---|---|---|---|---|---|
-| **llmwiki**（+ingest/query/health） | Wiki 读写体检，知识沉淀 | ✅ | ❌ | ❌ | 给 CC/AG 补装（见 [[wiki-ingest-guide]]） |
+| **wiki-update** | Wiki 知识写入（量身定做：正确路径+多领域+自动push） | ✅ | 手动 | 手动 | CC/AG 按 [[wiki-ingest-guide]] 手动 ingest |
 | **skill-creator** | 创建新 skill 的标准流程 | ✅ | ✅ | ❌ | 给 AG 补 |
 | **find-skills** | 检索现有 skill 生态 | ✅ | ✅ | ❌ | 给 AG 补 |
 | **brainstorming**（superpowers） | 写代码前苏格拉底式需求澄清（EXPLORE 阶段用） | ✅ | ❌ | ❌ | 给 CC 补装 |
@@ -90,28 +90,23 @@ slash 命令在 `~/.claude/commands/`（已有 8 个 workflow 命令）。
 **Hermes** —— 已装齐，无需补。新增用 `hermes skills install <source>`。
 
 **Antigravity** —— 无传统 skill 机制，走 `.agents/rules/` + Customizations→Workflows。
-**llmwiki 这类，Antigravity 通过读 [[wiki-ingest-guide]] 手动执行**，不一定装 skill。
+**wiki 写入，Antigravity/Claude Code 通过读 [[wiki-ingest-guide]] 手动执行**，无需装 skill。
 确需 skill 化的，用 skill-creator 生成 Antigravity 兼容版（名字保持一致，便于记忆）。
 
 ---
 
-## 六、llmwiki skill 的特殊改造说明
+## 六、Wiki 写入方案（wiki-update）
 
-Hermes 现装的 `llmwiki`（wangsw/llm-wiki-skills）默认指向 `~/hermesagent/_wiki/`、用 `concepts/` 扁平结构、`type/tags` frontmatter——**与本体系架构不符**。
+三个 Agent 写 Wiki 的统一方案：
 
-**改造要求**（步骤 7 执行）：
-- 路径 → `/Users/chaojin/Antigravity Projects/Generalrule/wiki/`
-- 结构 → 多领域目录（engineering/llm/crawler/...）
-- frontmatter → 方案 Z 双字段（见 [[wiki-ingest-guide]] 2.4）
-- 涉及 10 个文件（主 SKILL.md + ingest/query/health 各自的 SKILL.md + references）
-- 已设 `WIKI_PATH` 环境变量做临时指向修正
+- **Hermes**：用 local skill `wiki-update`（productivity 类）。它为本 Wiki 量身定做——正确路径、多领域结构、自动 git push。用自然语言触发（如"把这个总结进 wiki"）。
+- **Claude Code / Antigravity**：无需 skill，按 [[wiki-ingest-guide]] 手动 ingest（判断领域→写文件→更新 index→git push）。
 
-改造后作为 SSOT，三个 Agent 共享同一份（符号链接或拷贝）。
-
----
+> 历史说明：曾装过 `wangsw/llm-wiki-skills`（llmwiki-ingest/query/health），因默认指向错误路径、用 concepts/ 扁平结构、与本架构不符，已于 2026-05-24 删除，统一改用 wiki-update。
+> Wiki 读取（query）与体检（health）目前均为手动，无专门 skill；wiki 规模增大后可再引入。
 
 ## 七、相关页面
 
-- [[wiki-ingest-guide]] —— llmwiki 的使用规范
+- [[wiki-ingest-guide]] —— Wiki 读写规范（wiki-update 用法）
 - [[five-step-pipeline]] —— 第 3 步"找 Skill"
 - general-global-rule.md §3（五步链路）

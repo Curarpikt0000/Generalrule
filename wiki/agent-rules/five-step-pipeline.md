@@ -35,7 +35,7 @@ last_updated: 2026-05-24
 
 1. **读 Rule** —— 读 general-global-rule.md，找相关认知纪律（§2）和场景规范指针（§8）。
 2. **查 Wiki** —— 读 `wiki/index.md` → 相关领域页面。命中直接用，标注「来自 Wiki: <文件名>」。详见 [[wiki-ingest-guide]] 第四节 QUERY。
-3. **找 Skill** —— 检索已安装 skill（superpowers / llmwiki / skill-creator / RTK 等）。有匹配就调用，不重复造轮子。
+3. **找 Skill** —— 检索已安装 skill（superpowers / wiki-update / skill-creator / RTK 等）。有匹配就调用，不重复造轮子。
 4. **搜公网** —— GitHub / PyPI / 官方文档。找到现成方案就用；有价值的内容按 [[wiki-ingest-guide]] 写回 Wiki。
 5. **自己写代码（兜底）** —— 前四步都没方案，才从零写。
 
