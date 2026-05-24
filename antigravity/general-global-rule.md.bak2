@@ -99,7 +99,7 @@ Workflow 是结构化工作流。**触发纪律三个 Agent 通用**；实现各
 内容生成类任务（文章/视频/播客等非确定性输出）默认豁免 TDD。
 PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬门处向用户申请豁免，由用户手动批准。
 
-> 五阶段详细 SOP、各 Agent 触发差异、Git 检查点机制 → 见 `wiki/agent-rules/five-step-pipeline.md`
+> 五阶段详细 SOP、各 Agent 触发差异、Git 检查点机制 → 见 `workflows/` 目录与 `wiki/agent-rules/five-step-pipeline.md`
 
 ---
 
@@ -127,7 +127,7 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 
 **操作（写在 Wiki）**：怎么用 llm-wiki 的 ingest、装在哪、何时触发、是否新建子文件夹 → 全部见 `wiki/agent-rules/wiki-ingest-guide.md`。
 
-三条升级通道（细节见 `wiki/agent-rules/wiki-ingest-guide.md`）：留在项目 `tasks/lessons.md` / 升级进 Wiki / 固化为 Skill。
+三条升级通道（细节见 `workflows/promote-lessons.md`）：留在项目 `tasks/lessons.md` / 升级进 Wiki / 固化为 Skill。
 
 ---
 
@@ -154,5 +154,5 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 | Wiki 写入（ingest）操作指南 | `wiki/agent-rules/wiki-ingest-guide.md` |
 | 项目标准结构 + 初始化 | `wiki/agent-rules/project-template.md` |
 | 三 Agent 的 Skill 清单 | `wiki/agent-rules/skill-registry.md` |
-| 完整流程 SOP | `wiki/agent-rules/five-step-pipeline.md` |
+| 完整 Workflow 步骤 | `workflows/` 目录 |
 | 踩坑教训（按领域） | `wiki/engineering/`、`wiki/crawler/`、`wiki/llm/` 等 |
