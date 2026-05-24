@@ -100,67 +100,10 @@ last_updated: 2026-05-24
 
 ---
 
-## 五、AGENTS.md 占位模板
+## 五、AGENTS.md 入口模板
 
-新项目复制以下内容到 `AGENTS.md`，填入方括号部分。空小节先留着，随项目成长补充：
-
-```markdown
-# [项目名]
-
-> 本项目遵守全局规则：/Users/chaojin/Antigravity Projects/Generalrule/antigravity/general-global-rule.md
-> 通用规范与踩坑教训见全局 Wiki：/Users/chaojin/Antigravity Projects/Generalrule/wiki/
-> 本文件只写本项目特有的内容。
-
-## 项目简介
-
-[一两句话：这个项目做什么，解决什么问题]
-
-## 技术栈
-
-- 语言/框架：[如 Python 3.12 / FastAPI]
-- 关键依赖：[如 ...]
-- 部署：[如 本地 / GCP Cloud Run / ...]
-
-## 目录约定
-
-- 前端代码：[如 src/frontend/]
-- 后端代码：[如 src/api/]
-- 临时文件：scratch/（不进 git）
-- 配置：[如 config.py，严禁硬编码密钥]
-
-## 常用命令
-
-- 启动：[如 python main.py / pnpm dev]
-- 测试：[如 pytest / pnpm test]
-- 部署：[如 ...]
-- 其他：[如 数据库迁移命令 ...]
-
-## 工作规则（本项目特有）
-
-[只写和全局规则不同的、本项目独有的约定。没有就留空，遵守全局规则即可。]
-[例：本项目所有 Notion 写入必须走 markdown→blocks 转换器，禁止裸 markdown]
-
-## 输出要求
-
-[本项目对产物的特殊要求。例：]
-[内容生成类项目例：文章保持原文语言，禁止自动翻译]
-
-## 禁止事项
-
-[本项目绝对不能做的事。例：]
-[- 不要碰 src/legacy/ 目录下的旧代码]
-[- 不要修改线上数据库 Schema 而不先备份]
-[- 不要把生成的视频/音频文件提交到 git（放 scratch/）]
-
-## 验收标准
-
-[怎么算"做完了"。例：]
-[- 所有测试通过]
-[- 本地能启动且核心流程跑通]
-[- 没有硬编码密钥]
-```
-
----
+项目入口文件 AGENTS.md 的完整模板（三 Agent 通用）见 [[AGENTS-template]]。
+初始化时复制它到项目根目录，填好项目信息，并建符号链接 `ln -s AGENTS.md CLAUDE.md`。
 
 ## 六、相关页面
 
