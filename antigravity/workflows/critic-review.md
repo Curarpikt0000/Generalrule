@@ -26,7 +26,6 @@
 
 ## 角色定义（硬约束）
 
-依照 `wiki/engineering/harness-engineering-principles.md §2`：
 
 | 角色 | 职责 | **禁止行为** |
 |---|---|---|

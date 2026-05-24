@@ -93,5 +93,4 @@ last_updated: 2026-05-24
 
 ## 相关页面
 
-- [[harness-engineering-principles]] —— 工程原则总纲（engineering 领域）
 - general-global-rule.md §2.2 简单至上、§2.3 外科手术式修改
