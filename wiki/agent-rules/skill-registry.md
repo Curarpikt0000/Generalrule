@@ -38,10 +38,10 @@ last_updated: 2026-05-24
 | **wiki-update** | Wiki 知识写入（量身定做：正确路径+多领域+自动push） | ✅ | 手动 | 手动 | CC/AG 按 [[wiki-ingest-guide]] 手动 ingest |
 | **skill-creator** | 创建新 skill 的标准流程 | ✅ | ✅ | ❌ | 给 AG 补 |
 | **find-skills** | 检索现有 skill 生态 | ✅ | ✅ | ❌ | 给 AG 补 |
-| **brainstorming**（superpowers） | 写代码前苏格拉底式需求澄清（EXPLORE 阶段用） | ✅ | ❌ | ❌ | 给 CC 补装 |
-| **writing-plans**（superpowers） | 结构化任务规划（PLAN 阶段用） | ✅ | ❌ | ❌ | 给 CC 补 |
-| **systematic-debugging**（superpowers） | 4 阶段根因调试流程 | ✅ | ❌ | ❌ | 给 CC 补 |
-| **test-driven-development** | TDD 红绿重构 | ✅ | ❌ | ❌ | 给 CC 补 |
+| **brainstorming**（superpowers） | 写代码前苏格拉底式需求澄清（EXPLORE 阶段用） | ✅ | ✅ | ❌ | CC 已装(2026-05-24) |
+| **writing-plans**（superpowers） | 结构化任务规划（PLAN 阶段用） | ✅ | ✅ | ❌ | CC 已装(2026-05-24) |
+| **systematic-debugging**（superpowers） | 4 阶段根因调试流程 | ✅ | ✅ | ❌ | CC 已装(2026-05-24) |
+| **test-driven-development** | TDD 红绿重构 | ✅ | ✅ | ❌ | CC 已装(2026-05-24) |
 | **requesting-code-review** | 派子 agent 做分级代码审查 | ✅ | ✅ | ❌ | 给 AG 补 |
 
 > **现状解读**：核心方法论 skill 几乎都在 Hermes，Claude Code 缺一大半。这是"想用却没装"的根源。
