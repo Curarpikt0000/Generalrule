@@ -14,6 +14,7 @@
 | 爬虫 | [[crawler/\|crawler]] | 反爬、数据清洗、平台适配 |
 | 图像生成 | [[image-gen/\|image-gen]] | Imagen3、提示词、风格约束 |
 | 设计模式 | [[design-patterns/\|design-patterns]] | 级联降级、对抗性系统、自适应架构 |
+| pathlib | [[engineering/pathlib-vs-ospath\|pathlib-vs-ospath]] | pathlib.Path vs os.path 跨平台路径操作 | 2026-05-24 |
 | 工具对比 | [[engineering/google-antigravity\|google-antigravity]] | Google AntiGravity IDE 介绍 |
 | RTK Token优化 | [[agent-rules/rtk-usage\|rtk-usage]] | RTK, token优化, CLI代理 |
 
