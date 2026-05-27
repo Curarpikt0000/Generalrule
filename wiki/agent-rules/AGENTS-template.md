@@ -84,6 +84,13 @@ last_updated: 2026-05-24
 
 [怎么算"做完了"——这是 §2.4 目标驱动执行的项目级落地。]
 [例：所有测试通过 / 本地能启动且核心流程跑通 / 无硬编码密钥]
+
+## 项目 Wiki
+
+本项目的经验沉淀见 `wiki/README.md`，按领域分组逐层下钻。
+
+> Wiki 读写规范（三层索引、kebab-case 命名、frontmatter 格式）遵守全局 `wiki/agent-rules/wiki-ingest-guide.md`。
+> 沉淀新知识：写进项目 wiki 对应领域 → 更新该领域 README → 不要逐条往本文件加索引。
 ```
 
 ---

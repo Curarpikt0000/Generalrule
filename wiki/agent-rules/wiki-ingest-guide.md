@@ -132,6 +132,45 @@ last_updated: YYYY-MM-DD
 
 ---
 
+## 二·五、索引结构与入口文件规则（重要）
+
+### 三层索引结构（共享 Wiki 和项目 Wiki 都用）
+
+知识库是三层索引，查找时逐层下钻，写入时逐层维护：
+
+```
+第 1 层  index.md（或 README.md）   ← 顶层总览：哪类问题 → 看哪个领域/group
+第 2 层  <领域>/README.md           ← 领域分总览：本领域有哪些页、各讲什么
+第 3 层  <领域>/具体页面.md          ← 单一主题的具体知识
+```
+
+写入一条新知识时，三层都要更新：
+1. 写第 3 层具体页面（kebab-case 命名，方案 Z frontmatter）。
+2. 在第 2 层 `<领域>/README.md` 页面列表加一行。
+3. 在第 1 层顶层 `index.md` 确认该领域已登记（新领域才需加）。
+
+### 入口文件（CLAUDE.md / AGENTS.md）只放一句总指针
+
+**严禁把每条 wiki 逐条加进 CLAUDE.md / AGENTS.md 的索引。** 入口文件只放一句：
+
+```
+## 项目 Wiki
+所有经验沉淀见 `wiki/README.md`（或 wiki/index.md），按领域分组逐层下钻。
+```
+
+*为什么：入口文件要薄、稳定。逐条加 wiki 会让它无限膨胀、频繁改动。索引职责在 wiki 自己的三层结构里，不在入口文件。*
+
+### 项目级 Wiki vs 共享 Wiki
+
+- **共享 Wiki**（`Generalrule/wiki/`）：三 Agent 通用、跨项目的知识。
+- **项目级 Wiki**（`<项目>/wiki/`）：仅本项目的踩坑（如某项目特定的登录崩溃修复）。
+
+判断：这条知识**只对这个项目有用** → 项目 Wiki；**对其他项目/Agent 也有用** → 共享 Wiki。
+
+两者**结构和格式完全一致**：三层索引、kebab-case 命名、方案 Z frontmatter。项目 Wiki 也要有自己的 `wiki/README.md` 顶层总览 + 领域分 README。
+
+---
+
 ## 三、写完后：Git 同步
 
 ```bash
