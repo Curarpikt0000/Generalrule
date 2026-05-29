@@ -25,6 +25,14 @@
 | 静态网页表单邮件发送 | [[frontend/static-site-form-email]] | FormSubmit, 表单, 邮件, GitHub Pages | 2026-05-21 |
 | 浏览器缓存与 Cache Buster | [[frontend/cache-buster-versioning]] | Cache Buster, 版本号, 缓存, JS, CSS | 2026-05-21 |
 
+### crawler 领域明细
+
+| 规则标题 | 链接 | 关键词 | 创建日期 |
+|---|---|---|---|
+| 反爬虫绕过手册 (Bypass Handbook) | [[crawler/crawler-bypass-handbook]] | crawler, bypass, waf, camoufox, crawl4ai, jina-reader, yt-dlp | 2026-05-29 |
+| YouTube 播放器客户端伪装绕过强制登录限制 | [[crawler/yt-dlp-client-spoofing]] | youtube, yt-dlp, tv_embedded, sign in, android, bypass, scraping | 2026-05-19 |
+| 爬虫数据采集保持原文语言 | [[crawler/preserve-original-language]] | transcript, language, data-integrity, crawl, 原文 | 2026-05-04 |
+
 ## 使用方式
 
 - **Obsidian 打开**：File → Open Vault → 选择 `wiki/` 目录

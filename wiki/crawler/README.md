@@ -1,7 +1,9 @@
 # crawler 领域知识
 
-> 由 promote-lessons Workflow 自动维护。
+> 本领域整理爬虫、反爬、抓取、清洗、字幕、公众号、YouTube 及 URL 等相关的知识。
 
 ## 页面列表
 
-_暂无内容，等待第一条 lesson 升级_
+- [[crawler-bypass-handbook]] —— 反爬虫绕过手册 (Bypass Handbook)
+- [[yt-dlp-client-spoofing]] —— YouTube 播放器客户端伪装绕过强制登录限制
+- [[preserve-original-language]] —— 爬虫数据采集保持原文语言
