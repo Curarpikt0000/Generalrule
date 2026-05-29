@@ -17,6 +17,7 @@
 | pathlib | [[engineering/pathlib-vs-ospath\|pathlib-vs-ospath]] | pathlib.Path vs os.path 跨平台路径操作 | 2026-05-24 |
 | 工具对比 | [[engineering/google-antigravity\|google-antigravity]] | Google AntiGravity IDE 介绍 |
 | RTK Token优化 | [[agent-rules/rtk-usage\|rtk-usage]] | RTK, token优化, CLI代理 |
+|| COMEX/SIFO | [[com/dsifo-threshold-logic\|dsifo-threshold-logic]] | SIFO, q_phy, ΔS, 方向判断, 阈值表 |
 
 ### frontend 领域明细
 
