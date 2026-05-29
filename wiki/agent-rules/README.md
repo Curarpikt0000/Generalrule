@@ -36,6 +36,7 @@ last_updated: 2026-05-28
 ## 项目案例（蒸馏经验沉淀）
 
 - [[finance-hero-distillation]] —— Hermes profile 多人格架构 + 投资大师议会模式 + 11 位大师名册（2026-05-28）
+- [[google-finance-research-integration]] —— Google Finance Beta「研究 AI」二次验证集成；Playwright + Chrome profile + 7 大网页自动化踩坑（2026-05-29）
 
 ---
 
