@@ -35,6 +35,13 @@
 | 爬虫数据采集保持原文语言 | [[crawler/preserve-original-language]] | transcript, language, data-integrity, crawl, 原文 | 2026-05-04 |
 | 周报列表爬取中的分页与数据遗漏防范 | [[crawler/weekly-report-pagination]] | crawler, pagination, weekly-report, sge, backfill | 2026-05-30 |
 
+### engineering 领域明细
+
+| 规则标题 | 链接 | 关键词 | 创建日期 |
+|---|---|---|---|
+| Notion API 去重校验防静默失败与 Fail Loud 协议 | [[engineering/notion-dedup-fail-loud]] | notion, deduplication, fail-loud, runtime-error, exception-handling | 2026-05-30 |
+| Notion 数据验证必须循环翻页 | [[engineering/notion-pagination-validation]] | notion, pagination, blocks, has_more, validation | 2026-05-04 |
+
 ## 使用方式
 
 - **Obsidian 打开**：File → Open Vault → 选择 `wiki/` 目录
