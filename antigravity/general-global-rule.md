@@ -141,6 +141,17 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 
 ---
 
+## §7.5 多机同步纪律（家用机 + 公司机共享同一仓库）
+
+本体系被多台电脑共享（家用机、公司机 UB），同一个 GitHub 仓库。为避免覆盖和冲突：
+
+- **开工前先 pull**：任何 Agent 开始工作前，先 `git pull origin <当前分支>`，确保拿到最新规则和 Wiki。
+- **改动后必 push**：修改了 general rule、Wiki 或任何仓库内文件后，由修改的 Agent 立即 `git add -A && git commit && git push`，不留未推送的本地改动。
+- **规则与 Wiki 知识** → push 到 `main`；**公司机项目代码** → push 到 `ub-branch`。
+- **冲突时停下问用户**，不擅自 `git push --force` 或 merge。
+- 公司机写 Wiki 时 frontmatter 标注 `machine: UB`，commit message 带 `[UB]`。
+
+
 ## §8 指针索引（场景知识入口）
 
 本文件不写细节，所有细节在下列位置：
