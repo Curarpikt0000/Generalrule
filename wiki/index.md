@@ -39,6 +39,7 @@
 
 | 规则标题 | 链接 | 关键词 | 创建日期 |
 |---|---|---|---|
+| GitHub Actions 定时任务中 GitHub API 限流防护 | [[engineering/github-actions-rate-limit-mitigation]] | github-actions, github-api, rate-limit, github-token, secrets | 2026-06-06 |
 | Notion API 去重校验防静默失败与 Fail Loud 协议 | [[engineering/notion-dedup-fail-loud]] | notion, deduplication, fail-loud, runtime-error, exception-handling | 2026-05-30 |
 | Notion 数据验证必须循环翻页 | [[engineering/notion-pagination-validation]] | notion, pagination, blocks, has_more, validation | 2026-05-04 |
 

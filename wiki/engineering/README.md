@@ -4,6 +4,7 @@
 
 ## 页面列表
 
+* [[github-actions-rate-limit-mitigation]] - GitHub Actions 定时任务中 GitHub API 限流防护
 * [[notion-dedup-fail-loud]] - Notion API 去重校验防静默失败与 Fail Loud 协议
 * [[notion-pagination-validation]] - Notion 数据验证必须循环翻页
 * [[agent-dedup-double-insurance]] - Agent 去重双保险：音视频转换流水线必读规则
