@@ -30,3 +30,9 @@
 
 ## 认知纪律 / 五阶段 workflow / Lesson
 → 完全遵守 main 上的 general-global-rule.md，与家里一致。
+
+## VM 工作区目录纪律（devpod）
+- 工作区根（如 `~/claudecodeuber/`）只放：根入口 `CLAUDE.md` + 各任务文件夹，**不放散文件**。
+- 命名：正式项目 `project-<名>/`；临时对话/实验 `temp-<日期>-<主题>/`；数据分析 `data-analysis/<主题>/`。
+- 新任务第一步先建文件夹再动手（呼应 general rule §5）；项目内部结构按 `wiki/agent-rules/project-template.md`。
+- Generalrule 仓库在 VM 上**独立 clone**（checkout ub-branch），与本地 Mac 互不依赖，经 GitHub 同步。
