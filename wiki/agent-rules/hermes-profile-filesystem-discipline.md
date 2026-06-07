@@ -7,8 +7,8 @@ tags: [filesystem, discipline, profile-workspace, write-policy]
 source: 2026-05-31 Chao 为 finance / general 两个新 profile 定纪律；继承 ~/hermesagent/CLAUDE.md §"根目录写入禁令"
 sources: [hermesagent/CLAUDE.md, general-global-rule.md §7, general-global-rule.md §9]
 created: 2026-05-31
-updated: 2026-05-31
-last_updated: 2026-05-31
+updated: 2026-06-07
+last_updated: 2026-06-07
 violation_log: ["2026-05-31 Hermes Documents 三处违规惨案"]
 ---
 
@@ -71,6 +71,10 @@ violation_log: ["2026-05-31 Hermes Documents 三处违规惨案"]
    是 → 改 ~/hermesagent/Distill/蒸馏Hermes/<profile>-hero/ 蓝图，然后跑 sync.sh
    否 → 下一题
 
+5.5. 是不是"用户手动上传的输入文件"（Telegram/聊天附件，非 Hermes 生成的产物）？
+   是 → ~/Downloads/ 保持原名（仅此例外，不建子目录）
+   否 → 下一题
+
 5. 是不是"Hermes 内部自管的（memory / sessions / config）"？
    是 → 不要碰，Hermes 自己写到 ~/.hermes/profiles/<name>/，绕开不干预
    否 → 停下来问用户该放哪
@@ -109,6 +113,8 @@ violation_log: ["2026-05-31 Hermes Documents 三处违规惨案"]
                                             必须立刻 mv 到对应项目的 scheduled-tasks/
 ❌ ~/Desktop/                             → 同上
 ❌ ~/Downloads/                           → 同上
+   ⚠ 例外：允许接收"用户手动上传的输入文件"（Telegram/聊天附件，非 Hermes 生成的产物）
+     写入规则：文件名保持原名，不创建子目录，不删除/修改下载区内任何既有文件
 ❌ ~/Pictures/ / ~/Music/ / ~/Movies/     → 同上
 ❌ /etc /opt /usr /System /Library 等系统目录 → 系统级
 ❌ 直接改 ~/.hermes/profiles/<name>/ 的非自管文件
@@ -139,7 +145,8 @@ finance hero 和 general hero 的 SOUL.md 都加了一段"文件系统纪律"，
 
 绝对禁止：
 - ❌ ~/hermesagent/ 根目录
-- ❌ ~/Documents / ~/Desktop / ~/Downloads / ~/Pictures 等用户文件夹
+- ❌ ~/Documents / ~/Desktop / ~/Pictures 等用户文件夹
+- ❌ ~/Downloads（例外：仅允许接收用户手动上传的输入文件，详见 §五）
 - ❌ /etc /opt /usr 等系统目录
 - ❌ ~/.hermes/profiles/ 里 Hermes 自管文件之外的修改（必走蓝图→sync）
 
