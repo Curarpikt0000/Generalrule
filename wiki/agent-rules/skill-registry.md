@@ -4,11 +4,12 @@ domain: agent-rules
 type: entity
 keywords: [skill, mcp, registry, 清单, 对账, 全局化, uberpowers, 多环境]
 tags: [skill-registry, skills, mcp, reconciliation]
-source: 三 agent skill 盘点 2026-05-24，对账机制升级 2026-06
-sources: [conversation-2026-05-24, conversation-2026-06]
+source: 三 agent skill 盘点 2026-05-24，对账机制升级 2026-06，VM 对账 2026-06-08
+sources: [conversation-2026-05-24, conversation-2026-06, conversation-2026-06-08]
 created: 2026-05-24
 updated: 2026-06-08
 last_updated: 2026-06-08
+machine: UB
 ---
 
 # Skill 与 MCP 清单及对账机制
@@ -75,7 +76,15 @@ last_updated: 2026-06-08
 
 **仅家用机 Claude Code**：ckm-* 设计系列（banner-design / brand / design-system / slides / ui-styling / ui-ux-pro-max）、copy-editing、cua-driver、gemini-image。
 
-**仅 Uber 机**：见 ub-branch 的 uber-adaptation.md（uberpowers / code-mode / omni-mcp 及各 Uber 内部 plugin）。Uber 专属 skill 清单不进 main（IP 隔离）。
+**仅 Uber 机**（2026-06-08 实际确认）：
+
+*aifx plugin（12 个）*：alert-rca, ci-debugger, code-mode, data-analyst, find-skills, minion-dev, omni-mcp, page-publisher, skill-workshop, uber-dev, uber-reviewer, uberpowers
+
+*Claude Code skills（~/.claude/skills/，17 个咨询框架）*：consulting, management-consultant, issue-tree-builder, hypothesis-tree, synthesis, top-down-memo, decision-memo-builder, scpr-framework, storyline-builder, deck-pipeline, mckinsey-charts, mckinsey-critic, prioritization, ai-use-case-scorer, meeting-prep-kit, stakeholder-map, workshop-designer
+
+来源：yoichiojima-2/consultant（consulting），charlie989898/-mbb-management-consultant-claude-skill（management-consultant），sruthir28/enterprise-ai-skills（其余 15 个）。
+
+Uber 专属 plugin 详细用途见 ub-branch 的 uber-adaptation.md（IP 隔离，不进 main）。
 
 ---
 
@@ -83,7 +92,7 @@ last_updated: 2026-06-08
 
 | MCP | 用途 | 哪些环境 | 安装命令 |
 |---|---|---|---|
-| omni-mcp | 一个连接通 415+ servers | Uber | `aifx mcp add omni-mcp --skip-validation` |
+| omni-mcp | 一个连接通 415+ servers（含 UberHub、Slack、代码等内部工具） | Uber | `aifx plugin add omni-mcp`（plugin）+ `aifx mcp add omni-mcp --skip-validation`（注册编辑器）|
 
 > Uber 的 MCP 详情（含各内部 server）登记在 ub-branch 的 uber-adaptation.md，不进 main。
 > 家用机 / Hermes 的 MCP 按需登记于此。
