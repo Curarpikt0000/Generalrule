@@ -131,6 +131,13 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 
 ---
 
+## §6.5 Skill 对账纪律
+
+- 装/卸任何核心 skill 或 MCP 后，立即更新 `wiki/agent-rules/skill-registry.md` 对应环境列并 push（通用改动→main；Uber 专属→ub-branch）。
+- 开工时先读 skill-registry 对账：列出本环境缺的核心能力 + 安装命令，**经用户确认后**安装（安装是不可逆操作，遵守 §7）。
+- 比的是「能力」不是文件名（如 brainstorming 在家用机是 superpowers，在 Uber 是 uberpowers，算同一能力）。
+
+
 ## §7 安全与禁区
 
 - **严禁硬编码** API Key、密码、Token。一律从环境变量或 `.env`（已 gitignore）读取。
