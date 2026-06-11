@@ -71,9 +71,13 @@ last_updated: 2026-06-08
 
 ## 四、C 类专用（各环境登记，不对账）
 
-**仅 Hermes**：vision（图片转文字）、webworms / scrapling（反爬抓取）、youtube-reviewer、atn-pipeline / magazine-pipeline-operations（项目 skill）、moomoo 系列（炒股分析，10+ 个）、management-consultant / mckinsey-* / 各类咨询框架 skill、各 builtin（apple/github/mlops 等）。
+> 每项「是什么、给谁用、怎么获取」的明细 → 见 [[skill-catalog]]（详表，2026-06-11 全量盘点）。本节只留概览。
 
-**仅家用机 Claude Code**：ckm-* 设计系列（banner-design / brand / design-system / slides / ui-styling / ui-ux-pro-max）、copy-editing、cua-driver、gemini-image。
+**仅 Hermes**：vision（图片转文字，DeepSeek 配套）、webworms / scrapling / search-fallback（抓取与搜索回退）、youtube-reviewer、atn-pipeline / magazine-pipeline-operations / comex-daily-report / fred-notion-pipeline / kol-tracker-operations / webhook-subscriptions / wiki-update（项目运维 skill）、moomoo 系列（炒股分析，9 个）、management-consultant / mckinsey-* / 各类咨询框架 skill（约 18 个）、mlops 微调系列（axolotl / trl / unsloth / outlines）、linear / spotify / native-mcp、各 builtin（70 个，apple/github/mlops 等）。
+
+**仅家用机 Claude Code**：ckm-* 设计系列（design / banner-design / brand / design-system / slides / ui-styling）、ui-ux-pro-max、copy-editing、gemini-image。~~cua-driver~~（2026-06-11 核实本机已不存在，移除）。
+
+**仅 Antigravity**：frontend-design、humanizer-zh、code-review、agent-browser、webworms，外加 8 个 global workflow（plan-task / verify-done / self-correct / rollback 等，即 §4 五阶段链路的 Antigravity 实现）。
 
 **仅 Uber 机**：见 ub-branch 的 uber-adaptation.md（uberpowers / code-mode / omni-mcp 及各 Uber 内部 plugin）。Uber 专属 skill 清单不进 main（IP 隔离）。
 
@@ -84,9 +88,12 @@ last_updated: 2026-06-08
 | MCP | 用途 | 哪些环境 | 安装命令 |
 |---|---|---|---|
 | omni-mcp | 一个连接通 415+ servers | Uber | `aifx mcp add omni-mcp --skip-validation` |
+| notion | Notion 读写（各 Notion 管道写入通道） | Hermes | `npx -y @notionhq/notion-mcp-server` |
+| brave-search | Brave 网页搜索 | Hermes | `npx -y @anthropic/mcp-brave-search`（需 API key） |
+| context7 | 拉取最新库文档 | Antigravity | mcp_config.json 配 `https://mcp.context7.com/mcp` + API key |
 
+> 家用机 Claude Code 当前 **0 个 MCP**（`claude mcp list` 为空，2026-06-11 核实）。
 > Uber 的 MCP 详情（含各内部 server）登记在 ub-branch 的 uber-adaptation.md，不进 main。
-> 家用机 / Hermes 的 MCP 按需登记于此。
 
 ---
 
@@ -106,6 +113,7 @@ last_updated: 2026-06-08
 
 ## 七、相关页面
 
+- [[skill-catalog]] —— 家用机全量明细目录（每个 skill 是什么、给谁用、怎么获取）
 - [[wiki-ingest-guide]] —— Wiki 读写规范
 - [[five-step-pipeline]] —— 第 3 步"找 Skill"
 - general-global-rule.md §3（五步链路）、§6（装 skill 后更新清单的纪律）
