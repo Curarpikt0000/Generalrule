@@ -77,7 +77,7 @@ last_updated: 2026-06-08
 
 **仅家用机 Claude Code**：ckm-* 设计系列（design / banner-design / brand / design-system / slides / ui-styling）、ui-ux-pro-max、copy-editing、gemini-image。~~cua-driver~~（2026-06-11 核实本机已不存在，移除）。
 
-**仅 Antigravity**：frontend-design、humanizer-zh、code-review、agent-browser、webworms，外加 8 个 global workflow（plan-task / verify-done / self-correct / rollback 等，即 §4 五阶段链路的 Antigravity 实现）。
+**仅 Antigravity**：frontend-design、humanizer-zh、code-review、agent-browser、webworms，外加 8 个 global workflow（plan-task / verify-done / self-correct / rollback 等，即 §4 五阶段链路的 Antigravity 实现）。2026-06-11 已补齐 A 类缺口：systematic-debugging、test-driven-development（从家用机 CC 拷入）。
 
 **仅 Uber 机**：见 ub-branch 的 uber-adaptation.md（uberpowers / code-mode / omni-mcp 及各 Uber 内部 plugin）。Uber 专属 skill 清单不进 main（IP 隔离）。
 

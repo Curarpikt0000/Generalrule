@@ -52,7 +52,7 @@ updated: 2026-06-11
 
 ---
 
-## 三、Antigravity（`~/.gemini/antigravity/skills/`，7 个 skill + 8 个 global workflow）
+## 三、Antigravity（`~/.gemini/antigravity/skills/`，9 个 skill + 8 个 global workflow）
 
 ### Skills
 
@@ -65,6 +65,8 @@ updated: 2026-06-11
 | humanizer-zh | local | 消除中文 AI 写作痕迹：识别并重写 24 种 AI 模式（过度强调、三段式、粗体滥用等） | 【待人工确认】 |
 | requesting-code-review | 公共·superpowers 同源 | 同 CC，本机版含项目特有检查清单（爬虫层/LLM 层/前端层） | git、subagent |
 | webworms | local | Python 爬虫框架：4 层降级（requests+BS4→Jina Reader→CamoFox→Crawl4AI），内置 robots.txt 合规、限速、重试 | Python 3.10+、requests、bs4 |
+| systematic-debugging | 公共·superpowers | 同 CC（2026-06-11 从家用机 CC 拷入补齐 A 类） | — |
+| test-driven-development | 公共·superpowers | 同 CC（2026-06-11 从家用机 CC 拷入补齐 A 类） | 项目测试框架 |
 
 ### Global Workflows（`~/.gemini/antigravity/global_workflows/`，对应 general rule §4 五阶段链路的 Antigravity 实现）
 
