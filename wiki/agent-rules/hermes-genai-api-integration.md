@@ -45,6 +45,61 @@ last_updated: 2026-06-12
 
 ---
 
+## 一·补、两种接入方式对比（重要！）
+
+接 Uber GenAI API 有**两条路**，本质都是「OpenAI 兼容客户端 → 内部 GenAI Gateway」，
+区别在**认证方式**与**连接路径**。我们当前用的是 **A（Cerberus 隧道）**，
+Uber 工程师建议的是 **B（USSO token 直连）**。
+
+| 维度 | **A. Cerberus 隧道（当前在用）** | **B. USSO token 直连（工程师建议）** |
+|---|---|---|
+| Base URL | `http://localhost:8800/v1`（本地 proxy）→ Cerberus → `genai-api` | `https://genai-api.uberinternal.com/v1`（直连内部域名） |
+| 认证 | **Cerberus 证书**（`generate-cerberus-cert` + ussh cert，devpod 自动维护） | **USSO token** 当 `Authorization: Bearer` |
+| 计费 header | `rpc-caller: chao.jin` + `rpc-service: genai-api`（proxy 注入） | `rpc-caller` + **`OpenAI-Organization: <uOwn 项目 UUID>`** |
+| 需要 uOwn UUID | **不需要**（证书身份，计费归 ldap） | **需要**（go/maa 注册的 uOwn / MA Studio 项目 UUID） |
+| token 过期 | Cerberus cert 自动续期（无 401 困扰） | USSO token 约 **30 分钟过期**，长跑 agent 必须**每请求重取** |
+| 合规定位 | ⚠️ Cerberus 自带警告「LOCAL DEBUGGING ONLY，不可用于 automation/scripts/cron」 | ✅ 生产级官方推荐路径 |
+
+### 为什么当前 A 方式不需要 UUID 也能跑通
+
+A 走的是**证书隧道**，身份由 ussh/cerberus cert 承载，计费靠 `rpc-caller: chao.jin`
+归到个人 ldap —— 所以**不需要 uOwn 项目 UUID**。这也是为什么没填 UUID 也能成功。
+
+### 长期建议（何时切到 B）
+
+A 现在稳定、零额外配置，**短期不用改**。但两个长期风险值得注意：
+
+1. **计费合规**：A 计费归个人 ldap，若 Uber 要求 GenAI 用量必须挂到注册的 uOwn 项目
+   （成本中心），将来可能被风控拦。
+2. **Cerberus 非生产用途**：启动时自带警告，我们的长跑 agent + cron 技术上算 automation，
+   若 service owner 收紧 Charter policy，隧道可能被掐。
+
+**迁移到 B 的前置条件**：去 [go/maa](https://michelangelo-studio.uberinternal.com/ma)
+注册/确认一个 **uOwn 项目 UUID**。拿到后把 proxy 升级为
+「USSO token + `OpenAI-Organization` header + 每请求自动刷新 token」的生产级方式，
+Cerberus 退为 fallback。proxy 层做**每请求重取 token**（不硬编码），即可解决 USSO 30 分钟过期 401 问题。
+
+### B 方式参考实现（Uber 工程师原始建议）
+
+```python
+import subprocess, openai
+usso_token = subprocess.check_output(["usso-cli", "token"]).decode().strip()  # devpod 上 aifx 维护刷新
+client = openai.OpenAI(
+    base_url="https://genai-api.uberinternal.com/v1",
+    api_key=usso_token,                                  # USSO token 作 Bearer
+    default_headers={
+        "OpenAI-Organization": "<你的-uOwn项目-UUID>",   # 必需，计费
+        "rpc-caller": "chao.jin",                        # 成本归属
+    },
+)
+```
+
+> Hermes 走标准 OpenAI SDK，支持 `model.base_url` + 自定义 header 注入。
+> B 方式下 `OpenAI-Organization` 这种自定义 header 仍建议在 proxy 层注入（与 A 同构），
+> 避免改 Hermes client 初始化代码。
+
+---
+
 ## 二、支持的模型（截至 2026-06）
 
 GenAI API 暴露 **261 个 LLM 类模型**，核心：
@@ -181,9 +236,15 @@ curl -s http://localhost:8800/v1/chat/completions \
   -d '{"model":"claude-opus-4-8","messages":[{"role":"user","content":"ping"}],"max_tokens":5}'
 # 期望返回 choices[0].message.content
 
-# 4. ussh cert（每天过期，早上需要重签）
-ussh                                      # 重新签发 git + mtls cert
+# 4. ussh cert（自动续期，正常无需手动）
+ussh --ussh-replace                       # 只在自动续期失败时才会要 YubiKey tap
 ```
+
+> **YubiKey / ussh 认证说明（重要）**：devpod 上 dinit 服务 `agentic-ussh-refresh`
+> **每 10 小时自动续期** ussh x509 cert（有效期 20h，留 10h 缓冲，10 次重试 backoff）。
+> 所以**只要 devpod 不重启，Chao 早晨不需要 tap YubiKey 重认证**。
+> 需要 YubiKey 的场景只有：① devpod 重启 / 被回收后首次启动；② 自动续期连续失败。
+> **过期信号** = GenAI 突然 401 / cerberus 连不上。出现时再 tap YubiKey 跑 `ussh --ussh-replace`。
 
 ---
 
@@ -191,7 +252,7 @@ ussh                                      # 重新签发 git + mtls cert
 
 | 场景 | 操作 |
 |---|---|
-| 早上 cert 过期 | `ussh`（重签），然后 `sudo dinitctl restart genai-proxy` |
+| ussh cert 自动续期失败（GenAI 突然 401） | `ussh --ussh-replace`（tap YubiKey）→ `sudo dinitctl restart genai-proxy` |
 | 切换模型 | `hermes config set model.default <model>` → `/restart` |
 | proxy 挂了 | `sudo dinitctl restart genai-proxy` |
 | 容器重启后 | dinit + crontab @reboot 自动拉起，无需手动 |
