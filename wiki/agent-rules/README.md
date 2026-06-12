@@ -39,6 +39,7 @@ last_updated: 2026-05-28
 - [[google-finance-research-integration]] —— Google Finance Beta「研究 AI」二次验证集成；Playwright + Chrome profile + 7 大网页自动化踩坑（2026-05-29）
 - [[moomoo-opend-integration]] —— moomoo OpenD + futu-api 接入；同 Mac 多 Hermes profile 共用一个 OpenD 实例；凭证安全纪律（2026-05-31）
 - [[hermes-profile-filesystem-discipline]] —— 任何 Hermes profile 写文件的纪律：~/hermesagent/<profile>/ 专属工作区 + 禁止染指 Documents/Desktop 等用户文件夹（2026-05-31）
+- [[hermes-genai-api-integration]] —— Hermes 接 Uber 内部 GenAI API（Claude Opus 4 / GPT-5.5）；Cerberus 隧道 + proxy v2（429 重试）+ dinit/crontab 24/7 持久化；SSH_AUTH_SOCK 踩坑（2026-06-12）
 
 ---
 
