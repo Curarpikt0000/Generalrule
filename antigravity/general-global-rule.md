@@ -110,8 +110,17 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 1. 读 `wiki/agent-rules/project-template.md` 获取标准目录结构。
 2. 按模板创建文件夹（src / tasks / tests / docs / agents / hooks / commands 等）。
 3. 创建项目级入口文件（CLAUDE.md 或 AGENTS.md），写明项目技术栈 + 指向本全局规则。
+4. **创建 `tasks/context-snapshot.md`** — 项目上下文快照文件，记录核心配置、数据库ID、关键规则、历史教训。
+5. **创建每晚 23:00 cron job** — 自动搜索近期相关对话，压缩更新 context-snapshot.md，确保上下文不丢失。
 
-*因为预先建好结构，才能避免 Agent 乱放文件、随手新建文件夹，导致项目越长越乱。*
+### 上下文压缩铁律
+
+- **每个 Hermes 项目必须有一个 `tasks/context-snapshot.md`**，包含：核心数据关系、关键配置（DB ID、API 端点）、核心规则（不可遗忘的约束）、历史教训时间线
+- **每个项目必须有一个每晚 23:00 左右的 cron**，负责搜索近期与该项目相关的会话，提取新的纠正/规则变化，更新 context-snapshot.md
+- **AGENTS.md 必须包含指向 context-snapshot.md 的指针**（如"上下文快照 → tasks/context-snapshot.md"）
+- **新建项目时，必须先建好这整个机制再开始工作**（先搭骨架，再填血肉）
+
+*因为预先建好结构+上下文集，才能避免 Agent 乱放文件、丢失关键配置、反复犯同一类错误。*
 
 > 完整模板 + 初始化流程 → 见 `wiki/agent-rules/project-template.md`
 
