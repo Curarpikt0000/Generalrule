@@ -1,8 +1,8 @@
 ---
-title: AGENTS.md 项目入口模板（三 Agent 通用）
+title: AGENTS.md 项目入口模板（多 Agent 通用）
 domain: agent-rules
 type: source
-keywords: [agents.md, 项目入口, 模板, claude.md, 三agent通用]
+keywords: [agents.md, 项目入口, 模板, claude.md, 多agent通用]
 tags: [agents-md, template, project-entry]
 source: 架构设计 2026-05-24
 sources: [conversation-2026-05-24]
@@ -11,9 +11,9 @@ updated: 2026-05-24
 last_updated: 2026-05-24
 ---
 
-# AGENTS.md 项目入口模板（三 Agent 通用）
+# AGENTS.md 项目入口模板（多 Agent 通用）
 
-> 这是每个新项目的入口文件模板。Claude Code / Hermes / Antigravity 三个 Agent 都读 `AGENTS.md`。
+> 这是每个新项目的入口文件模板。Claude Code / Hermes / Antigravity / Codex / Cursor 等所有 Agent 都读 `AGENTS.md`。
 > 初始化新项目时，把下方"模板正文"复制成项目根目录的 `AGENTS.md`，填好方括号部分。
 > Claude Code 偏好 `CLAUDE.md`，用符号链接解决：`ln -s AGENTS.md CLAUDE.md`。
 > 本文件薄——只写项目特有内容；通用规则在全局 general rule 和 Wiki。
@@ -34,8 +34,8 @@ last_updated: 2026-05-24
 ```markdown
 # [项目名]
 
-> 本项目遵守全局规则：/Users/chaojin/Antigravity Projects/Generalrule/antigravity/general-global-rule.md
-> 通用规范与踩坑教训见全局 Wiki：/Users/chaojin/Antigravity Projects/Generalrule/wiki/
+> 本项目遵守全局规则：见 Generalrule 仓库 `antigravity/general-global-rule.md`（本机 clone 路径自行定位）。
+> 通用规范与踩坑教训见 Generalrule 仓库 `wiki/`。
 > 本文件只写本项目特有的内容。做项目的步骤、认知纪律、五阶段 workflow 在全局规则里，这里不重复。
 
 ## 项目简介

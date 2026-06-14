@@ -86,5 +86,5 @@ last_updated: 2026-05-24
 
 ## 相关页面
 
-- [[skill-registry]] —— RTK 登记为 B 类系统级共享工具
+- [[skill-register]] —— RTK 登记为 B 类系统级共享工具
 - general-global-rule.md §8 指针索引

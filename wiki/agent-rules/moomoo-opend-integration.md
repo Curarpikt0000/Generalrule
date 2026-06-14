@@ -242,7 +242,7 @@ bot 设计要有 fallback：调 futu-api 报"OpenD 未连接"时，自动降到 
 
 - [[finance-hero-distillation]] —— finance hero 议会模式底座（moomoo 是其行情数据层）
 - [[google-finance-research-integration]] —— Google Finance 二次验证（OpenD 不可用时的高质量备用源）
-- [[skill-registry]] —— Hermes profile 的 skill 加载机制
+- [[skill-register]] —— Hermes profile 的 skill 加载机制
 - general-global-rule.md §7（凭证管理）、§2.10（显式失败）
 
 ---

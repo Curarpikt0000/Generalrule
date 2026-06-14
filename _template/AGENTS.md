@@ -13,7 +13,7 @@
 - **项目类型**：<LLM 应用 / Web API / 数据处理 / 自动化脚本 / 其他>
 - **主要技术栈**：<Python 3.x + FastAPI + Pydantic / 其他>
 - **部署环境**：<Cloud Run / Docker / 本地 / 其他>
-- **项目根目录**：<绝对路径，例如 /Users/chaojin/Antigravity Projects/项目名>
+- **项目根目录**：<绝对路径，例如 ~/projects/项目名>（各机按本地 clone 路径填写）
 
 ---
 

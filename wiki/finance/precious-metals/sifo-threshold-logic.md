@@ -1,9 +1,14 @@
 ---
 title: SIFO §8.5 阈值表 — ΔS方向前置判断逻辑
+domain: finance
+type: concept
+keywords: [sifo, q_phy, delta-s, threshold, backwardation, contango, 贵金属, 阈值表, 方向判断]
+tags: [sifo, risk, delta-s, threshold, precious-metals]
+source: Hermes lesson 2026-05-29（Au 信号方向修正）
+sources: [conversation-2026-05-29]
 created: 2026-05-29
-updated: 2026-05-29
-author: Hermes
-tags: [sifo, risk, delta-s, threshold]
+updated: 2026-06-13
+last_updated: 2026-06-13
 ---
 
 # SIFO §8.5 阈值改进版

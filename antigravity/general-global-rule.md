@@ -1,9 +1,9 @@
 # General Global Rule（通用全局规则）
 
-> 三个 Agent（Claude Code / Hermes / Antigravity / Gemini CLI）的**共享行为根规范**。
+> 所有 Agent（Claude Code / Hermes / Antigravity / Gemini CLI / Codex / Cursor，未来更多）的**共享行为根规范**。
 > 本文件只放三样东西：**认知纪律 + 触发条件 + 指针**。
 > 具体场景知识（代码规范、LLM 调度、踩坑教训、项目模板）全部在 Wiki，本文件用指针指过去。
-> Wiki 路径：`/Users/chaojin/Antigravity Projects/Generalrule/wiki/`
+> Wiki 路径：本 repo 的 `wiki/`（规则正文一律用相对路径；各机按本地 clone 路径定位，不写死绝对路径）。
 > 本文件是单一事实来源（SSOT）。修改后由修改的 Agent 自行 git push。
 > 最后更新：2026-05-23
 
@@ -70,7 +70,7 @@
 
 ## §4 Workflow：五阶段核心链路 + 两个按需流程
 
-Workflow 是结构化工作流。**触发纪律三个 Agent 通用**；实现各不同（Antigravity 用 Customizations→Workflows 的 `.md`，Claude Code 用 `~/.claude/commands/*.md`，Hermes 读 workflow 文件）。三者本质一致：Markdown 文件 + `/` 触发。
+Workflow 是结构化工作流。**触发纪律所有 Agent 通用**；实现各不同（Antigravity 用 Customizations→Workflows 的 `.md`，Claude Code / Codex / Cursor 用各自的 commands / `AGENTS.md` 机制，Hermes 读 workflow 文件）。本质一致：Markdown 文件 + `/` 触发。
 
 ### 核心链路（每个非琐碎任务按顺序走完）
 
@@ -132,9 +132,9 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 
 - 用户每次**纠正** Agent（指出错误、否定方案、要求改方向），Agent 必须在当轮回复结束前记录这条 lesson，并在末尾声明「已记录 lesson L-YYYY-MM-DD-NNN」。
 - **lesson 严禁写进本文件。** 它们按场景沉淀进 Wiki。
-- Wiki 是 **Claude Code / Hermes / Antigravity 三个 Agent 共享**的同一个知识库。一个 Agent 学到的，三个都受益。
+- Wiki 是**所有 Agent 共享**（Claude Code / Hermes / Antigravity / Codex / Cursor，未来更多）的同一个知识库。一个 Agent 学到的，全部受益。
 
-**操作（写在 Wiki）**：怎么用 llm-wiki 的 ingest、装在哪、何时触发、是否新建子文件夹 → 全部见 `wiki/agent-rules/wiki-ingest-guide.md`。
+**操作（写在 Wiki）**：所有 Agent 更新 Wiki 时**优先调用通用 `llm-wiki` skill**（在 `self-skill/llm-wiki`），按统一 format / 领域划分 / frontmatter 写入；没装则手动按规范。怎么 ingest、何时触发、领域映射、子文件夹规则、三层索引 → 全部见 `wiki/agent-rules/wiki-ingest-guide.md`。每次写 Wiki 须在 `wiki/CHANGELOG.md` 留记录。
 
 三条升级通道（细节见 `wiki/agent-rules/wiki-ingest-guide.md`）：留在项目 `tasks/lessons.md` / 升级进 Wiki / 固化为 Skill。
 
@@ -142,9 +142,18 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 
 ## §6.5 Skill 对账纪律
 
-- 装/卸任何核心 skill 或 MCP 后，立即更新 `wiki/agent-rules/skill-registry.md` 对应环境列并 push（通用改动→main；Uber 专属→ub-branch）。
-- 开工时先读 skill-registry 对账：列出本环境缺的核心能力 + 安装命令，**经用户确认后**安装（安装是不可逆操作，遵守 §7）。
+- 装/卸任何核心 skill 或 MCP 后，立即更新 `wiki/agent-rules/skill-register.md` 对应环境列并 push（通用改动→main；Uber 专属→ub-branch）。
+- 开工时先读 skill-register 对账：列出本环境缺的核心能力 + 安装命令，**经用户确认后**安装（安装是不可逆操作，遵守 §7）。
 - 比的是「能力」不是文件名（如 brainstorming 在家用机是 superpowers，在 Uber 是 uberpowers，算同一能力）。
+- **通用 skill 收纳**：经改造适配本体系的**通用** skill（脱离公司/项目仍成立）可收入 repo 根 `self-skill/`，规则见 `self-skill/README.md`；copy 后**必须**登记到 `skill-register.md` 的 Self-Skill 区（这是准入的一部分）。**特用 skill 禁止**进 self-skill。
+
+
+## §6.6 Repo 版本管理纪律（任何 branch 任何改动都要留证据）
+
+- **任何 agent、任何 branch 改动本 repo（Curarpikt0000/Generalrule），都必须在根 `CHANGELOG.md` 留记录**：日期 / branch / 哪个 agent / 改了什么 / 为什么。Wiki 知识改动另在 `wiki/CHANGELOG.md` 记。
+- 根 `CHANGELOG.md` 维护**有用文件/文件夹结构白名单**；**增减任何目录/文件都要同步更新白名单**。
+- **禁止"一把梭"**把工作目录所有文件 git add/push（历史上因此混入过别项目误传文件）。提交前先 `git status` 核对，只提交本次有意改动、且在白名单内的文件。
+- 目的：repo 每次更新都更精简、干货更多、让别的 agent 踩坑更少。细节见 `CHANGELOG.md` 头部说明。
 
 
 ## §7 安全与禁区
@@ -157,16 +166,16 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 
 ---
 
-## §7.5 多机同步纪律（家用机 + 公司机共享同一仓库）
+## §7.5 多机同步纪律（私人机 + Uber 机共享同一仓库）
 
 本体系被多台电脑共享（家用机、公司机 UB），同一个 GitHub 仓库 Curarpikt0000/Generalrule。
 
-- **分支架构**：`main` = 认知纪律 general rule + 通用 wiki/workflow（两台机器共用）；`ub-branch` = main 全部内容 + `uber-adaptation.md`（Uber 环境适配层）。公司机日常 checkout 在 ub-branch。
-- **开工前先同步**：家用机在 main 上 `git pull origin main`；公司机在 ub-branch 上 `git fetch origin && git merge origin/main && git pull origin ub-branch`，确保拿到最新规则和 Wiki。
-- **改动后必 push**：通用规则与 Wiki 知识 → `main`；Uber 适配层 → `ub-branch`。不留未推送的本地改动。
-- **公司项目代码绝不进本仓库**：Uber 项目代码一律走公司 GitHub（或本地存放），与本仓库完全隔离。
+- **分支架构**：`main` = 核心（认知纪律 general rule + 通用 wiki / workflow / skill / 项目模板），私人 Mac 所有 agent 用。`ub-branch` = main 的**超集** = main 全部内容 + `uber-adaptation.md`（Uber 环境适配层），Uber Mac/VM 所有 agent（Claude Code / Codex / Cursor / Hermes / Antigravity，未来更多）用；99% 与 main 相同，只多"仅 Uber 能装/调用的特殊命令与流程"。
+- **开工前先同步**：私人机在 main 上 `git pull origin main`；Uber 机在 ub-branch 上 `git fetch origin && git merge origin/main && git pull origin ub-branch`，确保拿到最新规则和 Wiki。
+- **改动后必 push**：通用内容（规则 / Wiki / skill / 模板）→ `main`，再 merge 到 `ub-branch`；仅 Uber 适用的 → 只 `ub-branch`。不留未推送的本地改动。任何改动都要在 `CHANGELOG.md` 留证据（§6.6）。
+- **公司项目代码绝不进本仓库**：Uber 项目代码一律走公司 GitHub（或本地存放），与本仓库完全隔离。knowledge / wiki / skill / 踩坑经验是通用的，统一管在本 repo。
 - **冲突时停下问用户**，不擅自 `git push --force` 或 merge。
-- 公司机写 Wiki 时 frontmatter 标注 `machine: UB`，commit message 带 `[UB]`。
+- Uber 机写 Wiki 时 frontmatter 标注 `machine: UB`，commit message 带 `[UB]`。
 
 ## §8 指针索引（场景知识入口）
 
@@ -180,7 +189,10 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 | 五步链路细节 | `wiki/agent-rules/five-step-pipeline.md` |
 | Wiki 写入（ingest）操作指南 | `wiki/agent-rules/wiki-ingest-guide.md` |
 | 项目标准结构 + 初始化 | `wiki/agent-rules/project-template.md` |
-| 三 Agent 的 Skill 清单 | `wiki/agent-rules/skill-registry.md` |
+| Skill/MCP 总清单（对账+明细+self-skill） | `wiki/agent-rules/skill-register.md` |
+| 通用 skill 收纳（准入/copy/登记规则） | `self-skill/README.md` |
+| Repo 改动记录 + 文件白名单 | `CHANGELOG.md`（根） |
+| Wiki 知识改动记录 | `wiki/CHANGELOG.md` |
 | RTK 终端 token 优化 | `wiki/agent-rules/rtk-usage.md` |
 | 完整流程 SOP | `wiki/agent-rules/five-step-pipeline.md` |
 | 踩坑教训（按领域） | `wiki/engineering/`、`wiki/crawler/`、`wiki/llm/` 等 |

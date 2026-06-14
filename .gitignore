@@ -1,1 +1,9 @@
-.DS_Store
+# 操作系统 / 编辑器产物
+**/.DS_Store
+.obsidian/
+**/.obsidian/
+
+# 本机运行时配置 / 凭据（绝不入库，呼应 general rule §7）
+.env
+*.local
+**/config.md
