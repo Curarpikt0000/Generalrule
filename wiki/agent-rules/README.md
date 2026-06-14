@@ -25,6 +25,12 @@ last_updated: 2026-05-28
 - [[project-template]] —— 新项目 / 新 Telegram channel 标准目录结构（src/tasks/tests/docs/scratch 等）+ 初始化步骤
 - [[AGENTS-template]] —— `AGENTS.md` 项目入口模板（三 Agent 通用，CLAUDE.md 走符号链接）
 - [[skill-register]] —— skill/MCP 总清单（对账 A/B/C 三类 + 各环境全量明细 + Self-Skill 区）
+- [[agent-config-matrix]] —— 各 agent 配置自述矩阵（入口/人格/记忆/workflow/技能/与 repo 关系）；配新实例照抄
+
+## Claude Code 私有机制（Hermes / Antigravity 无）
+
+- [[auto-memory-boundary]] —— Auto Memory 边界：哪些进私有笔记、哪些必须进共享 Wiki
+- [[auto-memory-setup]] —— Auto Memory 配置：三层开关、存储与 MEMORY.md 索引、frontmatter 字段、写入/召回/更新/删除触发
 
 ## 代码与运行规范
 
