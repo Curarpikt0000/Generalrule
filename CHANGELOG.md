@@ -57,7 +57,13 @@ Generalrule/
 
 ## 变更记录
 
-### 2026-06-14 [main→ub-branch] Claude Code (Opus 4.8) —— 开工第 0 步铁律 + _template 接入文档通用化（承接并完成 2026-06-13 待续）
+### 2026-06-14 [main] Hermes —— 自述填充 agent-config-matrix + SOUL.md 指针同步 Generalrule 最新
+
+**为什么**：补齐 SSOT「新 agent 如何配置自己」缺口。Hermes 如实逐条自述自身配置机制（入口/人格/记忆/workflow/技能/与 repo 关系），填充到 agent-config-matrix；同时同步 SOUL.md 指针使其引用 Generalrule 最新状态（开工第 0 步 + agent-config-matrix 引用）。
+
+**改了什么**：
+- `wiki/agent-rules/agent-config-matrix.md`：Hermes 条目从「待自述」→ 已采集（7 维详细逐条），速查矩阵同步修正。
+- `~/.hermes/SOUL.md`：指针节更新——引用 Generalrule 最新路径，新增 agent-config-matrix 引用，补入「开工第 0 步」指向。
 
 **为什么**：承接上一轮治理「待续」三步并收口；同时按用户要求把「开工先 pull 对账」升格为体系铁律——任何 agent 任何机器开工第一步先与 SSOT 对齐，杜绝基于过期规则 / 缺失技能开工。
 
