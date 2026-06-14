@@ -28,9 +28,7 @@ Generalrule/
 │       └── .gitignore
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
-│   ├── HANDOVER_UB_INIT.md          # 新机 / 新 agent 接入指南
-│   ├── TASK_antigravity_config.md
-│   ├── TASK_claude_code_config.md
+│   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
 │   └── tasks/
 │       ├── lessons.md
 │       └── todo.md
@@ -53,10 +51,22 @@ Generalrule/
 - `wiki/agent-rules/` 下 4 个 Hermes 特定 / finance 特用页面（`finance-hero-distillation`、`google-finance-research-integration`、`moomoo-opend-integration`、`hermes-profile-filesystem-discipline`）归类偏特用，待专门一轮判断去留 / 迁移。
 - `wiki/engineering/youtube-pipeline-genimages-template-issue.md` 偏特用，同上。
 - 部分旧页 frontmatter 未升级到方案 Z 双字段（如 `url-fidelity`、`llm/cloud_test`），待统一规范化。
+- 知识页内残留 `file://` 写死本地链接（如 `wiki/crawler/crawler-bypass-handbook.md`、`wiki/agent-rules/moomoo-opend-integration.md`，多为历史 lesson 引用），待统一改相对链接 / 去本地化。
 
 ---
 
 ## 变更记录
+
+### 2026-06-14 [main→ub-branch] Claude Code (Opus 4.8) —— 开工第 0 步铁律 + _template 接入文档通用化（承接并完成 2026-06-13 待续）
+
+**为什么**：承接上一轮治理「待续」三步并收口；同时按用户要求把「开工先 pull 对账」升格为体系铁律——任何 agent 任何机器开工第一步先与 SSOT 对齐，杜绝基于过期规则 / 缺失技能开工。
+
+**改了什么**：
+- **general-global-rule §7.5**：原「开工前先同步」升级为**「开工第 0 步（铁律，先于一切任务）」**——每次开工先 `git pull` 全部文件，再对账三件事（①规则/Wiki/workflow 更新 ②本地入口/配置同步 ③核心技能/MCP 安装，对照 `skill-register`、经用户确认再装），并补「没 pull、没对账，不许开工」。§3 五步链路开头加前置指针指向 §7.5。
+- **_template 接入文档通用化（完成 2026-06-13 待续步骤 1+2）**：三份过时的 UB-Mac 一次性脚本（`HANDOVER_UB_INIT.md` + `TASK_antigravity_config.md` + `TASK_claude_code_config.md`——满是写死 `~/UBAntigravity Projects/` 路径、Mac 专属 `sed -i ''` / `~/Library/`、已废弃 UB 前缀目录方案）**合并重写为单一 `_template/ONBOARDING.md`《新机 / 新 agent 通用接入指南》**：去写死路径、去 Mac 专属、给通用原则（clone→选分支→入口指针→开工第 0 步→wiki 推送→验收清单）。白名单同步更新。
+- 至此 2026-06-13「活规则文件去写死路径」范围（general-global-rule / wiki-ingest-guide / _template）全部清零；仅余知识页历史 `file://` 链接列入「待下轮处理」。
+
+> 2026-06-13 待续步骤 3「推送 main 后 merge 到 ub-branch」为纯 git 同步动作，随本轮一并执行（含落盘上一轮成果 commit `98d6a1f`、拉取整合 origin/main 落后提交、main→ub-branch 同步）。
 
 ### 2026-06-13 [main] Claude Code (Opus 4.8) —— repo 治理与升级（统一交流窗口定型）
 

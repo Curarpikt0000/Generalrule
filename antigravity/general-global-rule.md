@@ -56,6 +56,8 @@
 
 ## §3 任务执行五步链路（核心强制流程）
 
+> **第 0 步在 §7.5**：进入下面五步前，确保本次开工已 `git pull` 本 repo 并完成本地更新 / 技能对账（详见 §7.5「开工第 0 步」）。
+
 任何**非琐碎**任务（debug、报错、新功能、复杂问题）开始前，**必须按顺序走这五步，禁止跳步**：
 
 1. **读 Rule** —— 读本文件，找到相关的认知纪律。
@@ -171,7 +173,7 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 本体系被多台电脑共享（家用机、公司机 UB），同一个 GitHub 仓库 Curarpikt0000/Generalrule。
 
 - **分支架构**：`main` = 核心（认知纪律 general rule + 通用 wiki / workflow / skill / 项目模板），私人 Mac 所有 agent 用。`ub-branch` = main 的**超集** = main 全部内容 + `uber-adaptation.md`（Uber 环境适配层），Uber Mac/VM 所有 agent（Claude Code / Codex / Cursor / Hermes / Antigravity，未来更多）用；99% 与 main 相同，只多"仅 Uber 能装/调用的特殊命令与流程"。
-- **开工前先同步**：私人机在 main 上 `git pull origin main`；Uber 机在 ub-branch 上 `git fetch origin && git merge origin/main && git pull origin ub-branch`，确保拿到最新规则和 Wiki。
+- **开工第 0 步（铁律，先于一切任务）**：任何 agent、任何机器，**每次开工第一件事就是对本 repo `git pull` 全部文件**，再对照检查三件事才动手——① 规则 / Wiki / workflow 有无更新（有变先读进脑子，尤其 general-global-rule 与 `wiki/`）；② 本地配置 / 入口文件是否需要随之同步；③ 缺哪些核心技能 / MCP（对照 [[skill-register]]），需装的**经用户确认后**再装（安装不可逆，守 §7）。同步命令：私人机在 main 上 `git pull origin main`；Uber 机在 ub-branch 上 `git fetch origin && git merge origin/main && git pull origin ub-branch`。**没 pull、没对账，不许开工。**
 - **改动后必 push**：通用内容（规则 / Wiki / skill / 模板）→ `main`，再 merge 到 `ub-branch`；仅 Uber 适用的 → 只 `ub-branch`。不留未推送的本地改动。任何改动都要在 `CHANGELOG.md` 留证据（§6.6）。
 - **公司项目代码绝不进本仓库**：Uber 项目代码一律走公司 GitHub（或本地存放），与本仓库完全隔离。knowledge / wiki / skill / 踩坑经验是通用的，统一管在本 repo。
 - **冲突时停下问用户**，不擅自 `git push --force` 或 merge。
