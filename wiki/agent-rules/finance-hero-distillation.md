@@ -47,7 +47,7 @@ last_updated: 2026-05-28
 最初担心 worker SOUL 是"通篇工程师"会污染 hero。读了 SOUL 全文后发现：
 
 - SOUL 本体只有身份/沟通规则/底线/起步开关/指针，**角色中性**
-- 工程师味在 SOUL **指向的下游链条**（project-template / AGENTS-template / five-step-pipeline 的 Git 检查点/TDD/VERIFY 清单 / skill-registry 全是 coder skill）
+- 工程师味在 SOUL **指向的下游链条**（project-template / AGENTS-template / five-step-pipeline 的 Git 检查点/TDD/VERIFY 清单 / skill-register 全是 coder skill）
 - profile 一旦隔离，新 profile 的 SOUL 可以自己定义"遇到新对话时怎么起步"——不会自动触发工程师模板
 
 **通用教训**：当 SOUL 本体已经很薄（< 100 行），不需要"SOUL 分层" 这种 over-engineering。**靠 profile 自然隔离即可，每个 profile 一份适合自己角色的 SOUL**。SOUL 分层只在共享一份 SOUL 多角色复用时才必要。
@@ -201,6 +201,6 @@ profile 完整路径：`~/.hermes/profiles/<name>/`（不是 `~/.hermes-<name>/`
 ## 相关页面
 
 - [[five-step-pipeline]] —— 这次"自己写 plist"违规，正是因为跳过了"找 Skill / 搜公网"先查 Hermes 是否内置守护
-- [[skill-registry]] —— 后续 hero 类 profile 的 skill 加载机制延续此页
+- [[skill-register]] —— 后续 hero 类 profile 的 skill 加载机制延续此页
 - [[wiki-ingest-guide]] —— 本文按此规范写入
 - general-global-rule.md §2.5（显式暴露冲突）、§2.10（显式失败）

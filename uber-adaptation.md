@@ -16,6 +16,16 @@
 - find-skills → 装 find-skills，装新 skill 前先查重
 - 没有 Uber 等价物的（如写个人 GitHub wiki 的 wiki-update）→ 用个人的 / 手动按 wiki-ingest-guide
 
+## Uber 机实际安装清单（VM 对账 2026-06-08）
+
+> Uber 专属 skill / plugin 全量明细。按 IP 隔离不进 main——main 的 `skill-register.md` 指向本处。
+> （本节由 2026-06-14 合并 main 治理时，从已废弃的 `skill-registry.md`[UB] 增量迁入。）
+
+- **aifx plugin（12 个）**：alert-rca, ci-debugger, code-mode, data-analyst, find-skills, minion-dev, omni-mcp, page-publisher, skill-workshop, uber-dev, uber-reviewer, uberpowers
+- **Claude Code skills（`~/.claude/skills/`，17 个咨询框架）**：consulting, management-consultant, issue-tree-builder, hypothesis-tree, synthesis, top-down-memo, decision-memo-builder, scpr-framework, storyline-builder, deck-pipeline, mckinsey-charts, mckinsey-critic, prioritization, ai-use-case-scorer, meeting-prep-kit, stakeholder-map, workshop-designer
+  - 来源：`yoichiojima-2/consultant`（consulting）、`charlie989898/-mbb-management-consultant-claude-skill`（management-consultant）、`sruthir28/enterprise-ai-skills`（其余 15 个）。
+- **omni-mcp 双注册**：`aifx plugin add omni-mcp`（plugin）+ `aifx mcp add omni-mcp --skip-validation`（注册编辑器）。
+
 ## 双 GitHub 分流（各干各的，不混）
 - 个人仓库 Curarpikt0000/Generalrule：只放 general rule / workflow / wiki 总结
   - 通用认知纪律、通用 wiki → push main

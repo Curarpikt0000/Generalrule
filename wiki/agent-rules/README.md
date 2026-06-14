@@ -24,7 +24,7 @@ last_updated: 2026-05-28
 - [[five-step-pipeline]] —— 五步链路（信息检索优先级）+ 五阶段 workflow（任务生命周期 Explore→Plan→Execute→Verify→Learn）完整 SOP，含 TDD 强制规则与 PLAN 硬门
 - [[project-template]] —— 新项目 / 新 Telegram channel 标准目录结构（src/tasks/tests/docs/scratch 等）+ 初始化步骤
 - [[AGENTS-template]] —— `AGENTS.md` 项目入口模板（三 Agent 通用，CLAUDE.md 走符号链接）
-- [[skill-registry]] —— 三 Agent skill 安装清单 + 统一管理三类（A 必须三处统一 / B 系统级共享 / C 单 Agent 专用）
+- [[skill-register]] —— skill/MCP 总清单（对账 A/B/C 三类 + 各环境全量明细 + Self-Skill 区）
 
 ## 代码与运行规范
 
