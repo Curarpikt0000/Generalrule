@@ -2,7 +2,7 @@
 
 > **目标位置**:`wiki/crawler/bypass-waf-via-backend-api-discovery.md`
 > **首次记录**:2026-05-31(SHFE 库存抓取案例)
-> **适用 Agent**:Claude Code / Hermes / Antigravity / Gemini CLI 全部
+> **适用 Agent**:所有 agent（Claude Code / Hermes / Antigravity / Codex / Cursor 等）
 
 ---
 

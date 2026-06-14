@@ -1,6 +1,6 @@
 # llm 领域知识
 
-> 由 promote-lessons Workflow 自动维护。
+> 新页面写完后在此登记一行（手动维护）。
 
 ## 页面列表
 

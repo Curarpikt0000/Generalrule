@@ -45,7 +45,7 @@ last_updated: 2026-05-24
 
 ## 第二部分：五阶段 Workflow（任务生命周期）
 
-每个非琐碎任务按此五阶段走完。实现因 Agent 而异（Claude Code 用 `~/.claude/commands/`，Antigravity 用 Customizations→Workflows，Hermes 读 workflow 文件），但**阶段纪律通用**。
+每个非琐碎任务按此五阶段走完。**阶段纪律所有 agent 通用，但承载方式各不相同**（2026-06-14 各 agent 实测，详见 [[agent-config-matrix]]）：Claude Code 靠 superpowers/uberpowers **skill** + 规则文本（**无 `~/.claude/commands/` 目录**）；Antigravity 靠内置 `planning_mode` + Artifacts（`implementation_plan.md`/`task.md`/`walkthrough.md`）；Hermes 靠 skill + SOUL 内嵌指针 + 内置 todo；Codex 靠 `update_plan` 工具 + prompt 纪律；Cursor 靠 Plan Mode。**没有任何 agent 用「commands/ 目录的 md 文件」承载五阶段**——别照旧描述去建那个目录。
 
 ### 阶段 1：EXPLORE（探索）
 
