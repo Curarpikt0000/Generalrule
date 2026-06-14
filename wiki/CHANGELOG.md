@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-14 —— Auto Memory 配置指南（Claude Code, Opus 4.8）
+
+- **[新增] `agent-rules/auto-memory-setup.md`** —— 补齐 [[auto-memory-boundary]] 缺的「怎么配」：三层启用开关（env / settings.json `autoMemoryEnabled` / `/memory`）、一事一文件 + MEMORY.md 索引、frontmatter 字段与 `metadata.type` 四取值、写入/召回/更新/删除触发、与共享 Wiki 的互斥分工。事实区分官方文档确证与【未找到官方来源】两档。同步登记进 `index.md` 第 2 层与 `agent-rules/README.md`（顺带补登原本漏登的 boundary 条目）。
+
 ### 2026-06-13 —— repo 治理伴随的 wiki 调整（Claude Code, Opus 4.8）
 
 - **[新增] 领域 `finance/`** —— 金融领域，含 `README.md`（领域范围说明）+ 子领域 `precious-metals/`。同步登记进 `index.md` 与 `wiki-ingest-guide.md` 领域映射表（领域数 7 → 8）。

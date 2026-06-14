@@ -35,6 +35,7 @@
 | 前端渲染规范 | [[agent-rules/frontend-rendering\|frontend-rendering]] | 渲染 / Markdown / 剪贴板 |
 | RTK Token 优化 | [[agent-rules/rtk-usage\|rtk-usage]] | terminal token 压缩 |
 | Auto Memory 边界 | [[agent-rules/auto-memory-boundary\|auto-memory-boundary]] | Claude Code 私有笔记 vs 共享 wiki |
+| Auto Memory 配置 | [[agent-rules/auto-memory-setup\|auto-memory-setup]] | 启用开关 / 存储 / frontmatter / 触发 |
 | AGENTS 模板 | [[agent-rules/AGENTS-template\|AGENTS-template]] | 项目入口模板 |
 
 ### finance（金融）

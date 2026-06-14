@@ -1,3 +1,16 @@
+---
+title: Auto Memory 配置指南（仅 Claude Code）
+domain: agent-rules
+type: rule
+keywords: [auto-memory, claude-code, 配置, frontmatter, MEMORY.md, autoMemoryEnabled]
+tags: [auto-memory, claude-code, setup, config]
+source: 官方文档 code.claude.com/docs/en/memory + 家用机实测
+sources: [conversation-2026-06-14]
+created: 2026-06-14
+updated: 2026-06-14
+last_updated: 2026-06-14
+---
+
 # Auto Memory 配置指南（仅 Claude Code）
 
 > 配套文件：[[auto-memory-boundary]] 管「能记什么 / 不能记什么」，本文件管「怎么开、存哪、怎么写、何时触发」。
