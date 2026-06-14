@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-14 —— Agent 配置自述矩阵（Claude Code, Opus 4.8）
+
+- **[新增] `agent-rules/agent-config-matrix.md`** —— 归集各 agent（Prompt A 通用自述）的配置机制，补 SSOT「新 agent 如何配置自己」缺口。首条填入 CC-home（家用机 Claude Code）完整七维自述；其余 8 个目标留【待该 agent 自述】占位（Antigravity/Hermes 附 CC 旁观推断，待各自确认转正）。登记进 `index.md` 第 2 层与 `agent-rules/README.md`。
+
 ### 2026-06-14 —— Auto Memory 配置指南（Claude Code, Opus 4.8）
 
 - **[新增] `agent-rules/auto-memory-setup.md`** —— 补齐 [[auto-memory-boundary]] 缺的「怎么配」：三层启用开关（env / settings.json `autoMemoryEnabled` / `/memory`）、一事一文件 + MEMORY.md 索引、frontmatter 字段与 `metadata.type` 四取值、写入/召回/更新/删除触发、与共享 Wiki 的互斥分工。事实区分官方文档确证与【未找到官方来源】两档。同步登记进 `index.md` 第 2 层与 `agent-rules/README.md`（顺带补登原本漏登的 boundary 条目）。

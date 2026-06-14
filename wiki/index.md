@@ -29,6 +29,7 @@
 | 五步链路 + 五阶段 workflow | [[agent-rules/five-step-pipeline\|five-step-pipeline]] | 任务执行 SOP |
 | Wiki 写作规范 | [[agent-rules/wiki-ingest-guide\|wiki-ingest-guide]] | 知识库读写真源 |
 | Skill 与 MCP 总清单 | [[agent-rules/skill-register\|skill-register]] | 对账 + 各环境全量明细 + self-skill |
+| Agent 配置自述矩阵 | [[agent-rules/agent-config-matrix\|agent-config-matrix]] | 各 agent 入口/人格/记忆/workflow 自述 |
 | 项目标准结构 | [[agent-rules/project-template\|project-template]] | 新项目初始化 |
 | Python 代码规范 | [[agent-rules/python-coding\|python-coding]] | 注释 / docstring |
 | LLM 调度规范 | [[agent-rules/llm-orchestration\|llm-orchestration]] | 模型 fallback / 配额 |
