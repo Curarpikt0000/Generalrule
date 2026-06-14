@@ -57,6 +57,15 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-14 [ub-branch] Claude Code CC-vm (Opus 4.8 [1m]) —— Uber 适配层补上下文持久化方案 + 运行时拓扑修正
+
+**为什么**：按用户新需求把「断网 / SSH 断裂不丢上下文」写成 Uber 专属规则；据各 agent 实测修正 Uber 运行时拓扑。仅 ub-branch（IP 隔离，不进 main）。
+
+**改了什么（仅 ub-branch，Uber 专属）**：
+- **`uber-adaptation.md` 新增「上下文持久化方案（仅 Uber 机/agent）」**：CC 家族用 `uber-dev:share-session`（上传 transcript 到 terrablob）做检查点备份；Hermes/Codex 靠各自本地会话存储（state.db / sqlite）；Cursor 无持久层须落盘兜底——「能力对齐，非同一 skill」。含分 agent + 分项目命名、检查点时机、重连恢复动作、terrablob 仅 Uber 红线。
+- **`uber-adaptation.md` 修正运行时拓扑**：旧版只列 3 运行时且把唯一 CC 误标「devpod VM」；改为真实 Uber fleet（Cowork@MacAir 物理机 / CC-vm@devpod / Antigravity / Codex / Hermes / Cursor），各 agent 配置详情指向 `wiki/agent-rules/agent-config-matrix.md`。
+- **更新 Hermes 出境说明**：据 Uber hermes-vm 实测，主模型为 Uber 内部 GenAI proxy 的 `claude-opus-4-8`（不出公司边界），仅 fallback `deepseek-v4-flash` 第三方出境——更正旧版「引擎为 deepseek-chat」。
+
 ### 2026-06-14 [main] Claude Code CC-vm (Opus 4.8 [1m]) —— 规则正文措辞统一（wiki 页改动见 wiki/CHANGELOG.md）
 
 **为什么**：承接「全 agent 统一 SSOT」治理——收齐各 agent 第一人称实测后，把规则正文里过时 / 幻影措辞统一。
