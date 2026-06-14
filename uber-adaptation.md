@@ -36,3 +36,27 @@
 - 命名：正式项目 `project-<名>/`；临时对话/实验 `temp-<日期>-<主题>/`；数据分析 `data-analysis/<主题>/`。
 - 新任务第一步先建文件夹再动手（呼应 general rule §5）；项目内部结构按 `wiki/agent-rules/project-template.md`。
 - Generalrule 仓库在 VM 上**独立 clone**（checkout ub-branch），与本地 Mac 互不依赖，经 GitHub 同步。
+
+## 本环境运行时拓扑（Uber 侧，三个独立运行时）
+
+> 记录 Uber 侧 agent 分布。仅环境事实，认知纪律仍归 main 的 general rule。
+
+| 运行时 | 宿主 | 角色 | Generalrule 来源 |
+|---|---|---|---|
+| Antigravity | 本物理机 MacBook Air（用户名 `chao.jin`） | Uber 项目架构 / 编码 | 本机 clone：`/Users/chao.jin/Antigravity Projects/Generalrule`（ub-branch） |
+| Claude Code | 独立 devpod VM | Uber 项目编码（aifx / uberpowers 生态） | VM 上独立 clone（ub-branch），经 GitHub 同步 |
+| Hermes | 另一独立 VM | Uber 知识检索 / wiki 辅助 | VM 上独立 clone（ub-branch） |
+
+- 三者互不依赖，全部经个人 GitHub 仓库（ub-branch）同步规则，不互相读对方文件系统。
+- 物理机用户名是 `chao.jin`（含点），与家用机 `chaojin` 不同；写路径勿照搬。
+- **三个 agent 均为做 Uber 工作而设，可正常读写 Uber 代码 / 内部文档 / 内部数据。**
+
+### 唯一红线：Uber 内容不进个人 GitHub 仓库
+- Uber 项目代码、内部数据、专有流程 → 一律 push **公司 GitHub**（`chao.jin@uber.com`），或本机/VM 本地存放。
+- 个人仓库 `Curarpikt0000/Generalrule` 只放脱离 Uber 也成立的通用规则 / wiki（内部工具名称除外，已批准）。
+- 写个人 wiki 前自问：这条脱离 Uber 也成立吗？不成立 → 不进个人仓库。
+
+### Hermes 待确认项（第三方 API 出境）
+- Hermes 引擎为 deepseek-chat，会把上下文发往 DeepSeek 第三方 API。
+- 让 Hermes 处理 Uber 内部数据 = Uber 内容经第三方出境，须先经 Cortana / 公司政策确认是否允许。
+- 确认前：Hermes 仅用于通用知识 / 个人 wiki；确认允许后，本条按结论更新。
