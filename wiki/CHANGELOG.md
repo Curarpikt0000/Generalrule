@@ -10,6 +10,13 @@
 
 ## 记录
 
+### 2026-06-14 —— Agent 自述实测归集 + SOUL 指南 + 措辞统一 + workflow 载体修正（Claude Code CC-vm, Opus 4.8 [1m]）
+
+- **[重写] `agent-rules/agent-config-matrix.md`** —— 用 8 份各 agent **第一人称实测**自述填全速查矩阵 + 逐 agent 七维详条：CC 家族（CC-home/Cowork/CC-vm 三类，机制同源差异在落地）、Antigravity（planning_mode+Artifacts，无 SOUL）、Hermes（家用+vm，有 SOUL.md）、Codex（SQLite 记忆）、Cursor（无持久层）。补 CC-vm 本机自述。**记一次教训**：一份替全部 9 个 agent 代填的旁观报告（uber-antigravity）经交叉核对系编造（虚构 CC 有 commands/、Hermes 是 soul.yaml、cowork 用 PostgreSQL、杜撰 Docker 镜像名），与各 agent 实测全面矛盾，整份弃用——只采信第一人称实测。
+- **[新增] `agent-rules/soul-authoring-guide.md`** —— SOUL 写作指南 + SOUL.md 五节模板（身份/沟通规则/底线/启动开关/指针），据 Hermes 实测骨架。明确 SOUL **仅 Hermes 有**，其余 agent 无 SOUL 层、不要给它们造 SOUL 文件。登记进 `agent-rules/README.md`。
+- **[修改] `agent-rules/five-step-pipeline.md`** —— 修正第二部分开头错误的五阶段载体描述（旧称「CC 用 ~/.claude/commands/、Antigravity 用 Customizations→Workflows」）：据多机实测改为各 agent 真实载体（CC=skill、Antigravity=planning_mode+Artifacts、Hermes=skill+SOUL、Codex=update_plan、Cursor=Plan Mode），明确无 agent 用 commands/ 目录。
+- **[修改] 措辞统一** —— `agent-rules/README.md`（去 Gemini CLI、清「promote-lessons Workflow 自动维护」死引用、三 Agent→所有/各 agent，并注册 soul-guide）、`frontend/README.md`+`llm/README.md`+`image-gen/README.md`（清同款 promote-lessons 死引用）、`rtk-usage.md`/`auto-memory-setup.md`/`project-template.md`/`wiki-ingest-guide.md`（三 Agent→多 agent）、`crawler/bypass-waf-via-backend-api-discovery.md`（适用 Agent 去 Gemini CLI）。
+
 ### 2026-06-14 —— Agent 配置自述矩阵（Claude Code, Opus 4.8）
 
 - **[新增] `agent-rules/agent-config-matrix.md`** —— 归集各 agent（Prompt A 通用自述）的配置机制，补 SSOT「新 agent 如何配置自己」缺口。首条填入 CC-home（家用机 Claude Code）完整七维自述；其余 8 个目标留【待该 agent 自述】占位（Antigravity/Hermes 附 CC 旁观推断，待各自确认转正）。登记进 `index.md` 第 2 层与 `agent-rules/README.md`。

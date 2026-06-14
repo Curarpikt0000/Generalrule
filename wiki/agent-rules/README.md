@@ -13,8 +13,8 @@ last_updated: 2026-05-28
 
 # agent-rules 领域知识
 
-> 本领域沉淀：三 Agent（Claude Code / Hermes / Antigravity / Gemini CLI）的工作流、代码规范、本体系自身的规则与项目模板。
-> 由 promote-lessons Workflow 自动维护；新页面写完后在此登记一行。
+> 本领域沉淀：所有 agent（Claude Code / Hermes / Antigravity / Codex / Cursor 等）的工作流、代码规范、本体系自身的规则与项目模板。
+> 新页面写完后在此登记一行（手动维护）。
 
 ---
 
@@ -23,9 +23,10 @@ last_updated: 2026-05-28
 - [[wiki-ingest-guide]] —— Wiki 读写操作宪法：何时写 / 写哪 / 怎么写 / 怎么读 / 怎么体检；三层索引规范、frontmatter 方案 Z
 - [[five-step-pipeline]] —— 五步链路（信息检索优先级）+ 五阶段 workflow（任务生命周期 Explore→Plan→Execute→Verify→Learn）完整 SOP，含 TDD 强制规则与 PLAN 硬门
 - [[project-template]] —— 新项目 / 新 Telegram channel 标准目录结构（src/tasks/tests/docs/scratch 等）+ 初始化步骤
-- [[AGENTS-template]] —— `AGENTS.md` 项目入口模板（三 Agent 通用，CLAUDE.md 走符号链接）
+- [[AGENTS-template]] —— `AGENTS.md` 项目入口模板（多 agent 通用，CLAUDE.md 走符号链接）
 - [[skill-register]] —— skill/MCP 总清单（对账 A/B/C 三类 + 各环境全量明细 + Self-Skill 区）
 - [[agent-config-matrix]] —— 各 agent 配置自述矩阵（入口/人格/记忆/workflow/技能/与 repo 关系）；配新实例照抄
+- [[soul-authoring-guide]] —— SOUL 写作指南 + SOUL.md 模板（仅 Hermes；其余 agent 无 SOUL 层）
 
 ## Claude Code 私有机制（Hermes / Antigravity 无）
 
@@ -37,7 +38,7 @@ last_updated: 2026-05-28
 - [[python-coding]] —— Python 代码规范：PEP 8、文件头注释、docstring、模块化原则、Test-First / TDD 执行顺序
 - [[llm-orchestration]] —— LLM 调度准则：禁止硬编码模型 ID、动态发现、级联回退（主→同平台备→跨平台兜底）、串行不并行
 - [[frontend-rendering]] —— 前端富文本渲染管道：禁裸露 Markdown、必经 marked.js 解析、剪贴板 `Clipboard API (text/html) + Blob` 加纯文本降级
-- [[rtk-usage]] —— RTK 终端 token 优化代理（v0.40.0）完整命令表 + 三 Agent 用法差异（Claude Code 有 hook 透明，Hermes/Antigravity 需主动用）
+- [[rtk-usage]] —— RTK 终端 token 优化代理（v0.40.0）完整命令表 + 各 agent 用法差异（Claude Code 有 hook 透明，Hermes/Antigravity 需主动用）
 
 ## 项目案例（蒸馏经验沉淀）
 

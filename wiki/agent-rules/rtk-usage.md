@@ -1,5 +1,5 @@
 ---
-title: RTK 使用规范（CLI Token 优化，三 Agent 通用）
+title: RTK 使用规范（CLI Token 优化，多 agent 通用）
 domain: agent-rules
 type: concept
 keywords: [rtk, token, cli, terminal, 优化, 代理, rust-token-killer]

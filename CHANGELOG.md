@@ -57,6 +57,17 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-14 [main] Claude Code CC-vm (Opus 4.8 [1m]) —— 规则正文措辞统一（wiki 页改动见 wiki/CHANGELOG.md）
+
+**为什么**：承接「全 agent 统一 SSOT」治理——收齐各 agent 第一人称实测后，把规则正文里过时 / 幻影措辞统一。
+
+**改了什么（结构性 / 规则文件）**：
+- **`antigravity/general-global-rule.md`**：§1 行 3 共享规范 agent 列表去掉幻影「Gemini CLI」（实际无此 agent，gemini 即 Antigravity）。
+- 其余为 wiki 知识页改动（各 agent 实测自述填全 `agent-config-matrix`、新建 `soul-authoring-guide`、修正 `five-step-pipeline` 五阶段载体描述、多页「三 Agent→多 agent」+ 清 `promote-lessons` 死引用），详见 `wiki/CHANGELOG.md` 同日条目。
+
+> 本轮未增删目录 / 结构性文件，结构白名单无需变更。
+> Uber 适配层（`uber-adaptation.md`）的「上下文持久化方案 + 运行时拓扑修正」**仅在 ub-branch**，记录见 ub-branch 本文件同日 [ub-branch] 条目（不进 main，IP 隔离）。
+
 ### 2026-06-14 [main→ub-branch] Claude Code (Opus 4.8) —— 开工第 0 步铁律 + _template 接入文档通用化（承接并完成 2026-06-13 待续）
 
 **为什么**：承接上一轮治理「待续」三步并收口；同时按用户要求把「开工先 pull 对账」升格为体系铁律——任何 agent 任何机器开工第一步先与 SSOT 对齐，杜绝基于过期规则 / 缺失技能开工。
