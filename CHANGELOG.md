@@ -57,6 +57,17 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-14 [ub-branch] Codex VM (GPT-5.4) —— Codex VM 首次接入 Generalrule 并登记对账结果
+
+**为什么**：用户要求在 VM 上接入 Generalrule，并按 general rule 完成 Codex 自我设置；接入后需把本环境入口、skill/plugin 对账结果回写到 SSOT。
+
+**改了什么（仅 ub-branch，Uber/Codex VM 环境事实）**：
+- **`uber-adaptation.md`**：新增 Codex VM 接入实测，登记本机 Generalrule clone、Codex 入口文件、已装 aifx plugin、`llm-wiki` 接入状态，以及 `omni-mcp` 尚未注册。
+- **`wiki/agent-rules/skill-register.md`**：更新时间并指向 `uber-adaptation.md` 中的 Codex VM 对账事实。
+- **`wiki/CHANGELOG.md`**：记录本次 wiki/适配层登记变更。
+
+> 本轮未增删目录 / 结构性文件，结构白名单无需变更。
+
 ### 2026-06-14 [ub-branch] Claude Code CC-vm (Opus 4.8 [1m]) —— Uber 适配层补上下文持久化方案 + 运行时拓扑修正
 
 **为什么**：按用户新需求把「断网 / SSH 断裂不丢上下文」写成 Uber 专属规则；据各 agent 实测修正 Uber 运行时拓扑。仅 ub-branch（IP 隔离，不进 main）。

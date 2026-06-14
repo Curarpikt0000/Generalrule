@@ -26,6 +26,14 @@
   - 来源：`yoichiojima-2/consultant`（consulting）、`charlie989898/-mbb-management-consultant-claude-skill`（management-consultant）、`sruthir28/enterprise-ai-skills`（其余 15 个）。
 - **omni-mcp 双注册**：`aifx plugin add omni-mcp`（plugin）+ `aifx mcp add omni-mcp --skip-validation`（注册编辑器）。
 
+### Codex VM 接入实测（2026-06-14）
+
+- **Generalrule clone**：`/home/user/codexvm/General-Global-Rule`，checkout `ub-branch`。
+- **Codex 入口**：`/home/user/.codex/AGENTS.md` + `/home/user/AGENTS.md`，两者只写 SSOT 指针，指向 `antigravity/general-global-rule.md` 与本 repo 根。
+- **aifx plugin（3 个）**：uberpowers、skill-workshop、find-skills。
+- **Codex skills**：系统内置 `imagegen`、`openai-docs`、`plugin-creator`、`skill-creator`、`skill-installer`；本次接入新增 `~/.codex/skills/llm-wiki`（来自 `self-skill/llm-wiki`，本机 `config.md` 留空路径，由入口指针解析）。
+- **未注册 MCP**：本次未执行 `aifx mcp add omni-mcp --skip-validation`；若任务需要 MCP，再按 §7 不可逆动作纪律经用户确认后安装。
+
 ## 双 GitHub 分流（各干各的，不混）
 - 个人仓库 Curarpikt0000/Generalrule：只放 general rule / workflow / wiki 总结
   - 通用认知纪律、通用 wiki → push main

@@ -7,13 +7,13 @@ tags: [skill-register, skills, mcp, reconciliation, inventory]
 source: 三 agent skill 盘点 2026-05-24，对账机制升级 2026-06，全量盘点 2026-06-11，合并 registry+catalog 2026-06-13
 sources: [conversation-2026-05-24, conversation-2026-06, conversation-2026-06-13]
 created: 2026-05-24
-updated: 2026-06-13
-last_updated: 2026-06-13
+updated: 2026-06-14
+last_updated: 2026-06-14
 ---
 
 # Skill 与 MCP 总清单（对账 + 明细）
 
-> 本页是 [[skill-registry]]+[[skill-catalog]] 合并后的**单一清单**（2026-06-13 合并，原两文件已废弃）。
+> 本页是 [[skill-registry]]+[[skill-catalog]] 合并后的**单一清单**（2026-06-13 合并，原两文件已废弃；2026-06-14 Codex VM 接入对账已登记到 ub-branch 的 `uber-adaptation.md`）。
 > 上半部分（一~六）= 对账机制 + A 类核心能力对账表 + MCP + 对账流程；下半部分（七~九）= 各环境/各 agent 全量明细 + Self-Skill 收纳区 + 跨环境获取速查。
 > 适用所有 agent：私人 Mac（Claude Code / Hermes / Antigravity）+ Uber Mac/VM（Claude Code / Codex / Cursor / Hermes / Antigravity，未来更多）。
 > **Uber 专属 skill/MCP 明细不在本（main）页展开，见 ub-branch 的 uber-adaptation.md（IP 隔离）。**

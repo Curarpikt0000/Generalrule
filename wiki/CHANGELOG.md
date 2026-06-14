@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-14 —— Codex VM 接入对账登记（Codex VM, GPT-5.4）
+
+- **[修改] `agent-rules/skill-register.md`** —— 更新对账时间，注明 Codex VM 接入对账结果登记在 ub-branch 的 `uber-adaptation.md`。
+
 ### 2026-06-14 —— Agent 自述实测归集 + SOUL 指南 + 措辞统一 + workflow 载体修正（Claude Code CC-vm, Opus 4.8 [1m]）
 
 - **[重写] `agent-rules/agent-config-matrix.md`** —— 用 8 份各 agent **第一人称实测**自述填全速查矩阵 + 逐 agent 七维详条：CC 家族（CC-home/Cowork/CC-vm 三类，机制同源差异在落地）、Antigravity（planning_mode+Artifacts，无 SOUL）、Hermes（家用+vm，有 SOUL.md）、Codex（SQLite 记忆）、Cursor（无持久层）。补 CC-vm 本机自述。**记一次教训**：一份替全部 9 个 agent 代填的旁观报告（uber-antigravity）经交叉核对系编造（虚构 CC 有 commands/、Hermes 是 soul.yaml、cowork 用 PostgreSQL、杜撰 Docker 镜像名），与各 agent 实测全面矛盾，整份弃用——只采信第一人称实测。
