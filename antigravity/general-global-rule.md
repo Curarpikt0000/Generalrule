@@ -1,6 +1,6 @@
 # General Global Rule（通用全局规则）
 
-> 所有 Agent（Claude Code / Hermes / Antigravity / Gemini CLI / Codex / Cursor，未来更多）的**共享行为根规范**。
+> 所有 Agent（Claude Code / Hermes / Antigravity / Codex / Cursor，未来更多）的**共享行为根规范**。
 > 本文件只放三样东西：**认知纪律 + 触发条件 + 指针**。
 > 具体场景知识（代码规范、LLM 调度、踩坑教训、项目模板）全部在 Wiki，本文件用指针指过去。
 > Wiki 路径：本 repo 的 `wiki/`（规则正文一律用相对路径；各机按本地 clone 路径定位，不写死绝对路径）。

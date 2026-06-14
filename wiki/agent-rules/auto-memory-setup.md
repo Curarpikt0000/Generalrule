@@ -115,7 +115,7 @@ metadata:
 
 | 内容 | 去向 |
 |---|---|
-| 值得三 Agent 共享的纠正 / 规则 / 方法论 | ❌ 不进 Auto Memory → 走共享 Wiki（general rule §6 / [[wiki-ingest-guide]]） |
+| 值得多 agent 共享的纠正 / 规则 / 方法论 | ❌ 不进 Auto Memory → 走共享 Wiki（general rule §6 / [[wiki-ingest-guide]]） |
 | general rule 已有的内容 | 都不记（避免重复） |
 | 代码结构 / 文件路径 | 都不记（直接读项目） |
 | git 历史、调试步骤 | 都不记（git log / 代码本身更准） |

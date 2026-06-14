@@ -102,7 +102,7 @@ last_updated: 2026-05-24
 
 ## 五、AGENTS.md 入口模板
 
-项目入口文件 AGENTS.md 的完整模板（三 Agent 通用）见 [[AGENTS-template]]。
+项目入口文件 AGENTS.md 的完整模板（多 agent 通用）见 [[AGENTS-template]]。
 初始化时复制它到项目根目录，填好项目信息，并建符号链接 `ln -s AGENTS.md CLAUDE.md`。
 
 ## 六、相关页面

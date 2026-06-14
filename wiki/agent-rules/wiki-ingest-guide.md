@@ -163,7 +163,7 @@ last_updated: YYYY-MM-DD
 
 ### 项目级 Wiki vs 共享 Wiki
 
-- **共享 Wiki**（`Generalrule/wiki/`）：三 Agent 通用、跨项目的知识。
+- **共享 Wiki**（`Generalrule/wiki/`）：多 agent 通用、跨项目的知识。
 - **项目级 Wiki**（`<项目>/wiki/`）：仅本项目的踩坑（如某项目特定的登录崩溃修复）。
 
 判断：这条知识**只对这个项目有用** → 项目 Wiki；**对其他项目/Agent 也有用** → 共享 Wiki。
