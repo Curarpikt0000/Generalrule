@@ -22,10 +22,17 @@ Generalrule/
 ├── self-skill/                      # 自有通用 skill 收纳处（只放通用 skill，特用禁止）
 │   ├── README.md                    # self-skill 准入宪法（准入/copy/登记规则）
 │   └── llm-wiki/                    # wiki 写作 skill（改造自公网 kingqiu/llm-wiki-skill）
-│       ├── SKILL.md
-│       ├── README.md
-│       ├── config.example.md        # 配置示例（本机 config.md 不入库）
-│       └── .gitignore
+│   │       ├── SKILL.md
+│   │       ├── README.md
+│   │       ├── config.example.md        # 配置示例（本机 config.md 不入库）
+│   │       └── .gitignore
+│   └── webworms/                     # 4 层爬虫标准框架（自有 Hermes skill 改造）
+│           ├── SKILL.md
+│           ├── references/
+│           │   ├── site-specific-notes.md
+│           │   └── base_scraper_impl.md
+│           └── scripts/
+│               └── wechat_scraper.py
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
 │   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
@@ -56,6 +63,16 @@ Generalrule/
 ---
 
 ## 变更记录
+
+### 2026-06-15 [main] Hermes —— webworms 爬虫 skill 纳入 self-skill 区 + skill-register 登记
+
+**为什么**：webworms（4 层降级回退网页爬虫框架）原为 Hermes C 类专用 skill，经改造去写死路径后纳入通用 skill 收纳，供所有 agent 取用。应 @Chao Jin 要求放入 GitHub 以便他机安装。
+
+**改了什么**：
+- `self-skill/webworms/`：新增，含 SKILL.md + references/site-specific-notes.md + references/base_scraper_impl.md + scripts/wechat_scraper.py
+- `self-skill/webworms/scripts/wechat_scraper.py`：去写死 `/tmp/` 路径，改为可配置 output_dir（默认 tempfile）
+- `wiki/agent-rules/skill-register.md` §8：新增 webworms 登记行（用途 + 来源 + 取用方式）
+- `CHANGELOG.md`：结构白名单 self-skill 区新增 webworms/ 子结构
 
 ### 2026-06-14 [main] Hermes —— 自述填充 agent-config-matrix + SOUL.md 指针同步 Generalrule 最新
 

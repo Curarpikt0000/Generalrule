@@ -166,7 +166,8 @@ MCP：context7（拉最新库文档，mcp_config.json + API key）。
 
 | skill | 用途 | 来源（原始） | 取用方式 |
 |---|---|---|---|
-| `self-skill/llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal）；已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门、无写死路径） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态，公网 `npx skills add`） | 拷 `self-skill/llm-wiki/` 到本机 skill 目录（如 `~/.agents/skills/`），复制 config.example.md→config.md 按本机填。所有 agent 写 wiki 优先调它 |
+|| `self-skill/llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal）；已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门、无写死路径） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态，公网 `npx skills add`） | 拷 `self-skill/llm-wiki/` 到本机 skill 目录（如 `~/.agents/skills/`），复制 config.example.md→config.md 按本机填。所有 agent 写 wiki 优先调它 |
+| `self-skill/webworms/` | 4 层降级回退的网页爬虫标准框架（requests+BS4 → Jina Reader → CamoFox → Crawl4AI），内置 robots.txt 合规、限速、重试。附站点爬虫备忘录 | 自有 Hermes skill 改造 | 拷 `self-skill/webworms/` 到本机 skill 目录。pip install requests beautifulsoup4 lxml camoufox crawl4ai |
 
 ---
 
