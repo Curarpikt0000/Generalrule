@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-15 —— Cloud Run 部署同步陷阱（Claude Code, Opus 4.8）
+
+- **[修改] `engineering/gcp-cloud-run-deployment.md`** —— 追加一节「部署同步陷阱：改了持久化层枚举/schema 却忘了重部署读取方」（来源 L-2026-06-15-001）。通用化教训：写入方往持久化层（Firestore/DB/MQ）加了新枚举值，但读取方仍跑不认得该值的旧镜像 → 旧读取方一遇新值即 `ValueError` 500 → 新数据进不了队列 → 下游静默停摆（最隐蔽，无报错只是「没数据」）。规则：枚举/schema 演进先升级所有读取方再写新值；非 git 项目靠 mtime + 部署 revision 时间戳对账是否上线；排查下游空转先查上游写入方。源自 magazine-podcast 扫描器停摆半月的真实事故。
+
 ### 2026-06-14 —— Agent 自述实测归集 + SOUL 指南 + 措辞统一 + workflow 载体修正（Claude Code CC-vm, Opus 4.8 [1m]）
 
 - **[重写] `agent-rules/agent-config-matrix.md`** —— 用 8 份各 agent **第一人称实测**自述填全速查矩阵 + 逐 agent 七维详条：CC 家族（CC-home/Cowork/CC-vm 三类，机制同源差异在落地）、Antigravity（planning_mode+Artifacts，无 SOUL）、Hermes（家用+vm，有 SOUL.md）、Codex（SQLite 记忆）、Cursor（无持久层）。补 CC-vm 本机自述。**记一次教训**：一份替全部 9 个 agent 代填的旁观报告（uber-antigravity）经交叉核对系编造（虚构 CC 有 commands/、Hermes 是 soul.yaml、cowork 用 PostgreSQL、杜撰 Docker 镜像名），与各 agent 实测全面矛盾，整份弃用——只采信第一人称实测。
