@@ -132,4 +132,4 @@ python -m camoufox fetch   # 首次使用下载浏览器内核
 | `references/base_scraper_impl.md` | BaseScraper 最小实现（各 agent 导入用） |
 | `scripts/wechat_scraper.py` | 微信公众号图片批量下载脚本 |
 
-> 安装时直接将 `self-skill/webworms/` 整目录拷到本机 skill 路径即可（如 `~/.claude/skills/`、`~/.hermes/skills/` 或 `~/.gemini/antigravity/skills/`）。
+> 安装时直接将 `self-skill/webworms/` 整目录拷到本机 skill 路径即可（如 `{agent_skill_dir}/`，具体路径因 agent 而异：Hermes 为 `~/.hermes/skills/`，Claude Code 为 `~/.claude/skills/`，Antigravity 为 `~/.gemini/antigravity/skills/`）。大模型 agent 安装时应根据目标 agent 类型替换 `{agent_skill_dir}` 为实际 skill 目录。

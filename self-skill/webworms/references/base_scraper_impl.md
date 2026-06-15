@@ -4,7 +4,7 @@
 BaseScraper 是一个轻量 Python 工具基类，内置于 webworms skill 框架中（webworms 自己有实现，但 Hermes 等 agent 用终端直接调 requests 时不需要导入）。
 
 **安装 webworms 后 BaseScraper 的位置：**
-- Hermes: `~/.hermes/skills/research/webworms/`（但当前版本 BaseScraper 未单独打包为 .py 文件——agent 解析 SKILL.md 后在终端中直接调用代码，不需要此 import）
+- Hermes: `{agent_skill_dir}/research/webworms/`（但当前版本 BaseScraper 未单独打包为 .py 文件——agent 解析 SKILL.md 后在终端中直接调用代码，不需要此 import）
 - 其他 agent（Antigravity / Claude Code）：解析 SKILL.md 中的代码片段直接使用，不依赖 BaseScraper import
 
 **BaseScraper 的行为（在 SKILL.md 中已描述）：**
