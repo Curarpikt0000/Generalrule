@@ -15,3 +15,4 @@
 * [[url-fidelity]] - 爬虫与 API 数据管道中的 URL 保真度协议
 * [[skill-check-before-coding]] - 动手编写代码前强制检索 Skill 机制
 * [[youtube-pipeline-genimages-template-issue]] - YouTube 音频转换管道与图片生成模版常见问题
+* [[container-reboot-service-persistence]] - 容器重启后服务恢复与开机持久化（临时 /etc 陷阱、幂等 boot 脚本、setsid、watchdog 循环依赖、调用链排障）
