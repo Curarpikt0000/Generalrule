@@ -21,18 +21,24 @@ Generalrule/
 │   └── general-global-rule.md       # 【SSOT】认知纪律 + 五步链路 + 五阶段 workflow + 指针索引
 ├── self-skill/                      # 自有通用 skill 收纳处（只放通用 skill，特用禁止）
 │   ├── README.md                    # self-skill 准入宪法（准入/copy/登记规则）
-│   └── llm-wiki/                    # wiki 写作 skill（改造自公网 kingqiu/llm-wiki-skill）
+│   ├── AUTHORING.md                 # 怎么写/copy 一个 skill 的操作手册（宪法的操作配套）
+│   ├── llm-wiki/                    # wiki 写作 skill（改造自公网 kingqiu/llm-wiki-skill）
 │   │       ├── SKILL.md
 │   │       ├── README.md
 │   │       ├── config.example.md        # 配置示例（本机 config.md 不入库）
 │   │       └── .gitignore
-│   └── webworms/                     # 4 层爬虫标准框架（自有 Hermes skill 改造）
-│           ├── SKILL.md
-│           ├── references/
-│           │   ├── site-specific-notes.md
-│           │   └── base_scraper_impl.md
-│           └── scripts/
-│               └── wechat_scraper.py
+│   ├── webworms/                     # 4 层爬虫标准框架（自有 Hermes skill 改造）
+│   │       ├── SKILL.md
+│   │       ├── references/
+│   │       │   ├── site-specific-notes.md
+│   │       │   └── base_scraper_impl.md
+│   │       └── scripts/
+│   │           └── wechat_scraper.py
+│   └── agent-slides/                 # PPTX 生成 skill（改造自公网 mpuig/agent-slides，MIT）
+│           ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
+│           ├── README.md            # 来源/许可/依赖/差异说明
+│           ├── LICENSE              # 上游 MIT 许可（署名保留）
+│           └── skills/              # 7 个子 skill：extract/build/edit/audit/critique/polish/full（含 references）
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
 │   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
@@ -63,6 +69,14 @@ Generalrule/
 ---
 
 ## 变更记录
+
+### 2026-06-16 [main] Cursor (Claude Opus) —— agent-slides PPTX 生成 skill 纳入 self-skill 区 + 新增 AUTHORING 操作手册
+**为什么**：agent-slides（公网开源 `mpuig/agent-slides`，MIT）是脱离公司/项目仍成立的通用「做 PPT」能力，符合 self-skill 准入。经冲突评审对照 general-global-rule.md + uber-adaptation.md 全部 PASS（无自动 push/commit、无遥测/外部网络写入、无 Uber IP、无写死路径、署名与 MIT 保留）。
+- `self-skill/agent-slides/`：新增。只收 skill 定义——orchestrator `SKILL.md` + `README.md` + `LICENSE` + `skills/`（7 个子 skill：extract/build/edit/audit/critique/polish/full，含 references）。**未 vendoring 上游 `src/` CLI 引擎**：运行时由 `uvx --from agent-slides` 从 PyPI 按需拉取，vendoring 不改变运行行为只增重（详见该目录 README）。
+- `self-skill/AUTHORING.md`：新增。把 self-skill/README.md 宪法操作化为「怎么写/copy 一个 skill」分步手册，以 agent-slides 为 worked example。
+- `wiki/agent-rules/skill-register.md` §8：新增 agent-slides 登记行。
+- `self-skill/README.md` §四：补 agent-slides 行（并补此前漏登的 webworms 行）；§五加 AUTHORING.md 指针。
+- `CHANGELOG.md`：结构白名单 self-skill 区新增 agent-slides/ 子结构 + AUTHORING.md。
 
 ### 2026-06-15 [main] Hermes —— webworms 爬虫 skill 纳入 self-skill 区 + skill-register 登记
 

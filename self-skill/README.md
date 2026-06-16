@@ -48,11 +48,14 @@
 | skill | 用途 | 来源 | 备注 |
 |---|---|---|---|
 | `llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal），已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态） | 已去 Quartz/双语/写死路径。各 agent 写 wiki 时优先调它，统一 format |
+| `webworms/` | 4 层降级回退的网页爬虫标准框架（requests+BS4 → Jina Reader → CamoFox → Crawl4AI），内置 robots.txt 合规、限速、重试 | 自有 Hermes skill 改造 | 已去写死路径。`pip install requests beautifulsoup4 lxml camoufox crawl4ai` |
+| `agent-slides/` | 从 brief 生成专业 PPTX deck：7 个可组合子 skill（extract/build/edit/audit/critique/polish/full），基于 python-pptx 的确定性 CLI | 公网开源 `mpuig/agent-slides`（MIT） | 只收 skill 定义，CLI 走 PyPI（`uvx --from agent-slides`）；需本机 `uv` + Python 3.12+。无遥测/外部写入 |
 
 ---
 
 ## 五、相关
 
+- [`AUTHORING.md`](AUTHORING.md) —— 怎么写/copy 一个 skill 的操作手册（本宪法的操作配套）
 - [[wiki/agent-rules/skill-register.md]] —— skill/MCP 总清单 + 对账（Self-Skill 区在此登记）
 - [[wiki/agent-rules/wiki-ingest-guide.md]] —— wiki 写作规范（llm-wiki 的产出须符合）
 - 根 `CHANGELOG.md` —— 任何增减留证据
