@@ -169,6 +169,7 @@ MCP：context7（拉最新库文档，mcp_config.json + API key）。
 || `self-skill/llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal）；已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门、无写死路径） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态，公网 `npx skills add`） | 拷 `self-skill/llm-wiki/` 到本机 skill 目录（如 `~/.agents/skills/`），复制 config.example.md→config.md 按本机填。所有 agent 写 wiki 优先调它 |
 | `self-skill/webworms/` | 4 层降级回退的网页爬虫标准框架（requests+BS4 → Jina Reader → CamoFox → Crawl4AI），内置 robots.txt 合规、限速、重试。附站点爬虫备忘录 | 自有 Hermes skill 改造 | 拷 `self-skill/webworms/` 到本机 skill 目录。pip install requests beautifulsoup4 lxml camoufox crawl4ai |
 | `self-skill/agent-slides/` | 从 brief 生成专业 PPTX deck：7 个可组合子 skill（extract/build/edit/audit/critique/polish/full），基于 python-pptx 的确定性 agent-ready CLI。无遥测/外部网络写入 | 公网开源 `mpuig/agent-slides`（MIT） | 拷 `self-skill/agent-slides/` 到本机 skill 目录；只收 skill 定义，CLI 走 PyPI——需本机 `uv`（含 `uvx`）+ Python 3.12+，命令 `uvx --from agent-slides slides ...` 按需拉包 |
+| `self-skill/project-context-persistence/` | Hermes 项目上下文持久化：state.db 对话采集脚本 + cron prompt 模板 + SKILL。每个项目自动建 `docs/context-log.md` + 每日 02:00 蒸馏 cron | 从零自制（依据 general-global-rule.md §5 上下文压缩铁律） | 拷 `self-skill/project-context-persistence/` 到本机 skill 目录。脚本 `scripts/collect_topic_conversation.py` 部署到 `~/.hermes/scripts/`。Python 只依赖 sqlite3（stdlib） |
 
 ---
 

@@ -34,11 +34,16 @@ Generalrule/
 │   │       │   └── base_scraper_impl.md
 │   │       └── scripts/
 │   │           └── wechat_scraper.py
-│   └── agent-slides/                 # PPTX 生成 skill（改造自公网 mpuig/agent-slides，MIT）
+│   └── agent-slides/
 │           ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
 │           ├── README.md            # 来源/许可/依赖/差异说明
 │           ├── LICENSE              # 上游 MIT 许可（署名保留）
-│           └── skills/              # 7 个子 skill：extract/build/edit/audit/critique/polish/full（含 references）
+│           └── skills/
+├── project-context-persistence/     # 项目上下文持久化（采集脚本 + cron 配方 + 踩坑）
+│       ├── SKILL.md
+│       ├── scripts/
+│       │   └── collect_topic_conversation.py  # Hermes state.db 对话采集脚本
+│       └── references/
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
 │   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
@@ -70,7 +75,15 @@ Generalrule/
 
 ## 变更记录
 
-### 2026-06-16 [main] Cursor (Claude Opus) —— agent-slides PPTX 生成 skill 纳入 self-skill 区 + 新增 AUTHORING 操作手册
+### 2026-06-17 [main] Hermes —— project-context-persistence self-skill（采集脚本 + SKILL）纳入 repo
+
+**为什么**：general-global-rule.md §5 上下文压缩铁律引用了 `skill project-context-persistence` 作为落地机制，但此前不存在。从零创建，含采集脚本 + skill 定义 + cron 模板。
+
+- `self-skill/project-context-persistence/`：新增，含 `SKILL.md`（采集方案、cron 模板、踩坑）、`scripts/collect_topic_conversation.py`（Hermes state.db 对话采集脚本）
+- `~/.hermes/SOUL.md`：同步更新，启动开关整合为「建结构 + 每日上下文归档（新 topic/项目自动建）」一条链
+- `~/.hermes/scripts/collect_topic_conversation.py`：部署到运行实例
+- `~/.hermes/skills/devops/project-context-persistence/`：skill 部署到运行实例
+- `CHANGELOG.md`：结构白名单新增 `project-context-persistence/`
 **为什么**：agent-slides（公网开源 `mpuig/agent-slides`，MIT）是脱离公司/项目仍成立的通用「做 PPT」能力，符合 self-skill 准入。经冲突评审对照 general-global-rule.md + uber-adaptation.md 全部 PASS（无自动 push/commit、无遥测/外部网络写入、无 Uber IP、无写死路径、署名与 MIT 保留）。
 - `self-skill/agent-slides/`：新增。只收 skill 定义——orchestrator `SKILL.md` + `README.md` + `LICENSE` + `skills/`（7 个子 skill：extract/build/edit/audit/critique/polish/full，含 references）。**未 vendoring 上游 `src/` CLI 引擎**：运行时由 `uvx --from agent-slides` 从 PyPI 按需拉取，vendoring 不改变运行行为只增重（详见该目录 README）。
 - `self-skill/AUTHORING.md`：新增。把 self-skill/README.md 宪法操作化为「怎么写/copy 一个 skill」分步手册，以 agent-slides 为 worked example。
