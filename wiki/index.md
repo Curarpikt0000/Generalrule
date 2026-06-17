@@ -76,6 +76,7 @@
 | pathlib vs os.path | [[engineering/pathlib-vs-ospath]] | pathlib, 跨平台路径 |
 | URL 保真度协议 | [[engineering/url-fidelity]] | url, user-intent, 严格使用用户URL |
 | 编码前先查 skill | [[engineering/skill-check-before-coding]] | skill, 五步链路 |
+| 容器重启服务恢复与开机持久化 | [[engineering/container-reboot-service-persistence]] | 容器, 重启, 临时/etc, 幂等 boot, setsid, watchdog |
 
 ### llm（LLM 调用）
 
