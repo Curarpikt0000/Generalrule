@@ -10,6 +10,12 @@
 
 ## 记录
 
+### 2026-06-17 —— GenAI 隧道 watchdog 认证升级边界 + 端口漂移踩坑（Claude Code, Opus 4.8 [UB]）
+
+- **[修改] `agent-rules/hermes-genai-api-integration.md`** —— §5 新增坑 5（cerberus idle 掉线 + 端口漂移 5436→5437 → `502 [Errno 99] Cannot assign requested address`，含 `/proc/net/tcp` 端口反查 + 杀干净重启修复）；文末新增 §8「GenAI 隧道 watchdog（系统 cron · 认证失败自动 Telegram 提醒）」，§7 运维表加一行。背景：6-17 LLM 又掉线复发，根因是 cerberus 周期性 idle 断链 + 端口漂移。删除了循环依赖的 Hermes 内部 `genai-proxy-watchdog`（`no_agent=false`，要调 LLM 才能查 LLM），改用系统 cron 纯脚本 watchdog（健康静默 / 自动重启 / 认证失败发 Telegram）。
+- **[修改] `engineering/container-reboot-service-persistence.md`** —— 通用教训新增第 6 条「自愈有边界：区分可自动修 vs 需人介入（认证）」——纯脚本 watchdog 能修瞬时故障（进程死 / 端口漂移：服务起来但绑错端口，须按约定端口健康检查）但修不了凭证过期，应判定认证类故障并经「不依赖被监控服务的旁路通道（IM bot）」主动通知人重认证 + 告警限频。**关键教训**：watchdog 不只是「拉起进程」，要能识别自己修不了的故障类型并升级给人，否则无声反复重启失败比没有更难发现。
+- 同步更新 `agent-rules/README.md`、`engineering/README.md` 两处页面描述。
+
 ### 2026-06-17 —— 咨询框架 skill 冲突消歧与去重指南（Cowork, Opus 4.8 [UB]）
 
 - **[修改] `agent-rules/skill-register.md`** —— 新增第十节「咨询框架 Skill 冲突消歧与去重（跨 agent 通用行动指南）」，原「相关页面」顺延为第十一节。背景：这批咨询 skill（issue-tree-builder / hypothesis-tree / scpr-framework / storyline-builder / decision-memo-builder / top-down-memo / prioritization / management-consultant / consulting 等）全靠 description 语义自动触发、无优先级表，宽泛描述会抢专用 skill 的触发。新节给出：① 去重结论（`consulting` body ⊂ `management-consultant` 超集 4.6MB/228 文件，应归档；`prioritization` 常缺 frontmatter → 死 skill，应修不删）；② 14 行触发消歧表（哪件事用哪个、别让谁抢）；③ prioritization frontmatter 修复模板；④ 4 条通用原则。**关键教训（L-2026-06-17-001）**：判断 skill 能否删必须看 body+支撑文件体量，不能只比 description（consulting 实为 180KB 知识库，差点被当"两行重复品"删）；删除先归档不 `rm`；整改产出要写进共享 registry 让所有 agent 受益，不是只改本地 SKILL.md 只惠及当前 agent。源自 Cowork 本机 17 个咨询 skill 全景实测。

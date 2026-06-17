@@ -2,13 +2,13 @@
 title: 容器重启后服务恢复与开机持久化（临时 /etc 陷阱）
 domain: engineering
 type: concept
-keywords: [容器, 重启, 临时文件系统, ephemeral, /etc, 开机自启, boot, 幂等, setsid, watchdog, 循环依赖, 调用链排障, init, dinit]
-tags: [container, reboot, ephemeral-fs, boot-persistence, idempotent, watchdog, debugging]
-source: 一次容器化开发环境内 AI agent 模型链路意外停机的复盘（已匿名化/通用化）
-sources: [conversation-2026-06-16]
+keywords: [容器, 重启, 临时文件系统, ephemeral, /etc, 开机自启, boot, 幂等, setsid, watchdog, 循环依赖, 调用链排障, init, dinit, 认证升级, auth-escalation, 端口漂移, port-drift, 自愈边界, 通知]
+tags: [container, reboot, ephemeral-fs, boot-persistence, idempotent, watchdog, debugging, auth-escalation]
+source: 一次容器化开发环境内 AI agent 模型链路意外停机的复盘（已匿名化/通用化）；2026-06-17 补「自愈的认证升级边界 + 端口漂移」
+sources: [conversation-2026-06-16, conversation-2026-06-17]
 created: 2026-06-16
-updated: 2026-06-16
-last_updated: 2026-06-16
+updated: 2026-06-17
+last_updated: 2026-06-17
 ---
 
 # 容器重启后服务恢复与开机持久化（临时 /etc 陷阱）
@@ -142,6 +142,7 @@ ensure gateway 0    "~/bin/start-gateway.sh"   # 无监听端口的用 pgrep 判
 3. **后台常驻进程要用 `setsid`/完全脱离会话启动**，避免随父进程组被回收。配 `nohup` + 日志重定向。
 4. **watchdog/自愈机制绝不能对它要修复的服务有循环依赖**。自愈逻辑要用最底层、最少依赖的手段（纯脚本 + 系统命令）实现，确保「被监控对象全挂」时它自己还能跑。
 5. **排障方法论：沿调用链逐跳验证**——`端口监听 → 进程 → 日志 → 服务定义 → 平台持久化层`，用错误信息当 oracle 反推（如「第一跳 connection refused」直接排除「后端 API 故障」假设）。
+6. **自愈有边界——区分「可自动修」与「需人介入（认证）」。** 纯脚本 watchdog 能修瞬时故障（进程死、**端口漂移**：服务起来了但绑到了非约定端口，`pgrep` 判活会被骗过，必须按**约定端口/endpoint** 健康检查），但**修不了需要人重新认证的故障**（凭证/令牌过期，需重新登录或硬件密钥确认）。watchdog 应：先尝试自动恢复 → 失败后判断是否认证类（凭证不在 agent / token 文件缺失 / 日志现 auth 报错）→ 是则**经一个不依赖被监控服务的旁路通道（如 IM bot）主动通知人**去重认证，并对告警**限频**。否则它只会无声地反复重启失败，比没有 watchdog 更难发现。
 
 ---
 
