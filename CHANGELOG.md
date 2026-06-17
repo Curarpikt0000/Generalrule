@@ -5,7 +5,7 @@
 > **分工**：本文件管 repo 的**结构性改动**（规则文件、模板、self-skill、目录骨架的增删改）。
 > wiki/ 下**单个知识页**的增删改迁移，记在 `wiki/CHANGELOG.md`，本文件不重复。
 > **白名单纪律**：下方「结构白名单」列出本 repo 所有有用文件/文件夹。**增减任何目录或结构性文件，必须同步更新白名单**。
-> **禁止"一把梭"**：提交前先 `git status` 核对，只提交本次有意改动且在白名单内的文件——历史上因盲目 `git add .` 混入过别项目文件（见 2026-06-13 治理记录）。
+> **禁止\"一把梭\"**：提交前先 `git status` 核对，只提交本次有意改动且在白名单内的文件——历史上因盲目 `git add .` 混入过别项目文件（见 2026-06-13 治理记录）。
 
 ---
 
@@ -21,11 +21,24 @@ Generalrule/
 │   └── general-global-rule.md       # 【SSOT】认知纪律 + 五步链路 + 五阶段 workflow + 指针索引
 ├── self-skill/                      # 自有通用 skill 收纳处（只放通用 skill，特用禁止）
 │   ├── README.md                    # self-skill 准入宪法（准入/copy/登记规则）
-│   └── llm-wiki/                    # wiki 写作 skill（改造自公网 kingqiu/llm-wiki-skill）
-│       ├── SKILL.md
-│       ├── README.md
-│       ├── config.example.md        # 配置示例（本机 config.md 不入库）
-│       └── .gitignore
+│   ├── AUTHORING.md                 # 怎么写/copy 一个 skill 的操作手册（宪法的操作配套）
+│   ├── llm-wiki/                    # wiki 写作 skill（改造自公网 kingqiu/llm-wiki-skill）
+│   │       ├── SKILL.md
+│   │       ├── README.md
+│   │       ├── config.example.md        # 配置示例（本机 config.md 不入库）
+│   │       └── .gitignore
+│   ├── webworms/                     # 4 层爬虫标准框架（自有 Hermes skill 改造）
+│   │       ├── SKILL.md
+│   │       ├── references/
+│   │       │   ├── site-specific-notes.md
+│   │       │   └── base_scraper_impl.md
+│   │       └── scripts/
+│   │           └── wechat_scraper.py
+│   └── agent-slides/                 # PPTX 生成 skill（改造自公网 mpuig/agent-slides，MIT）
+│           ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
+│           ├── README.md            # 来源/许可/依赖/差异说明
+│           ├── LICENSE              # 上游 MIT 许可（署名保留）
+│           └── skills/              # 7 个子 skill：extract/build/edit/audit/critique/polish/full（含 references）
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
 │   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
@@ -57,6 +70,24 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-16 [main] Cursor (Claude Opus) —— agent-slides PPTX 生成 skill 纳入 self-skill 区 + 新增 AUTHORING 操作手册
+**为什么**：agent-slides（公网开源 `mpuig/agent-slides`，MIT）是脱离公司/项目仍成立的通用「做 PPT」能力，符合 self-skill 准入。经冲突评审对照 general-global-rule.md + uber-adaptation.md 全部 PASS（无自动 push/commit、无遥测/外部网络写入、无 Uber IP、无写死路径、署名与 MIT 保留）。
+- `self-skill/agent-slides/`：新增。只收 skill 定义——orchestrator `SKILL.md` + `README.md` + `LICENSE` + `skills/`（7 个子 skill：extract/build/edit/audit/critique/polish/full，含 references）。**未 vendoring 上游 `src/` CLI 引擎**：运行时由 `uvx --from agent-slides` 从 PyPI 按需拉取，vendoring 不改变运行行为只增重（详见该目录 README）。
+- `self-skill/AUTHORING.md`：新增。把 self-skill/README.md 宪法操作化为「怎么写/copy 一个 skill」分步手册，以 agent-slides 为 worked example。
+- `wiki/agent-rules/skill-register.md` §8：新增 agent-slides 登记行。
+- `self-skill/README.md` §四：补 agent-slides 行（并补此前漏登的 webworms 行）；§五加 AUTHORING.md 指针。
+- `CHANGELOG.md`：结构白名单 self-skill 区新增 agent-slides/ 子结构 + AUTHORING.md。
+
+### 2026-06-15 [main] Hermes —— webworms 爬虫 skill 纳入 self-skill 区 + skill-register 登记
+
+**为什么**：webworms（4 层降级回退网页爬虫框架）原为 Hermes C 类专用 skill，经改造去写死路径后纳入通用 skill 收纳，供所有 agent 取用。应 @Chao Jin 要求放入 GitHub 以便他机安装。
+
+**改了什么**：
+- `self-skill/webworms/`：新增，含 SKILL.md + references/site-specific-notes.md + references/base_scraper_impl.md + scripts/wechat_scraper.py
+- `self-skill/webworms/scripts/wechat_scraper.py`：去写死 `/tmp/` 路径，改为可配置 output_dir（默认 tempfile）
+- `wiki/agent-rules/skill-register.md` §8：新增 webworms 登记行（用途 + 来源 + 取用方式）
+- `CHANGELOG.md`：结构白名单 self-skill 区新增 webworms/ 子结构
+
 ### 2026-06-14 [ub-branch] Codex VM (GPT-5.4) —— Codex VM 首次接入 Generalrule 并登记对账结果
 
 **为什么**：用户要求在 VM 上接入 Generalrule，并按 general rule 完成 Codex 自我设置；接入后需把本环境入口、skill/plugin 对账结果回写到 SSOT。
@@ -76,6 +107,14 @@ Generalrule/
 - **`uber-adaptation.md` 新增「上下文持久化方案（仅 Uber 机/agent）」**：CC 家族用 `uber-dev:share-session`（上传 transcript 到 terrablob）做检查点备份；Hermes/Codex 靠各自本地会话存储（state.db / sqlite）；Cursor 无持久层须落盘兜底——「能力对齐，非同一 skill」。含分 agent + 分项目命名、检查点时机、重连恢复动作、terrablob 仅 Uber 红线。
 - **`uber-adaptation.md` 修正运行时拓扑**：旧版只列 3 运行时且把唯一 CC 误标「devpod VM」；改为真实 Uber fleet（Cowork@MacAir 物理机 / CC-vm@devpod / Antigravity / Codex / Hermes / Cursor），各 agent 配置详情指向 `wiki/agent-rules/agent-config-matrix.md`。
 - **更新 Hermes 出境说明**：据 Uber hermes-vm 实测，主模型为 Uber 内部 GenAI proxy 的 `claude-opus-4-8`（不出公司边界），仅 fallback `deepseek-v4-flash` 第三方出境——更正旧版「引擎为 deepseek-chat」。
+
+### 2026-06-14 [main] Hermes —— 自述填充 agent-config-matrix + SOUL.md 指针同步 Generalrule 最新
+
+**为什么**：补齐 SSOT「新 agent 如何配置自己」缺口。Hermes 如实逐条自述自身配置机制（入口/人格/记忆/workflow/技能/与 repo 关系），填充到 agent-config-matrix；同时同步 SOUL.md 指针使其引用 Generalrule 最新状态（开工第 0 步 + agent-config-matrix 引用）。
+
+**改了什么**：
+- `wiki/agent-rules/agent-config-matrix.md`：Hermes 条目从「待自述」→ 已采集（7 维详细逐条），速查矩阵同步修正。
+- `~/.hermes/SOUL.md`：指针节更新——引用 Generalrule 最新路径，新增 agent-config-matrix 引用，补入「开工第 0 步」指向。
 
 ### 2026-06-14 [main] Claude Code CC-vm (Opus 4.8 [1m]) —— 规则正文措辞统一（wiki 页改动见 wiki/CHANGELOG.md）
 

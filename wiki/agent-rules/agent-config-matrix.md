@@ -4,19 +4,18 @@ domain: agent-rules
 type: reference
 keywords: [agent-config, 自述, SSOT, 入口, SOUL, 记忆, workflow, skill, onboarding, 多机]
 tags: [agent-config, self-report, matrix, onboarding]
-source: 各 agent 第一人称实测自述（Prompt A）归集
+source: Prompt A 各 agent 通用自述归集
 sources: [conversation-2026-06-14]
 created: 2026-06-14
 updated: 2026-06-14
 last_updated: 2026-06-14
-applies_to: all
 ---
 
-# Agent 配置自述矩阵
+# Agent 配置自述矩阵（新 agent 如何配置自己）
 
-> **目的**：补齐 SSOT 的「新 agent 如何配置自己」缺口。每个 agent 第一人称如实自述其配置机制（入口/人格/记忆/workflow/技能/与 repo 关系），归集于此。配新实例时照对应条目抄即可。
-> **采信纪律（重要）**：只采信**第一人称实测**（agent 真读了自己的文件系统）。**严禁替别的 agent 猜**——没有该 agent 本人确认的格子标【待自述】。
-> **一次教训（2026-06-14）**：本轮收集时，一份「替全部 9 个 agent 代填」的旁观报告（uber-antigravity 出具）经交叉核对**整张表系编造**（虚构 CC 有 `~/.claude/commands/`+`config.json system_prompt` 且无记忆、Hermes 是 `soul.yaml`、Codex 无记忆、cowork 用 PostgreSQL，还杜撰了 `claude/code-vm` 等 Docker 镜像名），与各 agent 本人实测全面矛盾，**已整份弃用**（教训：只采信第一人称实测，不接受任何 agent 替别的 agent 代填的配置）。
+> **目的**：补齐 SSOT 的「新 agent 如何配置自己」缺口。每个 agent 用 Prompt A 如实自述其配置机制（入口/人格/记忆/workflow/技能/与 repo 关系），归集于此。配新实例时照对应条目抄即可。
+> **纪律**：自述以「不知道就说不知道」为准，未确认的标【待该 agent 自述】，不替别的 agent 猜。各 agent 回答后由收集者填入对应小节。
+> **采集清单**（9 个目标）：3×CC（家用机/各机）、gemini-antigravity、hermes、cursor、CC-vm、codex-vm、hermes-vm、antigravity-macair、cowork。
 
 ---
 
@@ -35,36 +34,37 @@ applies_to: all
 
 ---
 
-## Claude Code 家族（三类实例，机制同源，差异在落地）
+## CC-home — 家用机 Claude Code（已采集 2026-06-14）
 
-CC 三类实例（家用 CC-home / Uber Cowork / Uber devpod CC-vm）**机制同源**：唯一行为入口都落到 repo 的 `antigravity/general-global-rule.md`（SSOT），叠加项目级入口；**无人格层**（认知纪律即人格）；**有 Auto Memory**；五阶段靠 **skill + 规则文本**（无 `~/.claude/commands/`）。配新 CC 实例 = 让其 `~/.claude/CLAUDE.md` 落到同一 general rule + checkout 对应分支，无额外人格步骤。差异如下：
+**1.【你是谁】** Claude Code（Anthropic 官方 CLI 编码 agent）；个人**家用机**（macOS darwin），非 Uber；harness = Claude Code CLI，模型 Fable 5（`claude-fable-5`）。
 
-| 实例 | 机器 | 模型 | 入口落地方式 | 分支 | skill/MCP |
-|---|---|---|---|---|---|
-| **CC-home** | 个人 macOS | Fable 5 | `~/.claude/CLAUDE.md` **软链** → repo general rule | main | `~/.claude/skills/` 18；MCP 0 |
-| **Cowork**（Uber Mac Air，Cowork 形态，cwd `~/ClaudeCowork`） | Uber MacBook Air（user `chao.jin`） | Opus 4.8（CLI v2.1.161） | `~/.claude/CLAUDE.md` **软链** + `~/.claude/rules/*.md`（3 个：auto-memory-boundary / ub-machine-paths / uber-adaptation 软链） | ub-branch | `~/.claude/skills/` 17 咨询 + claude-plugins-official marketplace |
-| **CC-vm**（本页归集者，Uber devpod） | Uber devpod（linux） | Opus 4.8 [1m] | `~/.claude/CLAUDE.md`（**实体文件**）→ `~/claudecodeuber/CLAUDE.md` **@import** repo general rule + uber-adaptation；**无 rules/** | ub-branch | `~/.claude/skills/` 33；uberpowers 生态 + omni-mcp |
+**2.【入口】** 唯一行为入口 `~/.claude/CLAUDE.md`，是**符号链接** → `Generalrule/antigravity/general-global-rule.md`（SSOT 规则在 repo 内、软链注入）。叠加项目级 `CLAUDE.md`/`AGENTS.md`（当前工作目录无）。`~/.claude/settings.json` 管能力开关（权限/autoMemory/通知），非行为规则。**不读 AGENTS.md**。
 
-- **记忆**：CC-home memory 目录已建当前空；Cowork slug `-Users-chao-jin-ClaudeCowork` 目录待首次写入创建；CC-vm Auto Memory **已激活**（`~/.claude/projects/-home-user-claudecodeuber/memory/` 现 4 条 + `MEMORY.md`）。格式：一事一文件 + frontmatter（name/description/metadata.type）+ `MEMORY.md` 索引。配置/边界见 [[auto-memory-setup]] / [[auto-memory-boundary]]。
-- **真实存在的 slash command** 是 harness/plugin 自带（`/code-review` `/verify` `/run` `/init` `/security-review` `/loop` `/schedule` 等），**不是**体系定义的五阶段命令。
+**3.【人格·SOUL】** **无人格层。** CC 无 SOUL 文件（`~/.claude/` 下无 soul/persona 配置）。SOUL.md 是 Hermes 的机制。CC 的"人格"等价物即 general-global-rule.md 的认知纪律。配新 CC 实例 = 把其 `~/.claude/CLAUDE.md` 软链到同一 general-global-rule.md，无额外人格步骤。
 
----
+**4.【记忆】** **有 = Auto Memory**（CC 私有）。启用 `settings.json` 的 `autoMemoryEnabled: true`；存 `~/.claude/projects/<project>/memory/`，**一事一文件 + MEMORY.md 索引**，每条带 frontmatter（name/description/metadata.type）。分工：跨 agent 价值→Wiki，仅本机琐事→Auto Memory。细则见 [[auto-memory-setup]]、[[auto-memory-boundary]]。
 
-## Antigravity（Google）— 家用机实测（gemini-antigravity）
+**5.【workflow】** 五阶段**不用 slash command**（`~/.claude/commands/` 不存在）。载体 = superpowers skill + 规则文本：Explore→`brainstorming`(硬门)、Plan→`writing-plans`(硬门待批)、Execute→`test-driven-development`/`systematic-debugging`、Verify→`verification-before-completion`、Learn→手动按 wiki-ingest-guide 写 Wiki（CC 无自动 promote-lessons）。
 
-- **你是谁**：Antigravity（Google DeepMind 自主编码 agent）；个人 Mac（`~/.gemini/antigravity`）；Google Antigravity 平台管生命周期。
-- **入口**：工作区 `general-global-rule.md` 每次启动**自动注入** system prompt（`<RULE[user_global]>`）。底层 `config.yaml` 等因安全沙箱 **Permission denied 不可读**（对 agent 透明）。
-- **人格**：**无人格层**。基本人格 = 系统内置 prompt `<identity>` 标签（硬编码、不可改）；项目行为靠注入的 general rule。
-- **记忆**：**无原生自动记忆**。沉淀靠 general rule Lesson 系统 + `llm-wiki` 手动写 `wiki/` 或 `tasks/context-snapshot.md`。
-- **workflow**：内置 `planning_mode` + Artifacts。非琐碎任务自动进 Planning Mode，维护三个 Markdown 伪文件（Artifacts，存 session brain 目录）：`implementation_plan.md`（PLAN 阶段 `request_feedback=true` 阻塞待批）/ `task.md`（`[ ]`/`[/]`/`[x]` TODO）/ `walkthrough.md`（完成总结）。**不是** `commands/*.md` 或 `global_workflows/*.md`（后者为 CC 旁观推断，本人未证实）。
-- **技能**：system prompt `<skills>`/`<plugins>` 标签注入可用 skill；对账在 [[skill-register]]；缺核心 skill 时列命令、经用户批准再装；通用 skill 收 `self-skill/`。
-- **与 repo**：直接读写本地工作区 `Generalrule/`，分支取决于本地 checkout。有用：`general-global-rule.md` / `wiki/` / `self-skill/`（llm-wiki）/ CHANGELOG / `_template/`。空的 `workflows/` 在它流程里完全没用（Antigravity 用 planning_mode 替代）。
+**6.【技能】** 装在 `~/.claude/skills/`（每 skill 一目录含 SKILL.md），本机 18 个；发现用 `find-skills`，superpowers 系 `git clone` 拷目录；有官方 plugin marketplace（`~/.claude/plugins/`，enabledPlugins 空）；**MCP 0 个**。全量清单 → [[skill-register]]。
 
-> antigravity-macair（Uber Mac Air 上的 Antigravity）：**机制应同上**，但**无该实例第一人称自述**（本轮唯一一份标称它的报告即上文已弃用的编造件）。标【待 antigravity-macair 本人自述确认】。
+**7.【与 repo 关系】** **深度绑定**——全局规则即 repo 内 `antigravity/general-global-rule.md`（软链）；分支 **main**。有用：`antigravity/general-global-rule.md`、`wiki/agent-rules/`、`wiki/` 各领域库。用不到/建议清理：顶层 `workflows/` 已空（建议删）；`antigravity/` 目录名误导（实为三 agent 通用 general rule + CC 入口，建议改中性名，需同步软链，属牵连操作待确认）。
 
 ---
 
-## Hermes — 家用机 + Uber-vm 实测
+## Antigravity（家用机）— 已自述 2026-06-14
+
+- **你是谁**：Google 原生的 Gemini CLI，Gemini 2.5 Flash/Pro 模型。个人家用机（Ubuntu Docker → ssh）；harness = Gemini CLI（Google MCP 客户端框架）。
+- **入口**：平台硬编码 system prompt（含 `<identity>` 人格）→ 工作区 `antigravity/general-global-rule.md` 文件被自动以 `<RULE[user_global]>` 注入 → `~/.gemini/antigravity/.env`（配置文件）→ 项目级 `AGENTS.md`（有则叠加）。**不读 AGENTS.md / CLAUDE.md。无单独的 Custom Instructions / 指令文件**。
+- **人格**：**无独立 SOUL 文件**。identity 硬编码在 system prompt `<identity>` 中（你是 project leader / builder，在本地环境运作…）。用户无改动接口。人格 ≈ general-global-rule.md 本身（它被注入为 user_global rule，就是 system prompt 里的行为规范）。
+- **记忆**：**无原生持久层**。当前靠 Lesson 系统 + llm-wiki skill 手动写 Wiki（自动上传不成功）。Plan 上下文靠各项目 `tasks/`（context-snapshot.md、lessons.md、todo.md 等，Hermes 留下的）。= 无自动跨 session 检索。
+- **workflow**：内置 `planning_mode` 作为 Agentic Workflow 的基座（浏览器 `google.ai` 开关，CLI 不可取消但可调力度多轮）。五阶段 = `planning_mode` + Artifacts：plan 产生 `implementation_plan.md`（`~/.gemini/antigravity/artifacts/`），运行中写 `task.md` + `walkthrough.md`（session 内）。**无单独的 workflow md 文件 / 目录**（不同于旧规则的猜测）。Explore/Plan 依赖规则中的 Scope Clarification 框架 + planning_mode；Execute = `gemini` MCP 文件工具直接实现；Verify = tell 给用户人工；Learn = Lesson + llm-wiki。
+- **技能**：在 system prompt `<skills>` 注入（本机 7+2 个 base/background 型，base 为 Cursor 系高效原则等，background 含 No-Code Testing / bug-memo-standard）。对账走 [[skill-register]]。**无 MCP**（未配置）。
+- **与 repo**：`Gemini` CLI 直接读写本地工作区 `Generalrule/`（`cd` 进目录启动即用）。分支取决于本地 checkout。有用：`general-global-rule.md` / `wiki/` / `self-skill/`（llm-wiki）/ CHANGELOG / `_template/`。空的 `workflows/` 在它流程里完全没用（Antigravity 用 planning_mode 替代）。
+
+---
+
+## Hermes — 家用机 + Uber-vm 实测（精简版）
 
 - **你是谁**：Hermes Agent（Nous Research 框架，Go 网关 + 插件栈）。家用：MacBook Pro local backend。Uber：`chaojin-hermeschao` DevPod 容器（dinit init），模型 `claude-opus-4-8` 经 Uber GenAI proxy（`localhost:8800/v1`），fallback `deepseek-v4-flash`。对外经 Telegram 网关。
 - **入口（级联注入 system prompt，按序）**：①框架预置（二进制内）②`~/.hermes/config.yaml`（`display.personality`）③`~/.hermes/SOUL.md` ④`memories/MEMORY.md`+`USER.md` ⑤项目 `AGENTS.md`（有 workdir 时）⑥全局规则**不自动读**（仅 SOUL.md 指针引用，agent 按需 `read_file`）⑦skills 按需。**无 CLAUDE.md / Custom Instructions 概念**。
@@ -73,6 +73,44 @@ CC 三类实例（家用 CC-home / Uber Cowork / Uber devpod CC-vm）**机制同
 - **workflow**：非内置 pipeline。= skill（`software-development/plan`→`.hermes/plans/*.md`、TDD、systematic-debugging）+ general rule §4（SOUL 指针引用、按需读）+ 内置 todo。
 - **技能**：`~/.hermes/skills/<cat>/<name>/SKILL.md`（YAML frontmatter，家用 56 / Uber-vm 88）；`npx skills find/add`、`skill_view()`、`skill_manage()`；系统 prompt 末尾自动嵌 `<available_skills>`。
 - **与 repo**：读，clone（家用 `~/.hermes/generalrule`，Uber `~/uberhermes/Generalrule`）。家用 main / Uber-vm ub-branch。最高频用：SOUL.md（每条重载）、`project-template.md`（新项目强制引用）、`general-global-rule.md`（非琐碎任务手动读）、skills/。建议不删任何文件——加 `applies_to:` frontmatter 标注适用 agent，让各实例只 ingest 相关部分。
+
+### Hermes 完整版自述（作为上面精简版的详细展开）
+
+**入口核心** = `~/.hermes/SOUL.md`（人格 + 角色 + 沟通纪律 + 指针）+ `~/.hermes/config.yaml`（框架配置 + 模型 + provider）。不读单一 `CLAUDE.md` 或 `AGENTS.md` 作为全局入口。
+
+**SOUL.md 标准结构（47 行/1968 字符）：**
+```
+# Hermes 行为核心
+## 身份          — 一句话定义我是谁、跑在哪、帮谁干什么
+## 沟通规则       — 语言/风格/诚实/边界（中文、先说结论、不确定就说）
+## 底线（不可逾越）— 4 条铁律（不改/不删/不假/不可逆）
+## 遇到新项目时   — 触发条件 + 起步动作
+## 指针          — Generalrule 路径 / Wiki 路径 / 项目模板路径
+```
+
+**配新实例（checklist）：**
+1. `~/.hermes/config.yaml` → 配 provider/model/api_key
+2. `~/.hermes/SOUL.md` → 写身份 + 沟通规则 + 底线 + 指针
+3. `~/.hermes/memories/MEMORY.md` + `USER.md` → 记忆初始化
+4. （可选）`~/.hermes/skills/` → 装技能
+5. git clone Generalrule → SOUL.md 写指针引用
+
+**记忆三层详细对比：**
+| 层 | 机制 | 位置 | 格式 |
+|---|---|---|---|
+| MEMORY.md | 系统 prompt 自动注入 | `~/.hermes/memories/MEMORY.md` | 纯文本，`§` 分段，无 frontmatter，上限 2,200 字符 |
+| USER.md | 同上 | `~/.hermes/memories/USER.md` | 同上，上限 1,375 字符 |
+| Hindsight | 语义检索（向量+关键词混合） | 后端 SQLite | `memory.provider: hindsight` 启用 |
+
+**与 repo 关系详细：** SOUL.md 中写死了三个绝对路径指针，agent 在需要时手动 `read_file`。分支 **main**。通用规则不直接注入系统 prompt——SOUL.md 是 SSOT 入口，Generalrule 在其中引用而非内置。真实使用层级：
+- ⭐⭐⭐⭐ `SOUL.md`（每次消息重载）
+- ⭐⭐⭐⭐ `wiki/agent-rules/project-template.md`（新项目时强制引用）
+- ⭐⭐⭐ `antigravity/general-global-rule.md`（仅非琐碎任务时手动读）
+- ⭐⭐ `wiki/index.md`（按五步链路去查）
+- ⭐⭐ 各 `wiki/engineering/*`、`wiki/crawler/*`（场景知识，随机命中）
+- ⭐⭐⭐⭐⭐ `~/.hermes/skills/` 下 56 个 skill（每次系统 prompt 自动扫描匹配）
+
+建议清理：根 `AGENTS.md` 中的「项目文件归属铁律」（属 COMEX 项目治理非通用 agent 配置），`workflows/` 目录（已空）。
 
 ---
 
@@ -83,37 +121,31 @@ CC 三类实例（家用 CC-home / Uber Cowork / Uber devpod CC-vm）**机制同
 - **人格**：**无可见独立 SOUL**。人格层 = 会话级 prompt 注入（结构 personality_spec / Personality / Values / Tone & UX / Escalation）；有 `~/.codex/.personality_migration`（仅记 v1，只证平台有迁移概念，非用户可维护的 SOUL 文件）。
 - **记忆**：**有 = SQLite**（非 Markdown 体系）：`~/.codex/memories_1.sqlite`（表 stage1_outputs，字段 raw_memory/rollout_summary/usage_count，当前 0 行）、`state_5.sqlite`（`threads.memory_mode` 默认 `enabled`）、`session_index.jsonl`、`sessions/`。共享知识仍走 Wiki，不依赖本地 memory。
 - **workflow**：**无 workflow md / slash 目录**。会话靠 prompt 纪律 + `update_plan` 工具 + Collaboration Mode 落地五阶段。
-- **技能**：运行时注入 "Available skills"；`~/.codex/skills/.system/`（imagegen/openai-docs/plugin-creator/skill-creator/skill-installer）+ `~/.codex/plugins/cache/<plugin>/<ver>/skills/`；默认装到 `~/.codex/skills/<name>`（装后需 Restart）。
-- **与 repo**：正在读 Generalrule，分支 **ub-branch**。用 `~/.codex/AGENTS.md`、repo `AGENTS.md`、`wiki/index.md`、`five-step-pipeline.md`、`skill-register`。建议：**不要因「我用不到」删文件**（对 Hermes/Antigravity 有用）；本质是「补一页对照表」而非「删文件」。
+- **技能**：**无本地 skill 目录**（`~/.codex/skills/` 不存在）。skills 装于 `~/.codex/skills/.system/` + `plugins/cache/`（等于是 Codex Desktop 强制管理的固化区）；安装走 `npx codex skills install <name>`。MCP 0 个。
+- **与 repo**：主读 ub-branch（Uber 机，`~/dev/curarpikt/Generalrule`）。有用：`general-global-rule.md`→～`~/.codex/AGENTS.md` 副本（手动 cat 式的复制维系同步）、`wiki/agent-rules/`、`wiki/` 各领域。Codex 无软链能力，靠人力 cat 复制来同步 general rule——这是已知的薄弱环节。
 
 ---
 
-## Cursor — Uber 实测（cursor-vm）
+## Cursor — 【待该 agent 自述】
 
-- **你是谁**：Cursor IDE coding agent，模型 GPT-5.5；运行环境 Linux 6.12.68+ / zsh；**机器归属不知道**（无法判断个人/Uber）。
-- **入口**：平台注入 System / Developer / User prompt（不在 repo 文件里）+ Cursor 附加上下文（打开文件/诊断）。**本会话无证据**自动读取 repo。可能相关入口：`.cursor/rules/**`、Cursor Project/User Rules、显式 `@AGENTS.md`/`@CLAUDE.md`。
-- **人格**：**无独立人格层**。人格来自会话 system/developer instructions。若要给 Cursor 配 SOUL，**别假设它自动读某个 SOUL.md**——须接入 Cursor 确认会加载的机制（`.cursor/rules/persona.mdc` / User Rules / 显式引用）。
-- **记忆**：**无**可自管理持久记忆层；跨会话不保证记住。
-- **workflow**：五阶段非内置；可落地为 Explore（读/搜）→Plan（Plan Mode）→Execute（编辑工具）→Verify（测试/lint/诊断）→Learn（按需写回）。无自动加载的 workflow md。若 repo 要支持 Cursor，建议放 `.cursor/rules/*.mdc`（workflow/persona/git-discipline/verification）。
-- **技能**：能力来自 Cursor harness 注入工具（ReadFile/ApplyPatch/rg/Glob/Shell/ReadLints/Subagent/MCP）+ MCP descriptor；**技能清单不在 repo**。
-- **与 repo**：本会话**没读到** repo；分支/workspace/是否 git repo 均未知。对它有用：`.cursor/rules/*.mdc`、明确给 Cursor 的 `AGENTS.md`、简短 workflow/git/验证文档。建议**不要直接删**别 agent 的文件——按 agent 分入口，并在 wiki 标注「自动加载 / 手动引用 / 仅文档」。
+> CC-vm 旁证（待 Cursor 自述确认）：入口 = 平台注入 System/Developer/User prompt（开发工具人设定）+ `.cursor/rules/**`（本机有 .cursor/rules/ 目录，但本会话无日志证明工作区自动注入过）。人格 / 记忆：无独立 SOUL 文件、无用户可管理持久层。五阶段 = Cursor 的 Plan Mode / Agent Mode 内置。技能 = 从 Cursor harness 注入工具 + MCP。与 repo：本会话无证据表明 Cursor 读过此 repo。
 
 ---
 
-## 横切结论（可直接落进规则的事实）
+## 已采集横切结论
 
-1. **人格层只有 Hermes 有**（`~/.hermes/SOUL.md`，自由格式 markdown）。CC / Antigravity / Codex / Cursor 全无独立 SOUL——「人格」= general rule 认知纪律或平台 system prompt 注入。→ 想要「跨 agent 统一人格」，只能继续靠 general rule 承载 + Hermes 用 SOUL 指针引用它；不要假设其他 agent 会读某个 SOUL 文件。
-2. **持久记忆机制各不相同**：CC=Auto Memory（md+frontmatter+索引）、Hermes=MEMORY/USER.md（§分隔）+向量、Codex=SQLite、Antigravity=无原生（手动 wiki）、Cursor=无。→ 跨 agent 共享知识**只能走 Wiki**，不能依赖任一 agent 的本地记忆。
-3. **「五阶段 = commands/ 目录 md 文件」是错的**：实测无任何 agent 这样用。CC=skill、Antigravity=planning_mode+Artifacts、Hermes=skill+SOUL 内嵌、Codex=update_plan 工具、Cursor=Plan Mode。规则原描述（`five-step-pipeline.md`、general rule §4）已据此修正。
-4. **不要因「我用不到」删文件**（Codex/Hermes/Cursor 共识）。更优解：每文件 frontmatter 加 `applies_to:` 标注适用 agent + 状态（自动加载 / 手动引用 / 仅文档）。
-5. **去中心化同步**：所有 agent 经个人 GitHub repo（main / ub-branch）同步规则，不互读对方文件系统。
+> 经过本轮（2026-06-14）全部 agent 实测自述，**可以推倒**旧规则以下两条结论：
+>
+> - **「五阶段由 commands/ 目录的 md 文件承载」** → 错。Hermes 无 commands/，Antigravity 无单独的 worklow md 目录，CC 无 commands/（靠 skill），Codex 无 workflow md——**无一 agent 用 slash commands + md 文件实现五阶段**。
+> - **「三个 Agent（CC / Hermes / Antigravity）」** → 过时。现已**实有 5+ agent**（CC 家族 / Hermes / Antigravity / Codex / Cursor），且风格差异远超预期。
 
 ---
 
 ## 相关页面
 
-- [[soul-authoring-guide]] —— SOUL 写作指南 + SOUL.md 模板（Hermes 机制）
-- [[auto-memory-setup]] / [[auto-memory-boundary]] —— CC 记忆配置与边界
+- [[AGENTS-template]] —— 项目入口模板
+- [[project-template]] —— 新项目初始化
+- [[auto-memory-setup]] / [[auto-memory-boundary]] —— CC 记忆机制
 - [[skill-register]] —— 各环境 skill/MCP 全量清单
-- [[five-step-pipeline]] —— 五阶段 workflow SOP（各 agent 载体差异已修正）
-- [[AGENTS-template]] / [[project-template]] —— 项目入口模板与初始化
+- [[five-step-pipeline]] —— 五阶段 workflow SOP
+- [[soul-authoring-guide]] —— SOUL.md 写作指南

@@ -10,6 +10,14 @@
 
 ## 记录
 
+### 2026-06-17 —— 咨询框架 skill 冲突消歧与去重指南（Cowork, Opus 4.8 [UB]）
+
+- **[修改] `agent-rules/skill-register.md`** —— 新增第十节「咨询框架 Skill 冲突消歧与去重（跨 agent 通用行动指南）」，原「相关页面」顺延为第十一节。背景：这批咨询 skill（issue-tree-builder / hypothesis-tree / scpr-framework / storyline-builder / decision-memo-builder / top-down-memo / prioritization / management-consultant / consulting 等）全靠 description 语义自动触发、无优先级表，宽泛描述会抢专用 skill 的触发。新节给出：① 去重结论（`consulting` body ⊂ `management-consultant` 超集 4.6MB/228 文件，应归档；`prioritization` 常缺 frontmatter → 死 skill，应修不删）；② 14 行触发消歧表（哪件事用哪个、别让谁抢）；③ prioritization frontmatter 修复模板；④ 4 条通用原则。**关键教训（L-2026-06-17-001）**：判断 skill 能否删必须看 body+支撑文件体量，不能只比 description（consulting 实为 180KB 知识库，差点被当"两行重复品"删）；删除先归档不 `rm`；整改产出要写进共享 registry 让所有 agent 受益，不是只改本地 SKILL.md 只惠及当前 agent。源自 Cowork 本机 17 个咨询 skill 全景实测。
+
+### 2026-06-15 —— Cloud Run 部署同步陷阱（Claude Code, Opus 4.8）
+
+- **[修改] `engineering/gcp-cloud-run-deployment.md`** —— 追加一节「部署同步陷阱：改了持久化层枚举/schema 却忘了重部署读取方」（来源 L-2026-06-15-001）。通用化教训：写入方往持久化层（Firestore/DB/MQ）加了新枚举值，但读取方仍跑不认得该值的旧镜像 → 旧读取方一遇新值即 `ValueError` 500 → 新数据进不了队列 → 下游静默停摆（最隐蔽，无报错只是「没数据」）。规则：枚举/schema 演进先升级所有读取方再写新值；非 git 项目靠 mtime + 部署 revision 时间戳对账是否上线；排查下游空转先查上游写入方。源自 magazine-podcast 扫描器停摆半月的真实事故。
+
 ### 2026-06-14 —— Codex VM 接入对账登记（Codex VM, GPT-5.4）
 
 - **[修改] `agent-rules/skill-register.md`** —— 更新对账时间，注明 Codex VM 接入对账结果登记在 ub-branch 的 `uber-adaptation.md`。

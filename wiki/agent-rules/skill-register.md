@@ -166,7 +166,9 @@ MCP：context7（拉最新库文档，mcp_config.json + API key）。
 
 | skill | 用途 | 来源（原始） | 取用方式 |
 |---|---|---|---|
-| `self-skill/llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal）；已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门、无写死路径） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态，公网 `npx skills add`） | 拷 `self-skill/llm-wiki/` 到本机 skill 目录（如 `~/.agents/skills/`），复制 config.example.md→config.md 按本机填。所有 agent 写 wiki 优先调它 |
+|| `self-skill/llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal）；已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门、无写死路径） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态，公网 `npx skills add`） | 拷 `self-skill/llm-wiki/` 到本机 skill 目录（如 `~/.agents/skills/`），复制 config.example.md→config.md 按本机填。所有 agent 写 wiki 优先调它 |
+| `self-skill/webworms/` | 4 层降级回退的网页爬虫标准框架（requests+BS4 → Jina Reader → CamoFox → Crawl4AI），内置 robots.txt 合规、限速、重试。附站点爬虫备忘录 | 自有 Hermes skill 改造 | 拷 `self-skill/webworms/` 到本机 skill 目录。pip install requests beautifulsoup4 lxml camoufox crawl4ai |
+| `self-skill/agent-slides/` | 从 brief 生成专业 PPTX deck：7 个可组合子 skill（extract/build/edit/audit/critique/polish/full），基于 python-pptx 的确定性 agent-ready CLI。无遥测/外部网络写入 | 公网开源 `mpuig/agent-slides`（MIT） | 拷 `self-skill/agent-slides/` 到本机 skill 目录；只收 skill 定义，CLI 走 PyPI——需本机 `uv`（含 `uvx`）+ Python 3.12+，命令 `uvx --from agent-slides slides ...` 按需拉包 |
 
 ---
 
@@ -180,7 +182,58 @@ MCP：context7（拉最新库文档，mcp_config.json + API key）。
 
 ---
 
-## 十、相关页面
+## 十、咨询框架 Skill 冲突消歧与去重（跨 agent 通用行动指南）
+
+> **适用对象**：任何装了这批咨询框架 skill 的 agent（CC / Cowork / CC-vm / Hermes / Antigravity / Codex / Cursor）。
+> **背景**：这批 skill 全靠 `description` 语义自动触发，**无优先级表**；描述越宽泛越会"抢"专用 skill 的触发。下表是**该用哪个**的硬规则。任何 agent 开工时据此自检本机 description，发现冲突按 10.3/10.4 自行修。
+> **首次落地**：2026-06-17，家用机 + Cowork 实测体量对比后得出（[UB]）。
+
+### 10.1 去重结论（哪些被别的完全 cover）
+
+| Skill | 处置 | 理由 | 各 agent 行动 |
+|---|---|---|---|
+| `consulting` | **归档/移除** | body 与 `management-consultant` 重叠，后者为**严格超集**（4.6MB / 228 文件 / 115 文件参考库 vs 180KB / 13 文件，主题全覆盖：case/strategy/finance/operations/problem-solving/projects/design） | 本机若两者并存→保留 management-consultant，把 consulting 移到 `skills-archive/`（**先归档不 `rm`**，可逆）。本机若只有其一→不动 |
+| `prioritization` | **修复，勿删** | 该 skill 的 `SKILL.md` 可能缺 frontmatter（无 `name`/`description`）→ **永不自动触发**，是死 skill | 本机自查文件首行：若不是 `---` frontmatter，按 10.3 补全 |
+
+### 10.2 触发消歧规则（同类里到底选谁）
+
+| 你要做的事 | ✅ 用这个 | ❌ 别让它抢 |
+|---|---|---|
+| 拆解**问题空间**（MECE 分支、调查计划） | `issue-tree-builder` | management-consultant |
+| **先押一个答案**再去验证 | `hypothesis-tree` | issue-tree-builder |
+| 1 页**决策**备忘（给某人拍板） | `decision-memo-builder` | top-down-memo |
+| 通用"**答案优先**"写作（Minto 金字塔） | `top-down-memo` | scpr-framework |
+| 明确要 **SCPR** 结构 | `scpr-framework` | top-down-memo |
+| Deck **叙事骨架**（每行＝slide 标题） | `storyline-builder` | deck-pipeline |
+| **端到端**做完整 deck | `deck-pipeline` | storyline-builder |
+| 只要 **pptx 图表** | `mckinsey-charts` | — |
+| **审阅**成品 deck/doc | `mckinsey-critic` | — |
+| Feature/任务**优先级**排序 | `prioritization` | — |
+| 给 **AI 用例**打分排序 | `ai-use-case-scorer` | prioritization |
+| 把杂乱输入逼出"**so what**" | `synthesis` | — |
+| 广义商业问题/行业分析**兜底** | `management-consultant` | 仅当上面无专用项匹配时 |
+| 会议准备包 / 干系人地图 / 工作坊设计 | `meeting-prep-kit` / `stakeholder-map` / `workshop-designer` | 三者互不重叠 |
+
+### 10.3 prioritization 修复模板（任何 agent 本机自查）
+
+若本机 `prioritization/SKILL.md` 顶部不是 `---` frontmatter，补到最顶：
+```
+---
+name: prioritization
+description: Prioritize features/initiatives/tasks via RICE/ICE/MoSCoW/Value-vs-Effort/Kano scoring; outputs a ranked table. Use when you have candidates and must decide what to do first/next/cut. AI use cases → ai-use-case-scorer; alignment workshop → workshop-designer.
+---
+```
+
+### 10.4 通用原则（沉淀，跨场景迁移）
+
+- **判断 skill 能否删，必须看 body + 支撑文件体量，不能只比 description。** 描述像但 body 各异 → 误删会销毁知识库（consulting 即 180KB 知识库，差点被当"两行重复品"删掉）。
+- **删除先归档不 `rm`**：移到同机 `skills-archive/<name>-<日期>/` 即停止触发，可逆；确认彻底无用再清。
+- **给宽泛 skill 加分流句**：在其 `description` 末尾显式写"做 X 用 skill-Y"，把触发主动让给专用 skill（management-consultant 已示范）。
+- **整改产出写进本 registry，不是只改本地 SKILL.md**：本地编辑只惠及当前 agent；消歧规则进共享 registry 才能让所有读它的 agent 受益。
+
+---
+
+## 十一、相关页面
 
 - [[wiki-ingest-guide]] —— Wiki 读写规范（llm-wiki 的产出须符合）
 - [[five-step-pipeline]] —— 第 3 步"找 Skill"
