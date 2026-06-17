@@ -34,11 +34,17 @@ Generalrule/
 │   │       │   └── base_scraper_impl.md
 │   │       └── scripts/
 │   │           └── wechat_scraper.py
-│   └── agent-slides/                 # PPTX 生成 skill（改造自公网 mpuig/agent-slides，MIT）
-│           ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
-│           ├── README.md            # 来源/许可/依赖/差异说明
-│           ├── LICENSE              # 上游 MIT 许可（署名保留）
-│           └── skills/              # 7 个子 skill：extract/build/edit/audit/critique/polish/full（含 references）
+│   ├── agent-slides/                 # PPTX 生成 skill（改造自公网 mpuig/agent-slides，MIT）
+│   │       ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
+│   │       ├── README.md            # 来源/许可/依赖/差异说明
+│   │       ├── LICENSE              # 上游 MIT 许可（署名保留）
+│   │       └── skills/              # 7 个子 skill：extract/build/edit/audit/critique/polish/full（含 references）
+│   └── project-context-persistence/  # 多项目按 topic 每日上下文归档（自有 Hermes skill 改造，已去 Uber 措辞）
+│           ├── SKILL.md             # Memory-Bank 模式（cron 蒸馏对话进 docs/context-log.md）
+│           ├── references/
+│           │   └── memory-bank-cron-recipe.md
+│           └── scripts/
+│               └── collect_topic_conversation.py
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
 │   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
@@ -69,6 +75,13 @@ Generalrule/
 ---
 
 ## 变更记录
+
+### 2026-06-17 [ub-branch] Hermes (Claude Opus) —— project-context-persistence skill 纳入 self-skill 区
+**为什么**：general rule §5「上下文压缩铁律」引用了这个 skill 名，但 skill 本体一直只在本地 Hermes profile，从未进 repo → 指针悬空，其他 agent 拉 repo 找不到。补齐它，让规则引用落地。
+- `self-skill/project-context-persistence/`：新增。SKILL.md（Memory-Bank 模式：cron 蒸馏每日对话进 docs/context-log.md + 刷新 AGENTS.md）+ `references/memory-bank-cron-recipe.md`（端到端 recipe 含 cron prompt）+ `scripts/collect_topic_conversation.py`（从 state.db 拉时间窗对话、过滤子任务噪音）。
+- **去 Uber 化**：把 "Uber internal VM"、"macOS ~/Antigravity Projects" 等环境专属措辞改成通用语言（"Hermes deployment"、"用户约定的项目父目录"）。IP 扫描确认无内部表名/路径/凭据。脚本为纯通用 state.db schema。
+- 诚实保留硬限制说明：state.db 不持久化 telegram topic/thread_id，只能时间窗近似单 topic；多 topic 同时活跃需独立 profile。
+- `self-skill/README.md` §4 + `wiki/agent-rules/skill-register.md` §8：各加一行登记。
 
 ### 2026-06-16 [main] Cursor (Claude Opus) —— agent-slides PPTX 生成 skill 纳入 self-skill 区 + 新增 AUTHORING 操作手册
 **为什么**：agent-slides（公网开源 `mpuig/agent-slides`，MIT）是脱离公司/项目仍成立的通用「做 PPT」能力，符合 self-skill 准入。经冲突评审对照 general-global-rule.md + uber-adaptation.md 全部 PASS（无自动 push/commit、无遥测/外部网络写入、无 Uber IP、无写死路径、署名与 MIT 保留）。
