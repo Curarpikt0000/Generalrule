@@ -2,16 +2,16 @@
 title: Hermes 接 Uber 内部 GenAI API（Claude Opus 4 / GPT-5.5）+ DevPod 24/7 持久化
 domain: agent-rules
 type: concept
-keywords: [hermes, genai-api, cerberus, claude-opus-4, gpt-5.5, devpod, dinit, ssh-auth-sock, proxy, 24-7, persistence, frontier-model, port-drift, idle-disconnect, tunnel-watchdog, telegram-alert, auth-escalation, errno-99]
+keywords: [hermes, genai-api, cerberus, claude-opus-4, gpt-5.5, devpod, dinit, ssh-auth-sock, uber-ldap-uid, proxy, 24-7, persistence, frontier-model, port-drift, idle-disconnect, tunnel-watchdog, telegram-alert, auth-escalation, errno-99]
 tags: [hermes-integration, genai-api, uber-internal, cerberus, dinit, persistence, model-config, watchdog]
-source: Cowork 协作会话 2026-06-12（GenAI API 接入排障 + dinit 持久化实装）；2026-06-17 补隧道 watchdog + 端口漂移踩坑
+source: Cowork 协作会话 2026-06-12（GenAI API 接入排障 + dinit 持久化实装）；2026-06-17 补隧道 watchdog + 端口漂移；2026-06-18 补 UBER_LDAP_UID 坑
 sources:
   - ~/.hermes/scripts/genai_proxy.py（proxy v2 实装稿）
   - /etc/dinit.d/genai-proxy（dinit 服务定义）
-  - ~/.hermes/scripts/genai_tunnel_watchdog.sh（隧道 watchdog，2026-06-17）
+  - ~/.hermes/scripts/genai_tunnel_watchdog.sh（隧道 watchdog，2026-06-17/18）
 created: 2026-06-12
-updated: 2026-06-17
-last_updated: 2026-06-17
+updated: 2026-06-18
+last_updated: 2026-06-18
 machine: UB
 ---
 
@@ -245,6 +245,25 @@ bash ~/.hermes/scripts/start_genai.sh
 
 > 这类「idle 掉线 + 漂移」是高频复发故障，靠下面 §8 的隧道 watchdog（每分钟纯脚本）自动兜底，不用人盯。
 
+### 坑 6：cron/后台重启 cerberus 缺 `UBER_LDAP_UID`（2026-06-18 复发）
+
+**现象**：5436 持续 DOWN，watchdog 每分钟重启 cerberus 但**起不来**、进程留不住，cerberus.log 末尾：
+```
+Error: UBER_LDAP_UID not set
+```
+（注意：ussh cert 在 agent、sock 在、USSO token 在——**不是认证问题**，watchdog 会把它判成「非认证」。）
+
+**根因**：cerberus 启动除了 `SSH_AUTH_SOCK`（坑 1）还需要 `UBER_LDAP_UID`（值=ldap 用户名，如 `chao.jin`）。它在登录 shell 里有（`zsh -lic 'echo $UBER_LDAP_UID'`），但 **cron / setsid / nohup 等非登录环境不继承**——与坑 1 同类。手动 `start_genai.sh` 一直能跑，是因为那个交互 shell 里有这个变量；watchdog **第一次真正自动重启**时才暴露。
+
+**修复**：凡是后台/cron 拉起 cerberus 的地方，都要显式 export 这两个变量：
+```bash
+export SSH_AUTH_SOCK=/var/lib/devpod/ssh/<your-agent>.sock
+export UBER_LDAP_UID="$(zsh -lic 'echo -n $UBER_LDAP_UID' 2>/dev/null)"   # 或硬编码 ldap 名
+```
+已加进 `genai_tunnel_watchdog.sh`（见 §8）。
+
+> **通用教训**：后台/cron 拉起的服务，要**逐一核对它依赖的所有环境变量**，别只修第一个报错的（先 `SSH_AUTH_SOCK` 后 `UBER_LDAP_UID`，挤牙膏式踩了两次）。最稳的是启动脚本里集中显式 export 全部依赖，或 `source` 一份固定的 env 文件。
+
 ---
 
 ## 六、健康检查 / 验证
@@ -296,7 +315,7 @@ ussh --ussh-replace                       # 只在自动续期失败时才会要
 `~/.hermes/scripts/genai_tunnel_watchdog.sh`（系统 crontab `* * * * *`，每分钟跑）：
 
 - **健康**（`curl :5436/health` 通）→ 静默，清除告警限频 marker。
-- **掉线** → `export SSH_AUTH_SOCK=...`（坑 1）→ `pkill cerberus; sleep 2; nohup cerberus -s genai-api` → 等最多 30s 复检；恢复则顺带补起 proxy(:8800)。
+- **掉线** → `export SSH_AUTH_SOCK=...` + `export UBER_LDAP_UID=...`（坑 1 + 坑 6，cron 不继承，缺一不可）→ `pkill cerberus; sleep 2; nohup cerberus -s genai-api` → 等最多 30s 复检；恢复则顺带补起 proxy(:8800)。
 - **重启后仍挂 + 判定为认证问题** → **Telegram 直接提醒用户重新认证**（关键新增）。
 - **非认证原因** → Telegram 提醒手动检查。
 - 告警**限频 1 小时 1 次**（`/tmp` marker 文件），恢复后自动清零。

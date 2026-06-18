@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-18 —— GenAI cerberus 缺 UBER_LDAP_UID 坑（Claude Code, Opus 4.8 [UB]）
+
+- **[修改] `agent-rules/hermes-genai-api-integration.md`** —— §5 新增**坑 6**：cron/后台重启 cerberus 报 `Error: UBER_LDAP_UID not set`（5436 持续 DOWN、watchdog 每分钟空转、且被误判「非认证」）。根因：cerberus 启动除 `SSH_AUTH_SOCK`（坑 1）还需 `UBER_LDAP_UID`（=ldap 名），登录 shell 有但 cron/setsid/nohup 不继承，watchdog **首次真正自动重启**时才暴露。修复：`genai_tunnel_watchdog.sh` 在重启 cerberus 前同时 export 两个变量；§8「掉线」步骤同步标注。**通用教训**：后台/cron 拉起的服务要一次核对**全部**依赖环境变量，别只修第一个报错的（先 SSH_AUTH_SOCK 后 UBER_LDAP_UID，挤牙膏踩了两次）。
+
 ### 2026-06-17 —— GenAI 隧道 watchdog 认证升级边界 + 端口漂移踩坑（Claude Code, Opus 4.8 [UB]）
 
 - **[修改] `agent-rules/hermes-genai-api-integration.md`** —— §5 新增坑 5（cerberus idle 掉线 + 端口漂移 5436→5437 → `502 [Errno 99] Cannot assign requested address`，含 `/proc/net/tcp` 端口反查 + 杀干净重启修复）；文末新增 §8「GenAI 隧道 watchdog（系统 cron · 认证失败自动 Telegram 提醒）」，§7 运维表加一行。背景：6-17 LLM 又掉线复发，根因是 cerberus 周期性 idle 断链 + 端口漂移。删除了循环依赖的 Hermes 内部 `genai-proxy-watchdog`（`no_agent=false`，要调 LLM 才能查 LLM），改用系统 cron 纯脚本 watchdog（健康静默 / 自动重启 / 认证失败发 Telegram）。
