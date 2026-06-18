@@ -16,3 +16,4 @@
 * [[skill-check-before-coding]] - 动手编写代码前强制检索 Skill 机制
 * [[youtube-pipeline-genimages-template-issue]] - YouTube 音频转换管道与图片生成模版常见问题
 * [[container-reboot-service-persistence]] - 容器重启后服务恢复与开机持久化（临时 /etc 陷阱、幂等 boot 脚本、setsid、watchdog 循环依赖、自愈的认证升级边界、端口漂移、调用链排障）
+* [[polling-bidirectional-bot-and-source-timeout-isolation]] - 轮询式双向消息机器人（无事件回调时用读 API+游标）+ 多源管道单源硬超时隔离（ThreadPoolExecutor 硬超时陷阱、shutdown(wait=False)、僵线程拖住退出、os._exit）

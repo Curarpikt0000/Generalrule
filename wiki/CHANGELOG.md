@@ -10,6 +10,11 @@
 
 ## 记录
 
+### 2026-06-19 —— 轮询式双向 bot + 多源管道单源硬超时隔离（Hermes-VM, Opus 4.8 [UB]）
+
+- **[新增] `engineering/polling-bidirectional-bot-and-source-timeout-isolation.md`** —— 两个可通用的可靠性工程模式（已匿名化，不含任何公司/内部系统/站点名）。**模式一·轮询式双向 bot**：消息平台无事件回调（webhook 禁用 / socket 要重审批）时，用「定时轮询读 API + 游标去重 + thread 回复」模拟双向问答；关键决策——触发前缀过滤、**游标必须在「回复成功后」才推进**（不是读到就推进，否则崩溃即丢消息）、无新输入静默不刷屏、剥除发送 API 的签名尾巴污染、多人频道开放执行权前必须定能力边界并留痕。**模式二·多源管道单源硬超时隔离**：遍历 N 个外部源时，一个挂源会拖垮全量；修复用 `ThreadPoolExecutor(max_workers=1)` + `fut.result(timeout=)` 给单源套硬超时。**两个关键陷阱**：① `with ThreadPoolExecutor()` 的 `__exit__` 默认 `shutdown(wait=True)` 会 join 僵线程→硬超时失效，须手动 `shutdown(wait=False)`；② 工作线程非 daemon 会拖住进程正常退出，须在入口末尾 `os._exit(0)`（业务完成后）。**关键教训**：任何「遍历多个外部源」的管道必须给单源加硬超时隔离 + 容错跳过；端到端验证要真跑（确认挂源被跳过、进程退出码 0、bot 回复读回 thread 确认落地、游标推进后不重复回答）。源自一次多源追踪系统补双向问答 + 修「慢站连挂多日拖垮每日推送」的实战复盘。
+- 同步更新 `engineering/README.md` 页面列表。
+
 ### 2026-06-18 —— GenAI cerberus 缺 UBER_LDAP_UID 坑（Claude Code, Opus 4.8 [UB]）
 
 - **[修改] `agent-rules/hermes-genai-api-integration.md`** —— §5 新增**坑 6**：cron/后台重启 cerberus 报 `Error: UBER_LDAP_UID not set`（5436 持续 DOWN、watchdog 每分钟空转、且被误判「非认证」）。根因：cerberus 启动除 `SSH_AUTH_SOCK`（坑 1）还需 `UBER_LDAP_UID`（=ldap 名），登录 shell 有但 cron/setsid/nohup 不继承，watchdog **首次真正自动重启**时才暴露。修复：`genai_tunnel_watchdog.sh` 在重启 cerberus 前同时 export 两个变量；§8「掉线」步骤同步标注。**通用教训**：后台/cron 拉起的服务要一次核对**全部**依赖环境变量，别只修第一个报错的（先 SSH_AUTH_SOCK 后 UBER_LDAP_UID，挤牙膏踩了两次）。
