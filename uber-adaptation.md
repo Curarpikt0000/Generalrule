@@ -34,6 +34,26 @@
 - **Codex skills**：系统内置 `imagegen`、`openai-docs`、`plugin-creator`、`skill-creator`、`skill-installer`；本次接入新增 `~/.codex/skills/llm-wiki`（来自 `self-skill/llm-wiki`，本机 `config.md` 留空路径，由入口指针解析）。
 - **未注册 MCP**：本次未执行 `aifx mcp add omni-mcp --skip-validation`；若任务需要 MCP，再按 §7 不可逆动作纪律经用户确认后安装。
 
+### dsge repo Claude Code skills（2026-06-15 登记，用户已批准记录）
+
+> 来源：Uber 内部 repo `code.uber.internal/uber-non-production/dsge`（ussh clone）。
+> 个人维护的 Claude Code skill 集，跨 devpod（uber-one）与 DSW 机器共享：`~/dsge/skills/` 版本化 + symlink 到 `~/.claude/skills/` 全局生效。
+> 安装：`git clone <内部地址>:not-production/dsge` → `ln -sf ~/dsge/skills/<name> ~/.claude/skills/<name>`。
+> **IP 隔离**：下表只记 skill 的能力/触发/适用环境（脱离具体项目仍成立的通用部分）。各 skill 内含的具体内部表名 / 项目代号 / 内部服务 endpoint / 内部 URL **不在此展开**（需要时读 repo 内 SKILL.md 原文）。
+> 环境标记：`devpod`=开发容器；`dsw`=Data Science Workbench；`dsw+git`=DSW 且有 uber-code repo。
+
+| Skill | 环境 | 平台 | 触发 | 用途（通用能力，已脱敏） |
+|---|---|---|---|---|
+| **arh-flow** | devpod / dsw+git | github | `/arh-flow`、"stack PR"、"rebase stack"、"create diff" | 用 Arrowhead(`arh`) CLI 管理 GitHub 原生的 stacked PR 工作流（替代 Phabricator 的 arc flow/diff/cascade/land）。涵盖 daily-sync、建栈、发布、级联 rebase、按序合并、清理；附 arc→arh 命令映射与故障排查。GitHub PR=分支的心智模型迁移指南 |
+| **dev-workflow** | devpod | bazel / langfx | `/dev-workflow`、"run gazelle"、"run tests"、"lint" | 某 monorepo 子项目的本地校验循环：gazelle 更新 BUILD 文件 → ruff 格式化/lint → bazel 跑测试（可选 coverage 阈值 90% 新增行 / 80% 整体）。含 gazelle 误改 BUILD 的常见症状与 `# gazelle:ignore` 修复 |
+| **ai-tunnel-manager** | devpod | langfx | `/ai-tunnel-manager`、"restart tunnel"、".cerberus changed" | 管理本地 `ai tunnel`（内部服务代理隧道）生命周期：检测 `.cerberus` 配置变更决定是否需重启、kill 旧进程、指导用户在独立终端重启、验证存活。区分"代码改动靠热重载不必重启" vs "代理/认证配置改动必须重启" |
+| **api-endpoint-test** | devpod | langfx | "test endpoint"、"call agent" | 通过 LangFx Agent Protocol（localhost 端点）测试某 orchestrator 及各子 agent：构造 JSON 请求、batch/streaming 两种模式、curl 调用、jq 解析风险评分与各 agent 结果、thread 管理、健康检查。含连接拒绝/空响应/超时排查 |
+| **uniflow-pipeline** | devpod | michelangelo / uniflow | "deploy pipeline"、"run pipeline" | 在 Michelangelo 上部署与管理 Uniflow 批处理 pipeline：mactl apply/run、静态镜像 ubuild 重建、Cadence workflow URL 获取、镜像缓存(SKIPPED)vs 新建判断、Hive 输出表校验、运行记录归档。含部署/构建/revision 常见错误排查（具体项目表名见原文） |
+| **uniflow-monitor** | devpod | langfx / uniflow | "monitor pipeline"、"watch cadence" | Michelangelo/Uniflow pipeline 运行的后台监控脚本集：每 30s 自动探测并保存 Cadence workflow URL、记录状态变化、检测 SUCCEEDED/FAILED 完成、超时保护。生成可追踪的 log/url 文件，支持多并发监控 |
+| **action-plan-manager** | devpod / dsw / dsw+git | — | `/action-plan-manager`、"create plan"、"track progress" | 跨 Claude 会话的多步行动计划跟踪：在 `.claude/action_plans/`（本地、永不提交 git）创建/更新/完成/列出计划。标准模板（状态 emoji / 下一步 / 成功标准 / 排查）+ 命名规范 + 归档约定。纯本地会话上下文工具 |
+| **mcp-query-tools** | devpod / dsw / dsw+git | hive | `/mcp-query-tools`、"query hive"、"verify staging data" | 用 queryrunner-mcp（远程生产）与 query-mcp-server（本地，自然语言转 SQL）执行 Hive/Presto 查询。区分两者适用场景（生产大结果集异步 vs 快速探查）、配置自检、失败回退到 `ai query` CLI。含 MCP 安装/添加命令 |
+| **quickstart**（plugins/dsge，master 分支） | devpod / dsw | — | 首次环境搭建 | dsge 插件的快速上手 skill，引导新机器完成环境搭建（见 references/env-setup.md） |
+
 ## 双 GitHub 分流（各干各的，不混）
 - 个人仓库 Curarpikt0000/Generalrule：只放 general rule / workflow / wiki 总结
   - 通用认知纪律、通用 wiki → push main
