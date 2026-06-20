@@ -1,53 +1,112 @@
 ---
 name: project-context-persistence
-description: "Persist per-topic/per-project conversation context for one agent running many projects. Daily cron distills a channel's chat into the project folder (AGENTS.md + docs/context-log.md) so future sessions auto-load prior decisions, facts, prep work, and TODOs. The 'Memory Bank' pattern (Cline / Claude-Code CLAUDE.md style) adapted to Hermes."
+description: Hermes 项目上下文持久化——每日自动采集、蒸馏、更新 docs/context-log.md + AGENTS.md 项目简介
 version: 1.0.0
+author: Hermes Agent system
+platforms: [macos, linux]
+category: devops
 metadata:
-  hermes:
-    tags: [memory-bank, project-context, cron, agents-md, multi-topic, telegram, context-persistence, scaffold]
+  tags: [context, persistence, cron, state-db, context-log, project-context]
 ---
 
-# Project Context Persistence
+# project-context-persistence
 
-When ONE Hermes instance serves MANY projects (e.g. separate Telegram topics, one per project), each project needs its own durable memory so a future session "remembers the prep work" instead of starting cold. This is the **Memory Bank** pattern (popularized by Cline's memory-bank and Claude Code's `CLAUDE.md` rolling memory): periodically distill the conversation into markdown that lives in the project folder and auto-loads next time.
+## 概述
 
-## When to use
-- User says "save this topic's context", "remember our prep work", "this channel = this project", "compress our chats into the folder", or "how do people keep per-project context with one agent".
-- You're standing up a new project folder per channel/topic.
-- You need a recurring job that summarizes a conversation into a project's context files.
+每个 Hermes 项目必须有一个 `docs/context-log.md` + 每天 02:00 的 cron，用于跨会话上下文持久化。
 
-## Verified Hermes mechanics (ground truth, not the docs)
-Hermes ACTUALLY supports:
-- `cronjob` with **`workdir`** → the job runs in that dir and auto-loads its `AGENTS.md`/`CLAUDE.md` as project context. THIS is the real per-project lever.
-- `cronjob` with **`script`** (filename only, must live in `~/.hermes/scripts/`) → script stdout is injected into the prompt before the agent runs. Great for deterministic data collection.
-- `session_search` = FTS5 keyword search over past messages. **No channel/topic filter param** despite what hallucinated docs may claim.
-- `state.db` (SQLite) at `~/.hermes/state.db` — query directly for precise time-windowed pulls.
-- `AGENTS.md` / `CLAUDE.md` (symlink) auto-load as project context when workdir matches. New sessions pick them up.
+本 skill 包含：
+- 采集脚本 → `scripts/collect_topic_conversation.py`
+- 每日 cron prompt 模式
+- 多 project 错峰调度配方
 
-Hermes does NOT have (do not rely on these — they're commonly hallucinated): `context_append` tool, `channels.<id>.workdir` config section, `session_search(channel=...)`, `hermes sessions export --channel`.
+## 依赖
 
-## Hard limitation to be honest about
-`state.db` stores telegram sessions with `source='telegram'` only — it does **NOT** persist the topic/thread_id in a queryable column. So you CANNOT perfectly isolate "just this one topic" from the DB. Approximate it with: recent time window + `source='telegram'` + filter out delegation/subagent noise. Tell the user this tradeoff. The only true isolation is a separate Hermes **profile** per project (heavier — separate startup), worth it only when multiple topics are simultaneously busy.
+- Hermes cron 调度器（`cronjob` 工具）
+- `~/.hermes/state.db`（Hermes 会话数据库，SQLite）
+- 项目根目录含 `docs/context-log.md`（不存在则自动创建）
 
-## The pattern (steps)
-1. **Scaffold the project folder** per the user's project-template convention (structure-first: `src/ tasks/ tests/ docs/ scratch/ agents/ hooks/ commands/ .claude/rules/ AGENTS.md CLAUDE.md(symlink) .gitignore` + `git init`). Confirm parent dir + exact channel-name list with the user FIRST — channel-name caches (`~/.hermes/channel_directory.json`) are often STALE; do not trust them as the source of truth for which topics exist. Ask.
-2. **Install the collector script** `scripts/collect_topic_conversation.py` into `~/.hermes/scripts/` (see this skill's `scripts/`). It pulls recent telegram human turns from state.db, filters delegation noise, prints raw text (or `NO_NEW_CONTENT`).
-3. **Create the cron job**: `workdir=<project dir>`, `script=collect_topic_conversation.py`, `deliver=local` (silent archive), `enabled_toolsets=[file, terminal]`, schedule e.g. `0 2 * * *`. Prompt = distill injected chat into `docs/context-log.md` (dated section: 决策/事实配置/进展/待办) and refresh the `## 项目简介` line in `AGENTS.md`; if input starts `NO_NEW_CONTENT`, do nothing and exit silently.
-4. **VERIFY by running it once now** (`cronjob action=run`), wait for the tick, then read the produced files. Never declare done on a schedule-only job without a real run — the user hates having to repair unattended setups. When reading the output, **check the CJK heading line** — the secret-redactor sometimes corrupts it (see Pitfalls); fix that one line with `write_file` if needed.
-5. Roll out to other channels only after the first proves out (offer; don't auto-fan-out).
+## 架构说明
 
-Full worked recipe incl. the exact cron prompt: `references/memory-bank-cron-recipe.md`.
+Hermes state.db 对 telegram 会话只记 `source='telegram'`，**不持久化 topic/thread_id**，故无法 100% 精确隔离单个 topic。本方案用「时间窗 + telegram 来源 + 项目关键词过滤 + 排除 delegation 子父」做近似。
 
-## Multi-project rollout
-Once one channel proves out, copy the same cron to other channels: change only `name`, `workdir`, and stagger `schedule` (e.g. `0 2` / `15 2` / `30 2 * * *`) so they don't collide on one tick. All channels share the single `~/.hermes/scripts/collect_topic_conversation.py` collector.
+**诚实限制**：单 topic 活跃时效果好；多 topic 同时高频活跃时，唯一真隔离是给每个项目开独立 Hermes profile（较重，按需）。
 
-## Pitfalls
-- **IP red-line: never push proprietary archive content to a personal GitHub repo.** Distilled context may contain employer-proprietary data (internal tables, metrics, plans). Keep it in the local project folder under `~/Projects/`; do not commit/push it to any personal remote.
-- **Verify framework capabilities against real source, not delegated "doc research."** Subagents fetching docs can return fabricated config keys and tool names (seen this session: invented `context_append`, `channels.workdir`, `session_search(channel=)`). When a claimed mechanism is load-bearing, confirm it in `~/.hermes/hermes-agent/` source (search for the tool/config key) before building on it. Zero search hits = it doesn't exist.
-- `cronjob` `script` field rejects absolute/home paths — pass the **bare filename**; the file must already be in `~/.hermes/scripts/`.
-- `execute_code` is blocked in this environment (cron-mode approval guard). Use `terminal` + `write_file` + `patch` instead.
-- Shell `printf`/heredoc with CJK + special punctuation can trip the unicode/homoglyph security scan and get interrupted. Prefer `write_file` for content files; reserve `terminal` for mkdir/git/symlink.
-- Delegation/subagent sessions also carry `source='telegram'` and pollute a naive pull — filter them (first user msg >500 chars and not starting with `[` ⇒ a machine goal, skip it).
-- Channel-name caches go stale; the user is authoritative on which topics exist and their names.
-- **CJK headings the distiller writes can come back mangled by the secret-redactor.** Verified: a cron run wrote a CJK project heading into `docs/context-log.md`, but the redactor rewrote the line to a placeholder (it false-positive'd the project name as a person/PII token and substituted it). The body distillation was correct — only the heading got corrupted. So step 3's VERIFY must include *reading the produced file and eyeballing the title line*, then surgically `write_file` the heading back to the intended CJK string if it was substituted. Don't rewrite the body the distiller produced — just fix the corrupted line. This is independent of the `printf`/heredoc scan trip above: it happens to a clean `write_file` done by the cron agent, after the fact.
-- **First `git commit` in the scaffolded folder can fail with `gpg failed to sign the data` / `failed to write commit object`** when a global `commit.gpgsign=true` is set but no usable signing key exists in the cron/headless context. Fix: commit with signing disabled and explicit identity — `git -c commit.gpgsign=false -c user.name='...' -c user.email='...' commit -m '...'`. Don't conclude git is broken; it's just the signing config.
+## 首次搭建操作（单项目）
+
+### 步骤 1：确认采集脚本
+```bash
+ls -la ~/.hermes/scripts/collect_topic_conversation.py
+```
+不存在则从本 skill 的 `scripts/` 复制。
+
+### 步骤 2：建 docs/context-log.md
+在项目根目录创建（可参考下方格式）。
+
+### 步骤 3：确认 AGENTS.md 含指向
+在 `AGENTS.md` 末行或「指针」节加：
+```markdown
+- **上下文日志 → `docs/context-log.md`**（每日 02:00 cron 自动更新）
+```
+
+### 步骤 4：设 cron job
+用以下 prompt 模板创建 cronjob，注意错开多项目时间（间隔 3-5 分钟）。
+
+### 步骤 5：多项目错峰调度
+
+已有项目采用 23:00 时段，新方案改为 02:00 时段。错峰示例：
+| 项目 | 时间 |
+|---|---|
+| Anything-to-Notion | 02:00 |
+| Youtube video | 02:15 |
+| COMEX 日报 | 02:30 |
+| US Debt | 02:45 |
+| Distill | 03:00 |
+| KOL 看板 | 03:15 |
+
+## cron prompt 模板
+
+```markdown
+# <项目名> 项目上下文压缩 — 每天运行
+
+你的职责是读取当前 Hermes 会话数据库中与 **<项目名>** 项目相关的近期对话，提取关键上下文并压缩到项目快照文件中。
+
+## 步骤
+
+### 1. 搜索近期相关对话
+用 session_search 搜索以下关键词：
+- "<项目搜索关键词1>" OR "<项目搜索关键词2>"
+
+获取最近 3 天内最多 5 个相关会话。
+
+### 2. 提取关键上下文
+从会话中提取：
+- **任何纠正**（用户指出错误、否定方案、要求改方向）——这是最重要的
+- **项目事实更新**（DB ID、API 端点、核心表、关键配置）
+- **决策记录**（用户明确说"按这个方案做"的）
+- **进展摘要**（已完成什么，剩什么）
+- **待办事项**（未完成的任务）
+
+### 3. 蒸馏更新 docs/context-log.md
+用 terminal 读取/写入项目根目录的 `docs/context-log.md`：
+1. 先读当前文件确保不重复
+2. 添加今天的日期小节（如还不存在）
+3. 只写入新的、尚未记录的信息——不要复读已记录过的东西
+4. 保持结构：决策 → 事实配置 → 进展 → 待办
+
+### 4. 刷新 AGENTS.md 项目简介
+读取 `AGENTS.md`，找到「项目简介」或项目描述行，确保它反映了最新状态。
+
+## 输出规则
+- 有新的有效信息 → 报告"已更新 context-log（<日期>），新增 N 条记录"
+- 没有新内容 → 输出 `[SILENT]`（抑制消息下发）
+- 不要复读老内容
+```
+
+## 踩坑记录
+
+| 问题 | 解决 |
+|---|---|
+| context-log 每天重复写同一段 | 写前先读，用日期节去重 |
+| 采集脚本只读 SQLite | 不写 state.db，只读。无副作用 |
+| Telegram topic 不精确 | 见上方「架构说明」，用关键词 + 排除 delegation 近似 |

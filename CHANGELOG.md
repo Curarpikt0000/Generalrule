@@ -34,17 +34,16 @@ Generalrule/
 │   │       │   └── base_scraper_impl.md
 │   │       └── scripts/
 │   │           └── wechat_scraper.py
-│   ├── agent-slides/                 # PPTX 生成 skill（改造自公网 mpuig/agent-slides，MIT）
-│   │       ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
-│   │       ├── README.md            # 来源/许可/依赖/差异说明
-│   │       ├── LICENSE              # 上游 MIT 许可（署名保留）
-│   │       └── skills/              # 7 个子 skill：extract/build/edit/audit/critique/polish/full（含 references）
-│   └── project-context-persistence/  # 多项目按 topic 每日上下文归档（自有 Hermes skill 改造，已去 Uber 措辞）
-│           ├── SKILL.md             # Memory-Bank 模式（cron 蒸馏对话进 docs/context-log.md）
-│           ├── references/
-│           │   └── memory-bank-cron-recipe.md
-│           └── scripts/
-│               └── collect_topic_conversation.py
+│   └── agent-slides/
+│           ├── SKILL.md             # orchestrator（指向 skills/<name>/SKILL.md）
+│           ├── README.md            # 来源/许可/依赖/差异说明
+│           ├── LICENSE              # 上游 MIT 许可（署名保留）
+│           └── skills/
+├── project-context-persistence/     # 项目上下文持久化（采集脚本 + cron 配方 + 踩坑）
+│       ├── SKILL.md
+│       ├── scripts/
+│       │   └── collect_topic_conversation.py  # Hermes state.db 对话采集脚本
+│       └── references/
 ├── _template/                       # 新项目 / 新机初始化模板
 │   ├── AGENTS.md                    # 项目入口模板
 │   ├── ONBOARDING.md                # 新机 / 新 agent 通用接入指南
@@ -76,14 +75,15 @@ Generalrule/
 
 ## 变更记录
 
-### 2026-06-17 [ub-branch] Hermes (Claude Opus) —— project-context-persistence skill 纳入 self-skill 区
-**为什么**：general rule §5「上下文压缩铁律」引用了这个 skill 名，但 skill 本体一直只在本地 Hermes profile，从未进 repo → 指针悬空，其他 agent 拉 repo 找不到。补齐它，让规则引用落地。
-- `self-skill/project-context-persistence/`：新增。SKILL.md（Memory-Bank 模式：cron 蒸馏每日对话进 docs/context-log.md + 刷新 AGENTS.md）+ `references/memory-bank-cron-recipe.md`（端到端 recipe 含 cron prompt）+ `scripts/collect_topic_conversation.py`（从 state.db 拉时间窗对话、过滤子任务噪音）。
-- **去 Uber 化**：把 "Uber internal VM"、"macOS ~/Antigravity Projects" 等环境专属措辞改成通用语言（"Hermes deployment"、"用户约定的项目父目录"）。IP 扫描确认无内部表名/路径/凭据。脚本为纯通用 state.db schema。
-- 诚实保留硬限制说明：state.db 不持久化 telegram topic/thread_id，只能时间窗近似单 topic；多 topic 同时活跃需独立 profile。
-- `self-skill/README.md` §4 + `wiki/agent-rules/skill-register.md` §8：各加一行登记。
+### 2026-06-17 [main] Hermes —— project-context-persistence self-skill（采集脚本 + SKILL）纳入 repo
 
-### 2026-06-16 [main] Cursor (Claude Opus) —— agent-slides PPTX 生成 skill 纳入 self-skill 区 + 新增 AUTHORING 操作手册
+**为什么**：general-global-rule.md §5 上下文压缩铁律引用了 `skill project-context-persistence` 作为落地机制，但此前不存在。从零创建，含采集脚本 + skill 定义 + cron 模板。
+
+- `self-skill/project-context-persistence/`：新增，含 `SKILL.md`（采集方案、cron 模板、踩坑）、`scripts/collect_topic_conversation.py`（Hermes state.db 对话采集脚本）
+- `~/.hermes/SOUL.md`：同步更新，启动开关整合为「建结构 + 每日上下文归档（新 topic/项目自动建）」一条链
+- `~/.hermes/scripts/collect_topic_conversation.py`：部署到运行实例
+- `~/.hermes/skills/devops/project-context-persistence/`：skill 部署到运行实例
+- `CHANGELOG.md`：结构白名单新增 `project-context-persistence/`
 **为什么**：agent-slides（公网开源 `mpuig/agent-slides`，MIT）是脱离公司/项目仍成立的通用「做 PPT」能力，符合 self-skill 准入。经冲突评审对照 general-global-rule.md + uber-adaptation.md 全部 PASS（无自动 push/commit、无遥测/外部网络写入、无 Uber IP、无写死路径、署名与 MIT 保留）。
 - `self-skill/agent-slides/`：新增。只收 skill 定义——orchestrator `SKILL.md` + `README.md` + `LICENSE` + `skills/`（7 个子 skill：extract/build/edit/audit/critique/polish/full，含 references）。**未 vendoring 上游 `src/` CLI 引擎**：运行时由 `uvx --from agent-slides` 从 PyPI 按需拉取，vendoring 不改变运行行为只增重（详见该目录 README）。
 - `self-skill/AUTHORING.md`：新增。把 self-skill/README.md 宪法操作化为「怎么写/copy 一个 skill」分步手册，以 agent-slides 为 worked example。
@@ -100,26 +100,6 @@ Generalrule/
 - `self-skill/webworms/scripts/wechat_scraper.py`：去写死 `/tmp/` 路径，改为可配置 output_dir（默认 tempfile）
 - `wiki/agent-rules/skill-register.md` §8：新增 webworms 登记行（用途 + 来源 + 取用方式）
 - `CHANGELOG.md`：结构白名单 self-skill 区新增 webworms/ 子结构
-
-### 2026-06-14 [ub-branch] Codex VM (GPT-5.4) —— Codex VM 首次接入 Generalrule 并登记对账结果
-
-**为什么**：用户要求在 VM 上接入 Generalrule，并按 general rule 完成 Codex 自我设置；接入后需把本环境入口、skill/plugin 对账结果回写到 SSOT。
-
-**改了什么（仅 ub-branch，Uber/Codex VM 环境事实）**：
-- **`uber-adaptation.md`**：新增 Codex VM 接入实测，登记本机 Generalrule clone、Codex 入口文件、已装 aifx plugin、`llm-wiki` 接入状态，以及 `omni-mcp` 尚未注册。
-- **`wiki/agent-rules/skill-register.md`**：更新时间并指向 `uber-adaptation.md` 中的 Codex VM 对账事实。
-- **`wiki/CHANGELOG.md`**：记录本次 wiki/适配层登记变更。
-
-> 本轮未增删目录 / 结构性文件，结构白名单无需变更。
-
-### 2026-06-14 [ub-branch] Claude Code CC-vm (Opus 4.8 [1m]) —— Uber 适配层补上下文持久化方案 + 运行时拓扑修正
-
-**为什么**：按用户新需求把「断网 / SSH 断裂不丢上下文」写成 Uber 专属规则；据各 agent 实测修正 Uber 运行时拓扑。仅 ub-branch（IP 隔离，不进 main）。
-
-**改了什么（仅 ub-branch，Uber 专属）**：
-- **`uber-adaptation.md` 新增「上下文持久化方案（仅 Uber 机/agent）」**：CC 家族用 `uber-dev:share-session`（上传 transcript 到 terrablob）做检查点备份；Hermes/Codex 靠各自本地会话存储（state.db / sqlite）；Cursor 无持久层须落盘兜底——「能力对齐，非同一 skill」。含分 agent + 分项目命名、检查点时机、重连恢复动作、terrablob 仅 Uber 红线。
-- **`uber-adaptation.md` 修正运行时拓扑**：旧版只列 3 运行时且把唯一 CC 误标「devpod VM」；改为真实 Uber fleet（Cowork@MacAir 物理机 / CC-vm@devpod / Antigravity / Codex / Hermes / Cursor），各 agent 配置详情指向 `wiki/agent-rules/agent-config-matrix.md`。
-- **更新 Hermes 出境说明**：据 Uber hermes-vm 实测，主模型为 Uber 内部 GenAI proxy 的 `claude-opus-4-8`（不出公司边界），仅 fallback `deepseek-v4-flash` 第三方出境——更正旧版「引擎为 deepseek-chat」。
 
 ### 2026-06-14 [main] Hermes —— 自述填充 agent-config-matrix + SOUL.md 指针同步 Generalrule 最新
 

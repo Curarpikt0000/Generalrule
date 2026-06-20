@@ -12,7 +12,7 @@
 | LLM 调用 | [[llm/\|llm]] | 模型调度、fallback、配额、提示词 |
 | 前端 | [[frontend/\|frontend]] | 渲染管道、剪贴板、DOM、表单、缓存 |
 | 工程实践 | [[engineering/\|engineering]] | Bug 修复、架构决策、代码规范、部署、权限 |
-| 爬虫 | [[crawler/\|crawler]] | 反爬、数据清洗、平台适配、分页 |
+|| 爬虫 | [[crawler/\\|crawler]] | 反爬、数据清洗、平台适配、分页、WAF 绕过 |
 | 图像生成 | [[image-gen/\|image-gen]] | Imagen3、提示词、风格约束 |
 | 设计模式 | [[design-patterns/\|design-patterns]] | 级联降级、对抗性系统、自适应架构 |
 | 金融 | [[finance/\|finance]] | 市场结构、指标解读、风险信号（下设 precious-metals 等子领域） |
@@ -61,6 +61,7 @@
 | YouTube 客户端伪装绕过 | [[crawler/yt-dlp-client-spoofing]] | youtube, yt-dlp, tv_embedded, bypass |
 | 采集保持原文语言 | [[crawler/preserve-original-language]] | transcript, language, data-integrity |
 | 周报分页与数据遗漏防范 | [[crawler/weekly-report-pagination]] | pagination, weekly-report, backfill |
+| SHFE WAF 绕过 — Playwright stealth 方案 | [[crawler/shfe-waf-bypass]] | shfe, waf, playwright, stealth, js-challenge |
 
 ### engineering（工程实践）
 
@@ -78,6 +79,8 @@
 | 编码前先查 skill | [[engineering/skill-check-before-coding]] | skill, 五步链路 |
 | 容器重启服务恢复与开机持久化 | [[engineering/container-reboot-service-persistence]] | 容器, 重启, 临时/etc, 幂等 boot, setsid, watchdog |
 | 轮询式双向 bot + 单源硬超时隔离 | [[engineering/polling-bidirectional-bot-and-source-timeout-isolation]] | 轮询, 双向 bot, 游标, ThreadPoolExecutor 硬超时, shutdown(wait=False), os._exit, 多源管道 |
+| Notion API Token — ntn_ 格式与 shell 截断陷阱 | [[engineering/notion-api-token-ntn-trap]] | notion, api-token, shell, 截断 |
+| Cron Job — GUI 方案不可靠，优先 no_agent 纯脚本 | [[engineering/cron-no-gui-preference]] | cron, computer_use, no_agent, playwright |
 
 ### llm（LLM 调用）
 
