@@ -39,6 +39,16 @@ Generalrule/
 │           ├── README.md            # 来源/许可/依赖/差异说明
 │           ├── LICENSE              # 上游 MIT 许可（署名保留）
 │           └── skills/
+├── persona-distillation/            # 人格/视角蒸馏术（改造自女娲 alchaincyf/nuwa-skill）
+│       ├── SKILL.md                 # 三步流程：调研swarm → 框架提炼 → 生成skill+自检
+│       ├── references/
+│       │   ├── extraction-framework.md   # 六层提取框架 + 心智模型三重验证 + 质量清单
+│       │   └── skill-template.md         # 人物 skill SKILL.md 模板
+│       └── scripts/                 # 4 个纯 stdlib 工具脚本
+│           ├── download_subtitles.sh     # YouTube 字幕下载
+│           ├── srt_to_transcript.py      # SRT → 纯文本清洗
+│           ├── merge_research.py         # 调研结果合并统计
+│           └── quality_check.py          # 6 项通过标准自检
 ├── project-context-persistence/     # 项目上下文持久化（采集脚本 + cron 配方 + 踩坑）
 │       ├── SKILL.md
 │       ├── scripts/
@@ -74,6 +84,20 @@ Generalrule/
 ---
 
 ## 变更记录
+
+### 2026-06-21 [main] Hermes —— persona-distillation self-skill（女娲方法论改造）纳入 repo
+
+**为什么**：人格/视角蒸馏能力（把真人或领域视角蒸馏成可运行 SKILL.md）此前只在 wiki `finance-hero-distillation.md` 有实战经验记载，方法论本体（女娲 `alchaincyf/nuwa-skill`）从未沉淀为常驻通用 skill，每次用都临时 clone。应 @Chao Jin 要求落地为通用 self-skill，供所有 Hermes/agent 取用。
+
+**准入评审（对照 self-skill/README.md 宪法 + IP 红线）全部 PASS**：脱离公司/项目仍成立的通用能力（造人格）✓；无 API key/token ✓；红线扫描无 Uber 专有内容（uber/aifx/usearch/presto/cerberus/账号名 零命中，仅"内部备忘录""目录内部"等普通中文词）✓；写死路径零命中（用 `<skills_dir>` 占位）✓；上游署名与 MIT 保留 ✓。
+
+**相对上游女娲的改造**：① 路径从 Claude 专属 `.claude/skills/` 改为通用 `<skills_dir>` 占位；② agent swarm 从抽象描述落到本体系 `delegate_task`（指向 parallel-subagent-orchestration）；③ 新增"主题人格"（不模拟真人）为一等路径（上游偏真人）；④ 检索工具写成通用 web_search/browser/webworms，不绑特定平台或公司内部工具；⑤ 接 Hermes profile + SOUL 落地章节。上游精华（心智模型三重验证、表达 DNA、矛盾保留、诚实边界、Agentic Protocol、质量自检脚本）全部保留。
+
+**改了什么**：
+- `self-skill/persona-distillation/`：新增。含 `SKILL.md` + `references/`（extraction-framework.md 六层提取框架、skill-template.md 人格模板）+ `scripts/`（download_subtitles.sh 字幕下载、srt_to_transcript.py SRT清洗、merge_research.py 调研合并、quality_check.py 质量自检，均纯 stdlib）
+- `wiki/agent-rules/skill-register.md` §8：新增 persona-distillation 登记行
+- `self-skill/README.md` §四：新增 persona-distillation 行
+- `CHANGELOG.md`：结构白名单 self-skill 区新增 persona-distillation/ 子结构
 
 ### 2026-06-17 [main] Hermes —— project-context-persistence self-skill（采集脚本 + SKILL）纳入 repo
 

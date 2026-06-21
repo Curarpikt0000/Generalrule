@@ -50,6 +50,7 @@
 | `llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal），已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态） | 已去 Quartz/双语/写死路径。各 agent 写 wiki 时优先调它，统一 format |
 | `webworms/` | 4 层降级回退的网页爬虫标准框架（requests+BS4 → Jina Reader → CamoFox → Crawl4AI），内置 robots.txt 合规、限速、重试 | 自有 Hermes skill 改造 | 已去写死路径。`pip install requests beautifulsoup4 lxml camoufox crawl4ai` |
 | `agent-slides/` | 从 brief 生成专业 PPTX deck：7 个可组合子 skill（extract/build/edit/audit/critique/polish/full），基于 python-pptx 的确定性 CLI | 公网开源 `mpuig/agent-slides`（MIT） | 只收 skill 定义，CLI 走 PyPI（`uvx --from agent-slides`）；需本机 `uv` + Python 3.12+。无遥测/外部写入 |
+| `persona-distillation/` | 把一个真人 / 一个领域视角蒸馏成可运行的「人格/视角」SKILL.md：并行 agent swarm 调研 → 思维框架提炼（心智模型三重验证 + 表达 DNA + 矛盾保留 + 诚实边界）→ 生成 skill + 质量自检。两条路径：人物 skill（模拟真人）/ 主题人格（不模拟真人，提炼角色原型/领域方法论）。含 Hermes profile + SOUL 落地指引 | 改造自公网女娲方法论 `alchaincyf/nuwa-skill`（创建者花叔，MIT） | 已去写死路径（`<skills_dir>` 占位）、去 Claude 专属目录、去公司专属工具引用。含 4 个脚本（字幕下载/SRT清洗/调研合并/质量自检，纯 stdlib）；检索写成通用 web_search/browser 不绑平台 |
 
 ---
 
