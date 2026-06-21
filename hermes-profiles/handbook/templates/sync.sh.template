@@ -1,0 +1,61 @@
+#!/bin/bash
+# ═══════════════════════════════════════════════════════════════
+# sync.sh — 把蓝图同步到 Hermes profile，并重启网关让改动生效
+# ═══════════════════════════════════════════════════════════════
+# 填空：
+#   [PROFILE_NAME]    — Hermes profile 名（如 finance / general）
+#   [PROJECT_NAME]    — 项目名（如 finance-hero / general-hero）
+#
+# 用法：
+#   cd ~/hermesagent/Distill/蒸馏Hermes/[PROJECT_NAME] && ./sync.sh
+#
+# 纪律：永远改蓝图 → 跑这个脚本，不要直接改 ~/.hermes/profiles/[PROFILE_NAME]/
+# 上游：General Global Rule §2.5（显式暴露冲突，拒绝折中调和）
+
+set -euo pipefail
+
+BLUEPRINT="$(cd "$(dirname "$0")" && pwd)"
+TARGET="$HOME/.hermes/profiles/[PROFILE_NAME]"
+
+if [ ! -d "$TARGET" ]; then
+  echo "❌ profile 目录不存在：$TARGET"
+  echo "   先跑：hermes profile create [PROFILE_NAME]"
+  exit 1
+fi
+
+echo "==> 蓝图：$BLUEPRINT"
+echo "==> 目标：$TARGET"
+echo ""
+
+# 同步三块：SOUL / skills / references
+# rsync --exclude 跳过冗余文件（如 mao-skill 类重 repo 的 Python 工具 / 开发文档 / 测试数据）
+
+echo "[1/4] 同步 SOUL.md"
+cp "$BLUEPRINT/SOUL.md" "$TARGET/SOUL.md"
+
+echo "[2/4] 同步 skills/（bundled skills 不受影响）"
+rsync -a \
+  --exclude='.git' --exclude='.github' \
+  --exclude='internal/' --exclude='tools/' \
+  --exclude='docs/' --exclude='prompts/' --exclude='data/' \
+  --exclude='*.py' --exclude='requirements.txt' \
+  --exclude='*.pyc' --exclude='__pycache__/' \
+  --exclude='CHANGELOG.md' --exclude='CONTRIBUTING.md' \
+  --exclude='README.de.md' --exclude='README.es.md' --exclude='README.ja.md' --exclude='README.ko.md' --exclude='README.en.md' \
+  "$BLUEPRINT/skills/" "$TARGET/skills/"
+
+echo "[3/4] 同步 references/"
+mkdir -p "$TARGET/references"
+rsync -a --delete "$BLUEPRINT/references/" "$TARGET/references/"
+
+echo "[4/4] 重启 [PROFILE_NAME] gateway"
+# Hermes 自带 launchd 集成；kickstart 让 launchd 重启 gateway 进程但保留服务定义
+launchctl kickstart -k "gui/$(id -u)/ai.hermes.gateway-[PROFILE_NAME]" 2>/dev/null || {
+  # 如果 launchd 服务未加载，回退到 manual start
+  [PROFILE_NAME] gateway stop 2>/dev/null || true
+  sleep 1
+  [PROFILE_NAME] gateway start
+}
+
+echo ""
+echo "✅ 同步完成。Telegram 里 @ <你的 bot> 测一句话验证。"
