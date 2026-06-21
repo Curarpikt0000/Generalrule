@@ -1,6 +1,6 @@
 # 项目进度与状态
 
-> 最后更新：2026-06-21
+> 最后更新：2026-06-21（General Hero 蓝图上传至 repo）
 > 本文件记录 Hermes 议会模式人格蒸馏项目的完整进度。
 
 ---
@@ -16,6 +16,7 @@
 | 2026-05-31 | General Hero blueprint 完成 + 部署跑通 | ✅ |
 | 2026-06-13 | 蒸馏方法论定型，模板集完成 | ✅ |
 | 2026-06-21 | 上传至 Generalrule 主 repo（本目录） | ✅ |
+| 2026-06-21 | General Hero 完整蓝图上传至 repo（10 位大师 + 四件套脚手架，噪音清理后 59 文件） | ✅ |
 
 ### 架构推翻记录
 
@@ -46,15 +47,32 @@
 | `handbook/QUICK-START.md` | 30s 判断当前阶段 → 按 checklist 直接干 |
 | `handbook/templates/` | SOUL.template / master-SKILL.template / depth-modes.template / synthesis.template / sync.sh.template / deploy.template / README.template |
 
-### 本地项目资产
+### 已上传至 repo 的蓝图
+
+| 资产 | 位置 |
+|---|---|
+| Finance Hero 蓝图 | `hermes-profiles/finance-hero/`（全 11 位大师 + SOUL + deploy） |
+| General Hero 蓝图 | `hermes-profiles/general-hero/`（全 10 位大师 + 四件套脚手架 + SOUL + deploy） |
+| 蒸馏 Handbook | `hermes-profiles/handbook/`（方法论 + 模板集） |
+| 根项目入口 | `hermes-profiles/README.md` |
+| 架构设计 | `hermes-profiles/ARCHITECTURE.md` |
+| 机制设计 | `hermes-profiles/MECHANISM-DESIGN.md` |
+| 蒸馏流程 | `hermes-profiles/DISTILLATION-PROCESS.md` |
+| 复刻指南 | `hermes-profiles/COPY-GUIDE.md` |
+
+### 本地蓝图 SSOT（蓝图仓库）
 
 | 资产 | 位置 |
 |---|---|
 | Finance Hero 蓝图 (SSOT) | `~/hermesagent/Distill/蒸馏Hermes/finance-hero/` |
 | General Hero 蓝图 (SSOT) | `~/hermesagent/Distill/蒸馏Hermes/general-hero/` |
 | 蒸馏 Handbook (SSOT) | `~/hermesagent/Distill/蒸馏Hermes/handbook/` |
-| Wiki 导出 | `~/hermesagent/Distill/蒸馏Hermes/wiki-output/` |
 | 项目入口 | `~/hermesagent/Distill/AGENTS.md` |
+
+### 运行时 profiles
+
+| Profile | 路径 |
+|---|---|
 | Finance 运行时 | `~/.hermes/profiles/finance/` |
 | General 运行时 | `~/.hermes/profiles/general/` |
 | Worker 运行时 | `~/.hermes/`（默认 profile） |

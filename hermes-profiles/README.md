@@ -40,8 +40,13 @@ hermes-profiles/
 │   ├── references/ (synthesis/depth-modes/moomoo-setup)
 │   └── tools/
 │
-├── general-hero/                   ← General Hero (10 位伟人，由另一 profile 上传)
-│   └── README.md
+├── general-hero/                   ← General Hero 完整蓝图（10 位伟人 + 四件套脚手架）
+│   ├── SOUL.md
+│   ├── README.md
+│   ├── deploy.md
+│   ├── sync.sh
+│   ├── skills/ (10 位大师)
+│   └── references/ (四件套脚手架 + depth-modes + synthesis)
 │
 └── handbook/                       ← 蒸馏方法论（可复用）
     ├── DISTILLATION-HANDBOOK.md
@@ -64,8 +69,8 @@ hermes-profiles/
 - **定位**：人生/通识/困境答疑
 - **大师**：10 位（毛泽东、费曼、芒格、塔勒布、库恩、老子、福柯、波特、阿克洛夫、乔布斯）
 - **回复形状**：同 finance + 四件套脚手架（费曼翻译/证伪自检/横纵/演化同类）
+- **特色脚手架**：费曼翻译层 · 证伪自检 · 索绪尔历时/共时横纵 · 演化/同类强制辅维
 - **快答档** ≤ 700 字
-- *蓝图由另一 Hermes profile 管理*
 
 ---
 
@@ -86,6 +91,9 @@ cat DISTILLATION-PROCESS.md
 
 # 5. 想部署 Finance Hero？看
 cat finance-hero/deploy.md
+
+# 6. 想部署 General Hero？看
+cat general-hero/deploy.md
 ```
 
 ---
@@ -101,8 +109,8 @@ cat finance-hero/deploy.md
 
 ## 维护
 
-本目录由两个 Hermes profile 分别维护：
-- **Finance Hero** — 当前 profile（`finance` profile）
-- **General Hero** — 另一 profile（`general` profile）
+本目录包含两个完整的 profile 蓝图：
+- **Finance Hero** — 11 位投资大师（含 moomoo/Google Finance 数据源）
+- **General Hero** — 10 位伟人 + 四件套脚手架（通识/人生/困境）
 
-冲突解决：两方各自管理自己目录下的文件。顶层文档（如本 README、ARCHITECTURE.md）由最近更新的 profile 负责同步最新状态。
+两个蓝图均由对应的 Hermes profile 独立维护并上传。顶层文档（如本 README、ARCHITECTURE.md）由最近更新的 profile 负责同步最新状态。

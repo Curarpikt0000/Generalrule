@@ -50,7 +50,8 @@
 | `llm-wiki/` | 在 Generalrule 共享 wiki 上做知识复利累积（Ingest/Query/Lint+Heal），已适配本体系（纯 markdown、领域目录、方案Z frontmatter、双分支、红线门） | 改造自公网 `kingqiu/llm-wiki-skill`（vercel skills 生态） | 已去 Quartz/双语/写死路径。各 agent 写 wiki 时优先调它，统一 format |
 | `webworms/` | 4 层降级回退的网页爬虫标准框架（requests+BS4 → Jina Reader → CamoFox → Crawl4AI），内置 robots.txt 合规、限速、重试 | 自有 Hermes skill 改造 | 已去写死路径。`pip install requests beautifulsoup4 lxml camoufox crawl4ai` |
 | `agent-slides/` | 从 brief 生成专业 PPTX deck：7 个可组合子 skill（extract/build/edit/audit/critique/polish/full），基于 python-pptx 的确定性 CLI | 公网开源 `mpuig/agent-slides`（MIT） | 只收 skill 定义，CLI 走 PyPI（`uvx --from agent-slides`）；需本机 `uv` + Python 3.12+。无遥测/外部写入 |
-| `project-context-persistence/` | 一个 agent 服务多项目时，按 topic/项目做每日上下文归档：cron 把当天对话蒸馏进项目文件夹（AGENTS.md + docs/context-log.md），新会话自动加载历史决策/事实/进展/待办。Memory-Bank 模式（Cline / CLAUDE.md 风格）在 Hermes 上的落地 | 自有 Hermes skill 改造 | 已去 Uber 措辞，纯通用 state.db 机制。含采集脚本 + cron recipe。诚实标注 state.db 不存 topic_id 的限制 |
+| `project-context-persistence/` | 一个 agent 服务多项目时，按 topic/项目做每日上下文归档：cron 把当天对话蒸馏进项目文件夹（AGENTS.md + docs/context-log.md），新会话自动加载历史决策/事实/进展/待办。Memory-Bank 模式（Cline / CLAUDE.md 风格）在 Hermes 上的落地 | 自有 Hermes skill 改造 | 已去写死路径。含采集脚本 + cron recipe。诚实标注 state.db 不存 topic_id 的限制 |
+| `hermes-profiles/handbook/` | 议会模式人格蒸馏完整方法论：从架构设计、大师阵容选择、蒸馏流程到部署。附两个完整实例（Finance Hero / General Hero）和可复用的模板集 | 自有 Cowork 蒸馏实践沉淀 | 路径：`hermes-profiles/handbook/DISTILLATION-HANDBOOK.md`（全貌）→ `QUICK-START.md`（急用）→ `templates/`（填空建新 profile） |
 
 ---
 

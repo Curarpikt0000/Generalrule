@@ -50,6 +50,16 @@ Generalrule/
 │   └── tasks/
 │       ├── lessons.md
 │       └── todo.md
+├── hermes-profiles/                 # Hermes 议会模式人格蒸馏蓝图
+│   ├── README.md                    # 入口：两个实例 + 目录索引
+│   ├── ARCHITECTURE.md              # Hermes profile/SOUL 匹配机制
+│   ├── MECHANISM-DESIGN.md          # 议会模式对话机制与人格设计
+│   ├── DISTILLATION-PROCESS.md      # 人格蒸馏流程（从资料到 skill）
+│   ├── COPY-GUIDE.md                # 给其他 Hermes 的复刻指南
+│   ├── PROJECT-PROGRESS.md          # 项目进度与架构决策记录
+│   ├── finance-hero/                # Finance Hero 完整蓝图（11 位投资大师）
+│   ├── general-hero/                # General Hero 完整蓝图（10 位伟人 + 四件套脚手架）
+│   └── handbook/                    # 蒸馏方法论 + 模板集（可复用于新 profile）
 └── wiki/                            # 共享知识库（三层索引，见 wiki-ingest-guide）
     ├── index.md                     # 第 1 层 · 领域总索引
     ├── CHANGELOG.md                 # wiki 知识页版本管理
@@ -75,10 +85,20 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-21 [main] general Hermes —— General Hero 完整蓝图上传 + hermes-profiles/ 纳入结构白名单
+
+**为什么**：General Hero 蓝图此前仅以 stub README.md 存在于 repo（上一轮 commit `3114001` 只上传了 finance-hero）。本轮从 `~/hermesagent/Distill/蒸馏Hermes/general-hero/` 拷贝清理后的 59 文件（原 259 文件 / 7.4MB），含 SOUL.md + 10 位大师 skills/references + 四件套脚手架 + deploy.md + sync.sh。毛泽东目录从 204 噪音文件降至 9 个（去除多语言 README/Python tools/CHANGELOG/internal/docs/tools/prompts/data 等 artefacts）。
+
+**改了什么**：
+- `hermes-profiles/` 纳入结构白名单
+- `hermes-profiles/general-hero/`：从 stub 升级为完整蓝图（59 文件，1.6MB）
+- `hermes-profiles/README.md`：更新目录结构 + General Hero 描述（去"由另一 profile 管理"措辞）+ 快速开始 #6
+- `hermes-profiles/PROJECT-PROGRESS.md`：新增里程碑行 + 更新资产表分"已上传至 repo"/"本地 SSOT"/"运行时"三栏
+- `self-skill/README.md`：新增 `hermes-profiles/handbook/`（蒸馏议会方法论） 指针
+- `wiki/agent-rules/skill-register.md`：Self-Skill 区新增董事会方法论指针行
+
 ### 2026-06-17 [main] Hermes —— project-context-persistence self-skill（采集脚本 + SKILL）纳入 repo
-
 **为什么**：general-global-rule.md §5 上下文压缩铁律引用了 `skill project-context-persistence` 作为落地机制，但此前不存在。从零创建，含采集脚本 + skill 定义 + cron 模板。
-
 - `self-skill/project-context-persistence/`：新增，含 `SKILL.md`（采集方案、cron 模板、踩坑）、`scripts/collect_topic_conversation.py`（Hermes state.db 对话采集脚本）
 - `~/.hermes/SOUL.md`：同步更新，启动开关整合为「建结构 + 每日上下文归档（新 topic/项目自动建）」一条链
 - `~/.hermes/scripts/collect_topic_conversation.py`：部署到运行实例
