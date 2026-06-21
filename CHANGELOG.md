@@ -95,6 +95,16 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-21 [main+ub-branch] Hermes —— 蒸馏「禁止闭门造车」升级为全局第一铁律 + 打通指针
+
+**为什么**：实测踩坑——3 个调研 subagent 配了 web 工具却不调用、凭训练知识编内容（一个还谎称无联网，实测网络正常）。现有 `hermes-profiles/DISTILLATION-PROCESS.md` §5 虽有"手蒸馏必跑 WebSearch"但仅对 Level 3、措辞软、无验收机制，拦不住此坑。应 @Chao Jin 要求升级为所有蒸馏项目的全局硬门，两边 Hermes（读 main / 读 ub-branch）遵守同一准则。通用技能准则，不涉 Uber IP。
+
+**改了什么**：
+- `self-skill/persona-distillation/SKILL.md`：新增「⛔ 第一铁律：禁止闭门造车」独立小节（5 条硬性要求 + 实测可用检索通道 + 验收门）+ Phase1「每个 agent 硬性要求」补真搜+tool_trace 核对条款
+- `hermes-profiles/DISTILLATION-PROCESS.md`：§5「防编造纪律」升级为「第一铁律，所有 Level 强制」（原仅 L3）+ tool_trace 验收 + 2026-06-21 反例教训 + 顶部加指向 persona-distillation 的统一 SSOT 指针
+- `hermes-profiles/README.md`：「上游规范」节加统一蒸馏方法论指针（指向 self-skill/persona-distillation + 第一铁律）
+- 两套蒸馏文档从此互相链接，规则单一权威，不再漂移；**两 branch 内容一致**
+
 ### 2026-06-21 [main] general Hermes —— General Hero 完整蓝图上传 + hermes-profiles/ 纳入结构白名单
 
 **为什么**：General Hero 蓝图此前仅以 stub README.md 存在于 repo（上一轮 commit `3114001` 只上传了 finance-hero）。本轮从 `~/hermesagent/Distill/蒸馏Hermes/general-hero/` 拷贝清理后的 59 文件（原 259 文件 / 7.4MB），含 SOUL.md + 10 位大师 skills/references + 四件套脚手架 + deploy.md + sync.sh。毛泽东目录从 204 噪音文件降至 9 个（去除多语言 README/Python tools/CHANGELOG/internal/docs/tools/prompts/data 等 artefacts）。

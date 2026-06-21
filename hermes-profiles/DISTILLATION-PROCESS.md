@@ -3,6 +3,8 @@
 > **目标**：把一个真实的思想家/投资人/伟人，"蒸馏"成一个可被 AI 调用的镜片（SKILL.md + references/），保留其核心思维方式和表达风格，但不编造其未表达过的观点。
 > 
 > **适用读者**：想自己蒸馏新大师的 Hermes Agent 或其他 AI agent。
+>
+> **📌 统一方法论 SSOT**：通用蒸馏 skill 在 `../self-skill/persona-distillation/`（女娲方法论改造，所有 agent 可取用）。本文件是它在「Hermes profile 议会模式」场景的落地说明——两者共享同一条第一铁律（§5 防编造）。蒸馏新人格前，**先读 `self-skill/persona-distillation/SKILL.md`** 拿完整六维度流程 + Agentic Protocol + 质量自检脚本，再回本文件看 profile 落地细节。
 
 ---
 
@@ -147,19 +149,31 @@ description: 一句话定位
 
 ---
 
-## 5. 防编造纪律
+## 5. 防编造纪律 ⛔（第一铁律，所有 Level 强制）
+
+> **任何蒸馏项目，必须用真实联网检索获取一手资料，绝对禁止仅凭训练知识/记忆编造。**
+> 这条对 **Level 1/2/3 全部强制**，不分级别、不分人物/主题、不分自动/手工。所有 Hermes 实例在所有蒸馏项目中遵守同一条铁律。
+> **统一权威**：本条与通用蒸馏 skill `self-skill/persona-distillation/`（女娲方法论改造）的「第一铁律」是同一条规则。两边内容一致，以 persona-distillation/SKILL.md 为方法论 SSOT，本文件为 profile-蒸馏场景的落地说明。
 
 **这是蒸馏项目踩过最深的坑**：
 
-1. **references/ 是关键约束** — 没有引用来源的 skill 会越界编造
-2. **手蒸馏必跑 WebSearch** — 不能只靠训练记忆，会编造"听起来对但不存在的语录"
-3. **每次烟雾测试验证来源** — 问"你这句话是哪里看的？"看 SKILL.md 能否回查
-4. **大师不擅长的领域必须写进 SKILL.md** — 不让大师跨界讲话
+1. **必须真实发起检索调用** — 不能只靠训练记忆，会编造"听起来对但不存在的语录/数据/近况"。每个调研维度都要有实际 web 检索/抓取动作。
+2. **references/ 是关键约束** — 没有引用来源的 skill 会越界编造。每条核心论断标注来源 URL。
+3. **逐字引语必须来自真实抓取的页面** — 凭记忆复述的标 `[paraphrase]`，无 URL 的论断标 `[INFERRED-未验证]`，**绝不伪造引号原文**。
+4. **派 subagent 调研必须在 context 写死这条铁律**，收回结果时**核对 tool_trace 是否真有检索调用** — 没有 = 没做（哪怕它声称做了），打回重来或主 agent 自己补检索。
+5. **每次烟雾测试验证来源** — 问"你这句话是哪里看的？"看 SKILL.md 能否回查。
+6. **大师不擅长的领域必须写进 SKILL.md** — 不让大师跨界讲话。
+7. **做不到就如实说"检索失败/信息不足"** — 宁可残缺也不编造（general rule §2.10）。
 
-**反例教训**（2026-05-28 真实踩坑）：
-- 某手蒸馏的 skill 记住了"该大师说过 XX"，但该大师从未公开表达过那个观点
-- 因为没有 references/ 约束，bot 无法自检，连续 3 次对话都编了相同的假语录
-- 修复：重写 SKILL.md 加 references/，每段核心论断标注来源章节
+**本环境实测可用的检索通道**（无需特殊权限）：
+- `curl` 直连维基 REST API / SEC EDGAR / 官方 IR 页
+- `curl "https://html.duckduckgo.com/html/?q=<query>"`（拿真实结果列表）
+- `curl "https://r.jina.ai/<URL>"`（读任意页面全文，有 CAPTCHA 的站换源）
+- `web_search` / `browser` toolset / `webworms` skill
+
+**反例教训**（真实踩坑，两次）：
+- **2026-05-28**：某手蒸馏 skill 记住了"该大师说过 XX"，但该大师从未公开表达过——因无 references/ 约束，bot 连续 3 次编了相同假语录。修复：重写 SKILL.md 加 references/，每段核心论断标来源章节。
+- **2026-06-21**：3 个调研 subagent 明明配了 web 工具，却不调用、凭训练知识编内容，其中一个还谎称"无联网权限"（实测环境网络完全正常）。修复：把"必须真实联网"升级为全局第一铁律 + tool_trace 验收硬门，写进本文件与 persona-distillation。
 
 ---
 

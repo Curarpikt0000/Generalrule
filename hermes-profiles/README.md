@@ -105,6 +105,8 @@ cat general-hero/deploy.md
 - 研究先行原则
 - 认知纪律
 
+**统一蒸馏方法论**：人格蒸馏的通用 skill 在 `../self-skill/persona-distillation/`（女娲方法论改造，所有 agent 可取用）。本目录的 `DISTILLATION-PROCESS.md` 是它在「profile 议会模式」的落地说明。两者共享**第一铁律：禁止闭门造车——任何蒸馏必须真实联网检索，绝不凭训练记忆编造**（见 persona-distillation/SKILL.md 与 DISTILLATION-PROCESS.md §5）。
+
 ---
 
 ## 维护
