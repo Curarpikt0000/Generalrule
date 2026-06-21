@@ -52,6 +52,7 @@
 | `agent-slides/` | 从 brief 生成专业 PPTX deck：7 个可组合子 skill（extract/build/edit/audit/critique/polish/full），基于 python-pptx 的确定性 CLI | 公网开源 `mpuig/agent-slides`（MIT） | 只收 skill 定义，CLI 走 PyPI（`uvx --from agent-slides`）；需本机 `uv` + Python 3.12+。无遥测/外部写入 |
 | `project-context-persistence/` | 一个 agent 服务多项目时，按 topic/项目做每日上下文归档：cron 把当天对话蒸馏进项目文件夹（AGENTS.md + docs/context-log.md），新会话自动加载历史决策/事实/进展/待办。Memory-Bank 模式（Cline / CLAUDE.md 风格）在 Hermes 上的落地 | 自有 Hermes skill 改造 | 已去写死路径。含采集脚本 + cron recipe。诚实标注 state.db 不存 topic_id 的限制 |
 | `hermes-profiles/handbook/` | 议会模式人格蒸馏完整方法论：从架构设计、大师阵容选择、蒸馏流程到部署。附两个完整实例（Finance Hero / General Hero）和可复用的模板集 | 自有 Cowork 蒸馏实践沉淀 | 路径：`hermes-profiles/handbook/DISTILLATION-HANDBOOK.md`（全貌）→ `QUICK-START.md`（急用）→ `templates/`（填空建新 profile） |
+| `persona-distillation/` | 把一个真人 / 一个领域视角蒸馏成可运行的「人格/视角」SKILL.md：并行 agent swarm 调研 → 思维框架提炼（心智模型三重验证 + 表达 DNA + 矛盾保留 + 诚实边界）→ 生成 skill + 质量自检。两条路径：人物 skill（模拟真人）/ 主题人格（不模拟真人，提炼角色原型/领域方法论）。含 Hermes profile + SOUL 落地指引 | 改造自公网女娲方法论 `alchaincyf/nuwa-skill`（创建者花叔，MIT） | 已去写死路径（`<skills_dir>` 占位）、去 Claude 专属目录、去公司专属工具引用。含 4 个脚本（字幕下载/SRT清洗/调研合并/质量自检，纯 stdlib）；检索写成通用 web_search/browser 不绑平台 |
 
 ---
 
