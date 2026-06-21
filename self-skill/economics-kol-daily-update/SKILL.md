@@ -64,13 +64,17 @@ tags: [economics, kol, macro, daily-update, notion, dashboard, opinion-tracking]
 | `Detail Sector` | select | **已满 381 option(>100上限)无法新增**！必须映射到已存在的简洁中文 option（黄金白银/国债收益率/科技AI/末日情景等），见 `scripts/fix_detail_sector.py` |
 | `Comments` | rich_text | 中文逻辑链 100-200字，用 → 连接，末尾附来源 |
 | `Suggestion` | rich_text | 中文操作建议，不放链接 |
-| `多空标的` | rich_text | 如"🟢 GLD, PHYS \| 🔴 TLT" |
+| `多空标的` | rich_text | 人类可读，如"🟢 GLD, PHYS \| 🔴 TLT" |
+| `方向明细` | rich_text | ⭐**结构化方向(JSON数组,按标的拆分)**：`[{"标的":"美债","板块":"Government Debt","方向":"看空"},...]`。dashboard 摊平成三元组统计真实多空。**写入用 `scripts/extract_direction.py` 的 write_direction()** |
+| `主导方向` | select | 6档：强烈看多/看多/中性/看空/强烈看空/分歧（该条最主要方向，快速筛选+加权用）|
+
+> ⭐**情绪/多空方向分析铁律（Chao 最高质量红线，2026-06-21）**：判方向【绝不可】用浅层文本/emoji 匹配或默认中性！必须逐条读懂 KOL 的【语言意味】。① 识别隐含看空（"美债泡沫/收益率飙升/抛长债/缩久期"=看空美债，即使无🔴；"科技泡沫/Mag7见顶/AI估值过高"=看空Equities；"美元购买力崩溃/去美元化"=看空美元）。② 一条发言常含多个标的、方向不同，**必须按标的拆分**，绝不整条简化（Luke Gromen 一条=🟢黄金强烈看多+🔴长久期美债强烈看空+🔴美元）。敷衍会导致"所有资产都看多/美债全看多"的荒谬结果。dashboard 必须读「方向明细」结构化字段，不靠文本现猜。详见项目 lessons §0。
 
 ### KOL By Week DB `36b4...`
 Key Insight(title) / Date / Week Number(number) / Comments / Suggestion / Sector / Detail Sector / 多空标的
 
 ### KOL List DB `3594...`（注册表 + 每个 KOL 的 page 正文存丰富背景）
-编号(title) / KOL 机构(rich_text) / 领域 / 核心背景身份 / 主要分析方向。**page 正文**存 profile（§六）。
+编号(title) / KOL 机构(rich_text) / 领域(**select**，8标准值：贵金属与商品周期/宏观货币与金融体系/国债利率与债券市场/预测/交易与市场微观结构/科技与未来趋势/资源与能源安全/股权市场) / 核心背景身份 / 主要分析方向。**page 正文**存 profile（§六）。
 
 ---
 
@@ -126,6 +130,7 @@ Key Insight(title) / Date / Week Number(number) / Comments / Suggestion / Sector
 5. 验证：打开 GitHub Pages 确认数据可见
 
 聚合改进方向（brief 第八节）：按 ticker 聚合 > 按情绪计数；sector 评分制；stance_changes 反转检测；置信度标签。
+**⭐sector 多空必须读「方向明细」JSON 摊平成(板块,标的,方向)三元组**（`generate_dashboard_data.py` 的 parse_legs/sector_legs），sector_summary 输出 legs_bull/legs_bear/strong_bear；标签综合 score+腿级偏向。绝不用旧的 sentimentScore 文本匹配（会把看空吞成中性→所有资产都看多）。未结构化的旧记录回退文本法但标注。
 
 ---
 
