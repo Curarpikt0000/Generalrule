@@ -10,6 +10,11 @@
 
 ## 记录
 
+### 2026-06-22 —— GenAI proxy v3：超时/异常兜底修「伪装成掉线的 Connection error」（Claude Code, Opus 4.8 [UB]）
+
+- **[修改] `agent-rules/hermes-genai-api-integration.md`** —— 新增**坑 7**：proxy `urlopen(timeout=120)` 写死 120s，超大对话（`msgs=244 tokens=~99,725`）上游 >120s 超时抛 `TimeoutError`（非 `URLError` 子类，旧 `except` 接不住）→ handler 线程崩 → 连接硬断 → Hermes 只看到 `APIConnectionError: Connection error`（像掉线，且**绕过 fallback**，呼应坑 2）。确诊关键：retry 真实间隔 ~122s 精确指向 120s 超时；隧道全程健康。修复（已实装 genai_proxy.py v3）：超时 120→600s（`GENAI_UPSTREAM_TIMEOUT`）+ 补 `except (TimeoutError, socket.timeout)`→504 + 兜底 `except Exception`→502，保证任何异常都返回干净错误码不断连。**通用教训**：转发/代理类服务的上游超时或任何异常都必须转成干净 HTTP 错误码，绝不能让异常冒泡断连（否则下游误判为掉线 + 绕过基于错误码的 fallback）。
+- 注：本页 frontmatter 与 §3.2（v2→v3 标注）由本机另一并发写者（Hermes/agent）在同一时段一并更新，内容一致、已合并；坑 7 与本 CHANGELOG 条目由 Claude Code 补齐。
+
 ### 2026-06-19 —— 轮询式双向 bot + 多源管道单源硬超时隔离（Hermes-VM, Opus 4.8 [UB]）
 
 - **[新增] `engineering/polling-bidirectional-bot-and-source-timeout-isolation.md`** —— 两个可通用的可靠性工程模式（已匿名化，不含任何公司/内部系统/站点名）。**模式一·轮询式双向 bot**：消息平台无事件回调（webhook 禁用 / socket 要重审批）时，用「定时轮询读 API + 游标去重 + thread 回复」模拟双向问答；关键决策——触发前缀过滤、**游标必须在「回复成功后」才推进**（不是读到就推进，否则崩溃即丢消息）、无新输入静默不刷屏、剥除发送 API 的签名尾巴污染、多人频道开放执行权前必须定能力边界并留痕。**模式二·多源管道单源硬超时隔离**：遍历 N 个外部源时，一个挂源会拖垮全量；修复用 `ThreadPoolExecutor(max_workers=1)` + `fut.result(timeout=)` 给单源套硬超时。**两个关键陷阱**：① `with ThreadPoolExecutor()` 的 `__exit__` 默认 `shutdown(wait=True)` 会 join 僵线程→硬超时失效，须手动 `shutdown(wait=False)`；② 工作线程非 daemon 会拖住进程正常退出，须在入口末尾 `os._exit(0)`（业务完成后）。**关键教训**：任何「遍历多个外部源」的管道必须给单源加硬超时隔离 + 容错跳过；端到端验证要真跑（确认挂源被跳过、进程退出码 0、bot 回复读回 thread 确认落地、游标推进后不重复回答）。源自一次多源追踪系统补双向问答 + 修「慢站连挂多日拖垮每日推送」的实战复盘。
