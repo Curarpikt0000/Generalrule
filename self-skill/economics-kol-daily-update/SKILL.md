@@ -130,7 +130,8 @@ Key Insight(title) / Date / Week Number(number) / Comments / Suggestion / Sector
 5. 验证：打开 GitHub Pages 确认数据可见
 
 聚合改进方向（brief 第八节）：按 ticker 聚合 > 按情绪计数；sector 评分制；stance_changes 反转检测；置信度标签。
-**⭐sector 多空必须读「方向明细」JSON 摊平成(板块,标的,方向)三元组**（`generate_dashboard_data.py` 的 parse_legs/sector_legs），sector_summary 输出 legs_bull/legs_bear/strong_bear；标签综合 score+腿级偏向。绝不用旧的 sentimentScore 文本匹配（会把看空吞成中性→所有资产都看多）。未结构化的旧记录回退文本法但标注。
+**⭐sector 多空必须读「方向明细」JSON 摊平成(板块,标的,方向)三元组**（`generate_dashboard_data.py` 的 parse_legs/sector_legs），sector_summary 输出 legs_bull/legs_bear/strong_bear；绝不用旧的 sentimentScore 文本匹配（会把看空吞成中性→所有资产都看多）。未结构化的旧记录回退文本法但标注。
+**⭐评分公式=共识度净占比（Chao 2026-06-21 重批，不可用 tanh）**：`score = 100×(加权看多−加权看空)/(加权看多+加权看空+分歧)`，强度加权（强烈±2/普通±1）。含义：**只有零反对才可能到±100，有一个相反立场就<100**，多空各半=0。tanh 那种"信号强度映射"会让几乎所有板块顶到±99，违背直觉（贵金属有113条看空却显示+99）。score 即"净多空倾向%"，consensus=|score|=共识度。
 
 ---
 
