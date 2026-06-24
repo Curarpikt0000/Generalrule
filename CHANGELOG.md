@@ -95,6 +95,13 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-06-22 [main+ub-branch] Hermes —— 新增认知纪律 §2.11 进度持久化（PROGRESS.md，抗中断）
+
+**改了什么**：`antigravity/general-global-rule.md` 新增 **§2.11 进度持久化（Progress-First，抗中断）**——执行命令前先写 `PROGRESS.md`（目标/步骤/验收/当前进度），长任务做阶段性分解、单阶段 ≤30 分钟、每阶段末把"已完成/已验证/下一步/中间产物路径"落盘；核心目的是抗中断：用户消息截断或会话被打断后，下一轮先读 `PROGRESS.md`（项目级读 `docs/context-log.md`）恢复最新状态。§2 标题「十条」→「十一条」，文件最后更新日期→2026-06-22，加一行指向 `five-step-pipeline.md` 的落地细节指针。
+
+**为什么**：应 @Chao Jin 要求。实际多次出现任务被 out-of-band 消息中途截断、会话超时断连导致上下文丢失。把进度只留在 context 窗口里 = 一断就全丢；强制落盘 PROGRESS.md 才能真正断点续传。通用执行纪律，不涉 Uber IP——两边 Hermes（读 main / 读 ub-branch）及所有 agent 同等遵守。本次仅改规则正文（无新增结构性文件），白名单无需更新。
+
+
 ### 2026-06-21 [main+ub-branch] Hermes —— 蒸馏「禁止闭门造车」升级为全局第一铁律 + 打通指针
 
 **为什么**：实测踩坑——3 个调研 subagent 配了 web 工具却不调用、凭训练知识编内容（一个还谎称无联网，实测网络正常）。现有 `hermes-profiles/DISTILLATION-PROCESS.md` §5 虽有"手蒸馏必跑 WebSearch"但仅对 Level 3、措辞软、无验收机制，拦不住此坑。应 @Chao Jin 要求升级为所有蒸馏项目的全局硬门，两边 Hermes（读 main / 读 ub-branch）遵守同一准则。通用技能准则，不涉 Uber IP。
