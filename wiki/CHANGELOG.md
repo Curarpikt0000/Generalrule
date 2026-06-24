@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-24 —— 模型把工具调用写成正文 antml 文本 + 上下文污染循环（Claude Code, Opus 4.8 [UB]）
+
+- **[新增] `llm/tool-call-emitted-as-text.md`** —— Hermes(default profile, claude-opus-4-8 via custom/genai 网关) 反复把工具调用打成 antml 文本（`<invoke name=…>`）塞进正文而非结构化 `tool_calls` → 不执行（任务失败）+ 不被清理（用户可见）。根因两层：①harness 没原生下发工具（疑 `tool_search` 诱发）→ 模型按 antml 编造调用；②harness 的泄漏清理只认 `<tool_call>`/`<function_calls>`/`<function>`，不认 Claude 的 `<invoke>`/`<parameter>`。核心机制=**自我污染循环**：坏输出进历史→模型照抄自己历史→反复犯、从会话内无法自愈（实测某会话 164 条里 31 条=18% 是文本调用）。修复：弃用污染会话开新对话 / 关 `tool_search` 让工具原生下发 / 上游修复格式识别。**通用教训**：工具调用是独立结构化通道非正文；坏输出进历史会自我强化，反复犯同一格式错先疑上下文污染、优先换干净会话。同步登记 `index.md` 第 2 层 + `llm/README.md`。
+
 ### 2026-06-22 —— GenAI proxy v3：超时/异常兜底修「伪装成掉线的 Connection error」（Claude Code, Opus 4.8 [UB]）
 
 - **[修改] `agent-rules/hermes-genai-api-integration.md`** —— 新增**坑 7**：proxy `urlopen(timeout=120)` 写死 120s，超大对话（`msgs=244 tokens=~99,725`）上游 >120s 超时抛 `TimeoutError`（非 `URLError` 子类，旧 `except` 接不住）→ handler 线程崩 → 连接硬断 → Hermes 只看到 `APIConnectionError: Connection error`（像掉线，且**绕过 fallback**，呼应坑 2）。确诊关键：retry 真实间隔 ~122s 精确指向 120s 超时；隧道全程健康。修复（已实装 genai_proxy.py v3）：超时 120→600s（`GENAI_UPSTREAM_TIMEOUT`）+ 补 `except (TimeoutError, socket.timeout)`→504 + 兜底 `except Exception`→502，保证任何异常都返回干净错误码不断连。**通用教训**：转发/代理类服务的上游超时或任何异常都必须转成干净 HTTP 错误码，绝不能让异常冒泡断连（否则下游误判为掉线 + 绕过基于错误码的 fallback）。

@@ -88,6 +88,7 @@
 |---|---|---|
 | 级联 fallback | [[llm/fallback]] | fallback, 多模型, 配额 |
 | 云端测试 | [[llm/cloud_test]] | 测试, 云端 |
+| 工具调用泄漏成文本 | [[llm/tool-call-emitted-as-text]] | antml, invoke, tool_calls, 上下文污染, tool_search |
 
 ### design-patterns（设计模式）
 
