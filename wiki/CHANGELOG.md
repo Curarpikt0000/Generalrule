@@ -10,7 +10,9 @@
 
 ## 记录
 
-### 2026-06-25 —— GenAI Gateway 公网搜索方案在 Economy-KOL 弃用，改自托管 SearXNG（Hermes default, Opus 4.8 [UB]）
+### 2026-06-25 —— 搜索 wiki 正名为「搜索工具栈」，GenAI grounded 从"推荐主力"改写为"项目级辅助兜底"（Hermes default, Opus 4.8 [UB]）
+
+- **[迁移+重写] `engineering/uber-genai-gateway-web-search.md` → `engineering/uber-hermes-web-search-stack.md`** —— Chao 2026-06-25 拍板核心事实：**SearXNG 是公网搜索主力/默认兜底；GenAI Gateway grounded search 只是【项目级可选辅助兜底】，不是标准搜索步骤之一**（AI-Guard 对人名做 PII 匿名化，搜人名不可靠）。改写：①文件正名（不再以 GenAI 为题）；②标题/frontmatter 重写为「公网搜索工具栈与兜底层级」；③**置顶权威小节**明确标准层级（L1 SearXNG→L2 ddgs；GenAI 仅可选）+ 记录两条正在跑的真实降级链（usearch CLI：SearXNG→GenAI 辅助→ddgs；Economy-KOL backfill：Exa→Tavily→SearXNG→ddgs，已删 GenAI）；④删除原「Exa→GenAI→ddgs 推荐降级链」等把 GenAI 当主力的误导措辞，GenAI 教程段保留但加「历史/辅助方案，非标准步骤」横幅并说明 PII 局限为降级根因；⑤保留 usearch CLI / Cerberus idle 保活等技术事实内容（措辞对齐：GenAI 标注为辅助层）。**不管是谁写的，以最新事实对齐。** README 索引同步更新文件名与定位。
 
 - **[修改] `engineering/uber-genai-gateway-web-search.md` 的 README 描述** —— 原拟把 GenAI Gateway grounded search 推广为通用免费联网方案，**实测发现致命局限**：AI-Guard 对 prompt 做 PII 匿名化，人名查询不稳定（76 KOL 抽测仍有 1 人 Daniel Ghali 被匿名化截断、9 人综述未直呼全名）；"去空格连写"绕过只是缓解非根治。**结论：不适合"按人名精确搜索"的 KOL 监控**。Economy-KOL 项目已改用**自托管 SearXNG**（localhost:8888，可搜真名零截断、免费不断粮），降级链定为 **Exa→Tavily→SearXNG→ddgs**（项目专属，不外推）。GenAI 相关搜索逻辑已从项目 `backfill_one.py` 移除。该 wiki 文件本体的 usearch CLI / Cerberus idle 内容由另一 Hermes 实例维护，保留不动。
 

@@ -17,4 +17,4 @@
 * [[youtube-pipeline-genimages-template-issue]] - YouTube 音频转换管道与图片生成模版常见问题
 * [[container-reboot-service-persistence]] - 容器重启后服务恢复与开机持久化（临时 /etc 陷阱、幂等 boot 脚本、setsid、watchdog 循环依赖、自愈的认证升级边界、端口漂移、调用链排障）
 * [[polling-bidirectional-bot-and-source-timeout-isolation]] - 轮询式双向消息机器人（无事件回调时用读 API+游标）+ 多源管道单源硬超时隔离（ThreadPoolExecutor 硬超时陷阱、shutdown(wait=False)、僵线程拖住退出、os._exit）
-* [[uber-genai-gateway-web-search]] - 内部联网/搜索备忘（usearch CLI 逐级 backup 封装 + Cerberus idle 保活根治）。注：其中 GenAI Gateway grounded 方案有 AI-Guard PII 人名匿名化局限，Economy-KOL 项目已改用自托管 SearXNG 替代，勿外推此方案到需要精确搜人名的场景。
+* [[uber-hermes-web-search-stack]] - 公网搜索工具栈与兜底层级（**SearXNG 主力**；usearch CLI 逐级 backup 封装；Cerberus idle 保活根治）。🔴 GenAI Gateway grounded **只是项目级可选辅助兜底、非标准搜索步骤**——AI-Guard 对人名做 PII 匿名化，搜人名不可靠，默认走 SearXNG。
