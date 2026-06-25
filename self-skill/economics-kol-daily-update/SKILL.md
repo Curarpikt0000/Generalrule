@@ -28,7 +28,9 @@ tags: [economics, kol, macro, daily-update, notion, dashboard, opinion-tracking]
 2. **Daily/Weekly 只写「新增观点」**（需求①）——见 §三.4 观点新颖性判断。
 3. **每个 KOL 的丰富背景+历史汇总** 写在 Notion KOL List 的 **page 正文**（callout/heading 结构化，非纯 text）——见 §六。脚本 `scripts/write_kol_profile.py`。
 4. **可靠写入库** `scripts/notion_writer.py`：自动 L2去重 + select option 安全合并 + 建 page。
-5. **搜索源优先级**：Exa（主，语义+日期过滤）→ 真实浏览器（X/YT/博客动态页）→ Tavily（备）→ ddgs（免费兜底）。Uber 内部无公网搜索通道（usearch 是内部知识检索）。
+5. **搜索源优先级**：Exa（主，语义+日期过滤）→ 真实浏览器（X/YT/博客动态页）→ Tavily（备）→ ddgs（免费兜底，`pip install ddgs --break-system-packages`）。**backfill_one.py 已内置降级链**：Exa+Tavily 总命中=0 时自动触发 ddgs；输出 json 有三桶 `exa`/`tavily`/`ddgs`，**下游分析/cron prompt 必须三桶都读**否则付费源断粮当天观点全丢；ddgs 无日期字段时效靠正文判断。
+   - ⭐**Uber 内部公网联网方案（2026-06 实测，纠正旧结论"内部无公网搜索"）**：`aifx mcp list` 确实没有独立 web/news/serp MCP，但**官方公网出口收口在 GenAI Gateway**。①【首选，已实测跑通】**GenAI Gateway grounded web search**：`POST http://localhost:5436/v1/models/gemini-2.5-flash:generateContent`，头 `Rpc-Service: genai-api` + `Rpc-Caller: <ldap>@uber.com`，body 加 `"tools":[{"google_search":{}}]`；返回 `candidates[].content.parts[].text` + `groundingMetadata.groundingChunks[].web.uri`（源URL）。**免费走内部计费、不断粮**。OpenAI 版 `/v1/responses` tools `[{"type":"web_search"}]`；Anthropic `/v1/messages` tools `[{"type":"web_search_20250305"}]`。②**LangFx/Agent Builder 内置工具** `get_tools(["search.web"])` / `search.serpapi`（Uber 已买 SerpAPI 额度）/ `search.web_search_summary`。③ 抓全文页面走 Oxylabs/直连 HTTPS（agentic-scraping 平台模式）。
+   - ⚠️**致命坑：AI-Guard 对 prompt 做 PII 匿名化**——查具体人名（KOL 真名如 "Peter Schiff"）会被替换成 `ANONYMIZED_PERSON_X` 导致搜不到/返回空。**对 KOL 监控必须用 handle(@PeterSchiff)/公司/资产/话题等非真名实体查询**（实测："Peter Schiff gold"→0结果被匿名化；"gold price news June 23 2026 analyst commentary"→16个真实源URL）。
 6. **真实浏览器已装**（agent-browser + Chrome），可抓 X 推文（未登录即可）、YouTube、个人博客。
 
 ---
