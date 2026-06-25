@@ -1,10 +1,10 @@
 ---
 title: Uber GenAI Gateway — 免费公网搜索（grounded web search）给 Hermes Agent 用
 domain: engineering
-keywords: [genai-gateway, web-search, grounded, gemini, google-search, 联网, 公网搜索, exa, tavily, ddgs, ai-guard, pii, cerberus, ussh, devpod, 内部联网]
+keywords: [genai-gateway, web-search, grounded, gemini, google-search, 联网, 公网搜索, exa, tavily, ddgs, ai-guard, pii, cerberus, ussh, devpod, 内部联网, usearch, keepalive, idle, failed-after-retries]
 source: hermes-economy-kol-genai-integration-20260625
 created: 2026-06-25
-last_updated: 2026-06-25
+last_updated: 2026-06-25 (+usearch CLI 封装 + Cerberus idle 保活根治)
 ---
 
 # Uber GenAI Gateway — 免费公网搜索给 Hermes Agent 用
@@ -119,3 +119,52 @@ query = f"{handle} {focus_topic} market news {start} to {end}"
 - **LangFx / Agent Builder 内置工具**：`get_tools(["search.web"])` / `search.serpapi`
   （Uber 已买 SerpAPI 额度）/ `search.web_search_summary`——适合在 LangFx agent 运行时里用。
 - **抓全文页面**：Oxylabs 代理 / 直连 HTTPS（agentic-scraping 平台模式）。
+
+## 复用 CLI 封装：`usearch`（逐级 backup 搜索）
+
+把上面的方案封装成一个开箱即用的 CLI，**所有 Hermes 项目直接复用**，不用各自重写降级逻辑。
+
+**位置**：`~/.local/bin/usearch`（已 chmod +x；记得 `~/.local/bin` 在 PATH）
+
+**降级链**（前级失败/无结果才落下级，stderr 实时打印用了哪一级）：
+- **L1** GenAI Gateway grounded：`gemini-3-flash-preview` + `google_search`，端口 5436，带 `Rpc-Service`/`Rpc-Caller` 头。综述 + 源URL，免费不断粮。
+- **L2** 同网关自动换备用模型（`gemini-2.5-flash` → `gemini-2.5-pro`），抗偶发 5xx。
+- **L3** `ddgs` 兜底（网关整挂时），纯链接列表。
+
+**源 URL = 方案 A**：直接用 `groundingMetadata` 原始 uri（`vertexaisearch.../grounding-api-redirect/...` 跳转链），**不跟随重定向解析**。要落地页再 fetch。
+
+**用法**：
+```bash
+usearch "query"                  # 默认 grounded
+usearch -n 8 "query"             # 限源数
+usearch --model gemini-2.5-pro "query"
+usearch --raw "query"            # JSON 输出 (text + urls + tier)
+usearch --ddgs "query"           # 强制走 ddgs 兜底
+```
+
+**实现要点 / 踩过的坑**：
+- `ddgs -o json` **不打印 stdout 而是偷偷写文件** `/tmp/text_<query>_<时间>.json`。改用 `from ddgs import DDGS` Python 库直调，别走 CLI 的 `-o`。
+- `ddgs` 装在 `~/.local/bin/`，cron/非登录 shell 的 PATH 里可能没有 → 用库直调最稳。
+- L1 默认升到 `gemini-3-flash-preview`（质量高于 2.5、比 3-pro 快），实测 grounded 可用。
+
+## ⚠️ 致命坑 + 根治：Cerberus 隧道 idle 自停 → 对话/搜索偶发 "failed after retries"
+
+**现象**：一段时间没活动后，下一条请求偶发 `The model provider failed after retries`，再发一条又好了。
+
+**根因**（cerberus 日志实锤）：Cerberus 有空闲休眠——`Idle session detected. Stopping Cerberus daemon`。请求落在 idle 唤醒/重握手窗口期（1-2s），此时隧道返回连接错误或 502/503。而 **proxy 旧代码只对 429 重试，对连接错误/5xx 直接放弃** → 报错。**关键**：cerberus 的 `/health` 探测**不算活跃使用**，每分钟 ping health 也阻止不了 idle（日志显示 health check 后照样 idle）。
+
+**根治（双管齐下，治本 + 兜底）**：
+
+1. **保活进程**（治本）`~/.hermes/scripts/genai_keepalive.sh`
+   - 每 40s 打一次**真实 1-token** `generateContent`（`gemini-2.5-flash`，`maxOutputTokens:1`）→ session 永不 idle。代价极小（每次 totalTokenCount=1）。
+   - `flock` 单实例；cron **每分钟自愈** + `@reboot` 兜底 → durable、跨会话、抗 reboot。
+   - 必须显式 `export SSH_AUTH_SOCK=/var/lib/devpod/ssh/active_ssh_auth_sock`（cron 不继承登录 shell env，否则 Cerberus no suitable auth）。
+   - 验证：cerberus 日志 `Idle session detected` 应归零，改为持续的 generateContent 请求。
+
+2. **proxy 重试覆盖瞬时错误**（兜底竞态窗口）`genai_proxy.py`
+   - `HTTPError` 重试条件从 `e.code == 429` 扩到 `e.code in (429, 502, 503)`。
+   - `URLError`（连接层错误）也重试（退避 1.5s/3s），兜住保活间隙的窄竞态窗口。
+   - 429/超时(504)/大请求逻辑不动。注意 `except HTTPError` 必须在 `except URLError` 之前（前者是后者子类）。
+
+> 不做保活 = 隧道反复 idle 拉锯，用户偶发掉线手动恢复；做了保活 = 永不 idle，proxy 重试再兜住极端竞态。两者都上才是真 durable。
+
