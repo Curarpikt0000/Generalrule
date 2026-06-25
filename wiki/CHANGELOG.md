@@ -10,9 +10,9 @@
 
 ## 记录
 
-### 2026-06-25 —— Uber GenAI Gateway 免费公网搜索给 Hermes agent 用（Hermes default, Opus 4.8 [UB]）
+### 2026-06-25 —— GenAI Gateway 公网搜索方案在 Economy-KOL 弃用，改自托管 SearXNG（Hermes default, Opus 4.8 [UB]）
 
-- **[新增] `engineering/uber-genai-gateway-web-search.md`** —— 纠正"Uber 内部无公网搜索"的常见误判：`aifx mcp list` 里 search 类 MCP 确实全是内部知识/业务数据，但**官方公网出口收口在 GenAI Gateway**——它透传 Gemini 的 Google Search grounding（及 OpenAI/Anthropic 的 web_search）。调用法：`POST localhost:5436/v1/models/gemini-2.5-flash:generateContent` + 头 `Rpc-Service: genai-api`/`Rpc-Caller: <ldap>@uber.com` + body `tools:[{"google_search":{}}]`，返回综述正文 + `groundingChunks[].web.uri` 源URL，**免费走内部计费、永不断粮**。**致命坑+绕过**：AI-Guard 对 prompt 做 PII 匿名化，带空格的标准全名（"Peter Schiff"）会被替换成 ANONYMIZED_PERSON 导致查无；用**去空格连写**（"PeterSchiff"/handle 去@/display_name 去空格）实测能绕过并正确识别本人。**定位**：质量高于 ddgs、免费不断粮，但精度/日期窗不如 Exa→放降级链 **Exa>GenAI>ddgs**。参考实现 economy-kol `scripts/backfill_one.py`。同步登记 `engineering/README.md`。源：economy-kol 项目把付费 Exa/Tavily 断粮风险转为内部免费联网能力的实战。
+- **[修改] `engineering/uber-genai-gateway-web-search.md` 的 README 描述** —— 原拟把 GenAI Gateway grounded search 推广为通用免费联网方案，**实测发现致命局限**：AI-Guard 对 prompt 做 PII 匿名化，人名查询不稳定（76 KOL 抽测仍有 1 人 Daniel Ghali 被匿名化截断、9 人综述未直呼全名）；"去空格连写"绕过只是缓解非根治。**结论：不适合"按人名精确搜索"的 KOL 监控**。Economy-KOL 项目已改用**自托管 SearXNG**（localhost:8888，可搜真名零截断、免费不断粮），降级链定为 **Exa→Tavily→SearXNG→ddgs**（项目专属，不外推）。GenAI 相关搜索逻辑已从项目 `backfill_one.py` 移除。该 wiki 文件本体的 usearch CLI / Cerberus idle 内容由另一 Hermes 实例维护，保留不动。
 
 ### 2026-06-24 —— 模型把工具调用写成正文 antml 文本 + 上下文污染循环（Claude Code, Opus 4.8 [UB]）
 
