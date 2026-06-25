@@ -1,13 +1,18 @@
 ---
 title: Uber Hermes 公网搜索工具栈与兜底层级（SearXNG 主力 / GenAI grounded 仅项目级辅助兜底）
 domain: engineering
-keywords: [web-search, 搜索工具栈, 兜底层级, searxng, exa, tavily, ddgs, genai-gateway, grounded, gemini, google-search, 联网, 公网搜索, ai-guard, pii, cerberus, ussh, devpod, 内部联网, usearch, keepalive, idle, failed-after-retries]
+scope: UBER-HERMES-ONLY
+keywords: [web-search, 搜索工具栈, 兜底层级, searxng, exa, tavily, ddgs, genai-gateway, grounded, gemini, google-search, 联网, 公网搜索, ai-guard, pii, cerberus, ussh, devpod, 内部联网, usearch, keepalive, idle, failed-after-retries, uber-hermes-only]
 source: hermes-web-search-stack-20260625
 created: 2026-06-25
-last_updated: 2026-06-25 (正名为搜索工具栈；GenAI 从"推荐主力"改写为"项目级辅助兜底"，置顶权威层级)
+last_updated: 2026-06-25 (正名为搜索工具栈；GenAI 从"推荐主力"改写为"项目级辅助兜底"，置顶权威层级；标注 Uber-Hermes 专属)
 ---
 
 # Uber Hermes 公网搜索工具栈与兜底层级
+
+> 🔒 **适用范围：本文档为 Uber Hermes（devpod 上的 Hermes Agent）专属。**
+> 内容依赖 Uber 内部基础设施（Cerberus 隧道 / GenAI Gateway / AI-Guard / ussh 证书 / Chao 自托管的 SearXNG），
+> **不进 `main` 分支、不外推给其他 Hermes 实例或非 Uber 环境**，仅留在 `ub-branch` 供 Uber-vm 上的本机使用。
 
 ## ⭐ 当前搜索工具层级与兜底方案（权威，先看这个）
 
