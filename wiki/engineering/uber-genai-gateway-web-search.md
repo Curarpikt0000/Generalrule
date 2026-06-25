@@ -4,16 +4,22 @@ domain: engineering
 keywords: [genai-gateway, web-search, grounded, gemini, google-search, 联网, 公网搜索, exa, tavily, ddgs, ai-guard, pii, cerberus, ussh, devpod, 内部联网, usearch, keepalive, idle, failed-after-retries]
 source: hermes-economy-kol-genai-integration-20260625
 created: 2026-06-25
-last_updated: 2026-06-25 (+usearch CLI 封装 + Cerberus idle 保活根治)
+last_updated: 2026-06-25 (+SearXNG 升为 L1 + usearch 项目级边界 + deepdive 深挖 + Cerberus idle 保活)
 ---
 
-# Uber GenAI Gateway — 免费公网搜索给 Hermes Agent 用
+# Uber GenAI Gateway — 内部联网/搜索备忘 + usearch 项目级降级链
+
+> ⚠️ **现状提示（2026-06-25 起）**：GenAI Gateway grounded 搜索仍可用，但它前面的 **AI-Guard 会把人名匿名化**（见下文「致命坑」），不适合「精确搜某个人」。因此项目级搜索的**首选已改为自托管 SearXNG**，GenAI 降为备用：
+> - 通用项目级降级链（本文 `usearch` CLI）：**SearXNG（L1）→ GenAI grounded（L2）→ ddgs（L3）**
+> - economics-kol 项目另有专属链：**Exa → Tavily → SearXNG → ddgs**（项目专属，不外推）
+> 下面保留 GenAI Gateway 的完整调法（它仍是 L2 备用 + 历史参考）。
 
 ## 一句话
 
 跑在 Uber devpod 上的 Hermes agent **不需要付费的 Exa/Tavily 也能联网搜公网**：
 直接打内部 **GenAI Gateway** 的 grounded web search（Gemini + Google Search grounding），
 **免费走内部计费、永不断粮、返回带源 URL 的实时结果**。这是 Uber 官方的公网出口。
+（注：因 AI-Guard PII 局限，现已降为 usearch 的 L2 备用，L1 用 SearXNG。）
 
 ## 背景 / 纠正一个常见误判
 
@@ -126,26 +132,54 @@ query = f"{handle} {focus_topic} market news {start} to {end}"
 
 **位置**：`~/.local/bin/usearch`（已 chmod +x；记得 `~/.local/bin` 在 PATH）
 
-**降级链**（前级失败/无结果才落下级，stderr 实时打印用了哪一级）：
-- **L1** GenAI Gateway grounded：`gemini-3-flash-preview` + `google_search`，端口 5436，带 `Rpc-Service`/`Rpc-Caller` 头。综述 + 源URL，免费不断粮。
-- **L2** 同网关自动换备用模型（`gemini-2.5-flash` → `gemini-2.5-pro`），抗偶发 5xx。
-- **L3** `ddgs` 兜底（网关整挂时），纯链接列表。
+> 🔴 **铁律：websearch 降级链是「项目级」，不是「整体级」**（Chao 2026-06-25 明确）。
+> `usearch` 是一个独立的项目级 CLI，跑在 `~/.local/bin/`，与 **Hermes Agent 的主对话模型 /
+> provider / 网关配置完全无关**。要换搜索后端 / 调降级顺序，**只改这个文件**，
+> **绝不能去动 `hermes config`、主 model/provider、或 Hermes 基础设置**。
+> 每个项目可以有自己的搜索策略；Hermes 本体的 web 工具与对话链路保持不变。
+>
+> 📌 **适用范围**：本节(SearXNG→GenAI→ddgs 降级链)是给 **`~/Projects/` 下搭建的 Hermes 项目级数据管道**
+> 用的(竞品追踪、KOL 监控、dashboard 这类自动化采集项目)。**不是所有 topic conversation 的强制规则**——
+> 日常对话里 Hermes 自带的 web 工具照常用，无需套这套降级链。只有当你在某个项目里需要
+> 「自带兜底、可控后端」的稳定搜索时，才复用这个 `usearch` CLI。
 
-**源 URL = 方案 A**：直接用 `groundingMetadata` 原始 uri（`vertexaisearch.../grounding-api-redirect/...` 跳转链），**不跟随重定向解析**。要落地页再 fetch。
+**降级链**（前级失败/无结果才落下级，stderr 实时打印用了哪一级）：
+- **L1** **SearXNG**（本地 metasearch，`http://localhost:8888`，Chao 后台设的默认）：多引擎聚合，**直接返回真实落地页 URL**（无需 resolve），免费、快。
+- **L2** GenAI Gateway grounded（`gemini-3-flash-preview` + `google_search`，端口 5436）：带 AI 综述 + 源URL，作为 SearXNG 挂掉时的备用。仍可用，但**只是纯调用，不改 Hermes 任何设置**。
+- **L3** `ddgs` 兜底（前两级都挂时），纯链接列表。
+
+**源 URL 处理**：
+- SearXNG / ddgs 直接给真实 URL。
+- GenAI grounded 给 `vertexaisearch.../grounding-api-redirect/...` 跳转链（方案 A 原样），`--resolve` 可解析成真实 URL（仅 GenAI 层需要）。
 
 **用法**：
 ```bash
-usearch "query"                  # 默认 grounded
+usearch "query"                  # 默认走降级链 (SearXNG 优先)
 usearch -n 8 "query"             # 限源数
-usearch --model gemini-2.5-pro "query"
 usearch --raw "query"            # JSON 输出 (text + urls + tier)
+usearch --resolve "query"        # 深挖: 解析 GenAI 跳转链为真实 URL
+usearch --genai "query"          # 强制跳过 SearXNG, 直接走 GenAI grounded
 usearch --ddgs "query"           # 强制走 ddgs 兜底
+usearch --model gemini-2.5-pro "query"   # 仅 GenAI 层换模型
 ```
+环境变量：`SEARXNG_BASE`（默认 `http://localhost:8888`）、`GENAI_BASE`（默认 `http://localhost:5436`）。
 
 **实现要点 / 踩过的坑**：
-- `ddgs -o json` **不打印 stdout 而是偷偷写文件** `/tmp/text_<query>_<时间>.json`。改用 `from ddgs import DDGS` Python 库直调，别走 CLI 的 `-o`。
+- SearXNG JSON 接口：`GET /search?q=<query>&format=json`，返回 `results:[{title,url,content}]`，**url 是真实落地页**（比 GenAI 跳转链更省，深挖时不用 resolve）。
+- `ddgs -o json` **不打印 stdout 而是偷偷写文件**。改用 `from ddgs import DDGS` Python 库直调。
 - `ddgs` 装在 `~/.local/bin/`，cron/非登录 shell 的 PATH 里可能没有 → 用库直调最稳。
-- L1 默认升到 `gemini-3-flash-preview`（质量高于 2.5、比 3-pro 快），实测 grounded 可用。
+
+## 深挖补全（deepdive）：从「综述」到「拿到 promo 真实机制+时间」
+
+usearch 默认只给综述/链接列表。要拿到**真实的活动期間 + 机制细节**（建 calendar/入库用），需要"深挖"：
+搜索 → 跟进真实落地页原文 → LLM 二次抽取。参考实现：competitor-news 项目 `src/deepdive.py`。
+
+- **触发条件**（可配）：campaign 缺任一日期 OR 机制描述过短（< ~40 字）。
+- **反复深挖**：每条最多用 N 个不同角度的查询（日期向 / 机制向 / 官方 prtimes 向），命中即停。
+- **数据禁估算（铁律）**：深挖只填能从落地页原文**明确证实**的真值；拿不到精确日期就**留空**，展示层标「期間未明示」——**绝不 ±N 天估算补全**。
+- **证据留痕**：抽取时一并返回 `evidence`（源 URL + 原文引文片段），便于人工核验，符合"每个论断锚到具名数据"。
+- **预算控制**：每轮全局上限（competitor-news 设 60 条），超预算放弃，防 cron 超时。
+- SearXNG 作 L1 后，深挖源质量更硬（常直接命中官方新闻稿，如 `corporate.demae-can.co.jp` / `prtimes.jp`），优于聚合返利站。
 
 ## ⚠️ 致命坑 + 根治：Cerberus 隧道 idle 自停 → 对话/搜索偶发 "failed after retries"
 
