@@ -7,8 +7,8 @@ tags: [tool-calling, llm-behavior, contamination, hermes, claude]
 source: 2026-06-24 排障——Hermes(default profile) 在对话末尾反复把工具调用打成 antml 文本导致任务失败
 sources: [conversation-2026-06-24, /home/user/.hermes/state.db]
 created: 2026-06-24
-updated: 2026-06-24
-last_updated: 2026-06-24
+updated: 2026-06-27
+last_updated: 2026-06-27
 machine: UB
 ---
 
@@ -52,7 +52,24 @@ machine: UB
 
 1. **弃用被污染的会话**（最有效）：导出备份后**开新对话**，别再 resume 那条被自己坏范例教坏的会话。compact 也可，但摘要可能残留范例，新开更彻底。
 2. **让工具始终原生下发**：关闭/调高 `tool_search` 阈值（Hermes：`tools.tool_search.enabled: false`），消除"目标工具没下发→模型编 XML"的诱因。代价：每次请求 prompt 更大、更费 token，**与超大对话的超时/成本相冲突**，按需权衡。
-3. **harness 缺陷（根上）**：识别并**剥离/抢救** antml `<invoke>` 格式（既要从显示剥掉，最好还能解析成真调用）。属版本级问题，本地难改，值得反馈上游。
+3. **harness 缺陷（根上）**：识别并**剥离/抢救** antml `<invoke>` 格式（既要从显示剥掉，最好还能解析成真调用）。上游 Hermes 原生只认 OpenAI 格式、从不处理 Claude antml（`git grep <invoke|antml` 上游整树零命中），官方修不了 → **本地补丁**（见下）。
+
+## 变体：悬空 `call:` 断点（无 `<invoke>`，正文停在 `call:`）
+
+同一格式转换失败的另一种表现，2026-06-27 实测：模型吐了一个工具调用引子行 **`call:`**（或 `call`）后，**没有**任何 `<invoke>`/工具名/参数，且 `finish_reason=stop` + `tool_calls` 空。
+- 症状：Telegram 消息**正好停在 `call:`**，对话挂住**死等用户**（用户原话"每次 call: 就断"）。
+- 难点：正文**非空**（真实叙述 + 末尾一个 `call:`），所以 harness 既有的"空响应 nudge/retry"全被跳过 → 半截消息原样返回。
+- **务必区分两类 `call:`**：`finish_reason=tool_calls` 且 `tool_calls` 有值 = **正常引子**（模型在调工具的口头禅，无害，别误杀）；`finish_reason=stop` + `tool_calls` 空 = **真断**。
+- **为什么 Hermes 自己永远修不了**：① `stop` 时控制权交还用户，模型没被再次调用，断的当下无人察觉；②会话历史被 `...call:` 尾巴污染→模型照抄自己→反复在同一边界断；③ antml salvage 补丁无 `<invoke>` 可解析、不触发。
+
+## 已实装的本地补丁（Hermes VM，逐 profile 重启才生效）
+
+> 上游修不了 → 在 `~/.hermes/hermes-agent/` 本地打补丁。改完**必须逐个重启每个 profile**（进程不热更新代码，见 [[hermes-multi-profile-watchdog]]）；改前备份 `*.bak.<ts>`。
+
+- **A 剥离**：`agent/agent_runtime_helpers.py` 的 `strip_think_blocks()` 增加对 `<invoke>`/`<parameter>`/`<function_calls>`/裸 `call` 前缀的正则剥离（原本只认 `<tool_call>`/`<function>`），保证泄漏文本不显示给用户、不进历史当坏范例。
+- **B 转译/抢救**：同文件新增 `parse_antml_tool_calls()`；`agent/conversation_loop.py` 在 `if assistant_message.tool_calls:` 前插 salvage——空 `tool_calls` + 完整 `<invoke>` + 名字 ∈ `valid_tool_names` 时，解析合成结构化 `tool_call` 注入并清洗 content。护栏：只在"无真调用 + 块完整 + 名字是已知工具"时才触发，防误执行正文里**引用**的格式。
+- **C 悬空 `call:` 恢复**：`agent/conversation_loop.py` 的 no-tool-call 分支顶部加检测——`无 tool_calls + 无 <invoke> + 正文末行匹配 ^[ \t]*call[ \t]*:?$` → 剥掉悬空 `call:` + 一次性 nudge（guard `_dangling_call_retried`，工具成功后重置）让模型重发工具调用；guard 用尽则带清洗后正文 fall through，用户**绝不再看到 `call:`**。正则对 `recall`/`API call`/`make the call.`/`subprocess.call(` 零误伤（已验）。
+- **清污染**：被 `...call:` 尾巴污染的会话历史可用 `venv/bin/python` 直接 `UPDATE state.db` 去尾（备份到 json），斩断自我模仿；sqlite3 CLI 没装，走 venv python 的 sqlite3 模块。
 
 ## 通用教训
 

@@ -10,7 +10,12 @@
 
 ## 记录
 
-### 2026-06-27 —— 首次构建 RAG 问答 chatbot 的工程踩坑（Hermes default, Opus 4.8 [UB]）
+### 2026-06-27 —— Hermes 多 profile 运维与重启 + antml/`call:` 本地补丁沉淀（Claude Code, Opus 4.8 [UB]）
+
+- **[新增] `agent-rules/hermes-multi-profile-watchdog.md`** —— 一次性修好 3 个 Uber profile（u-dara/u-financer/u-consultant 自 6/25 重启后实质空转、跑旧代码）后沉淀。**核心知识**：①架构=4 profile 各自独立 token/state.db/日志但**共用** `localhost:8800` LLM 代理（单点，隧道 `502 [Errno 99]` 一挂 4 个全挂）；②**最大陷阱「活着≠在干活」**——`multi_watchdog.log` 的 `OK alive` 只是进程级 ping，真健康要查该 profile `logs/agent.log` 最近有没有 `API call #`；③**profile 不热更新代码**，给 `~/.hermes/hermes-agent/` 打补丁后须**逐个重启**每个 profile 才生效（本次 3 个 Uber profile 一直跑 6/25 旧代码没吃到 antml/`call:` 补丁）；④**重启坑**：token-scoped 锁在 `~/.local/state/hermes/gateway-locks/telegram-bot-token-<hash>.lock`（不在 HERMES_HOME 下），删 HERMES_HOME 的 gateway.lock 不够；multi_watchdog cron 会和手动重启**抢着拉起同一 profile→撞 token 双双退出**（gateway.out 两次 "Gateway Starting" 即此），watchdog 是 token-conflict-aware 撞一次会让路；⑤正确手法=精确按 `/proc/<pid>/environ` 的 HERMES_HOME kill→等优雅退出清锁→逐个 `setsid env -i HERMES_HOME=... hermes gateway run` 起+逐个 verify。同步登记 `agent-rules/README.md`。
+
+- **[修改] `llm/tool-call-emitted-as-text.md`** —— 补两节：①**变体「悬空 `call:` 断点」**——模型吐 `call:` 引子后无 `<invoke>`/工具名、`finish_reason=stop`+`tool_calls` 空，消息停在 `call:` 死等用户；务必区分 `finish_reason=tool_calls`（正常引子，别误杀）vs `=stop`（真断）；Hermes 自己修不了的三因（stop 时模型没被再调用→当下无人察觉 / 历史污染自我模仿 / antml salvage 无 `<invoke>` 不触发）。②**已实装的本地补丁 A+B+C**（上游原生只认 OpenAI 格式、`git grep` 零命中、官方修不了→本地改 `agent/agent_runtime_helpers.py` + `agent/conversation_loop.py`）：A 剥离 antml 文本、B 解析 `<invoke>` 抢救成结构化调用、C 检测悬空 `call:` 并 nudge 重发（正则对 recall/API call/subprocess.call( 零误伤）；附清污染会话历史（venv python UPDATE state.db 去尾）。强调**改后须逐个重启 profile**（指向 [[hermes-multi-profile-watchdog]]）。
+
 
 - **[新增] `engineering/rag-chatbot-first-build-pitfalls.md`** —— 首次为内部 Slack 频道构建三层降级 RAG 问答 bot，上生产前做完整 code review（逐文件审 + 独立 reviewer subagent fail-closed 交叉验证 + 亲自复核最高危项），发现 3 个阻断上线的 Critical，提炼为脱平台通用知识（Slack/Telegram/Discord 均适用）。**4 大坑**：①**共享账号下的自回复死循环**（最隐蔽）——bot 与人类共用账号、回复走用户 OAuth token 发出故不带 `bot_id`，用 `m.get("bot_id")` 过滤自己的消息完全失效，当下不死循环纯属"回复恰不以触发词开头"的偶然；正解=用发送方追加的稳定签名（如 `*Sent using*`）判定自己的消息，且顶层+线程两个过滤点都要应用，上线前真实账号实测一轮。②**缓存是防编造逻辑的后门**——L1 缓存命中返回 `sources=[]`（违反"必带来源"）且永不过期（数据每日刷新后返回陈旧答案）；正解=缓存存 sources 命中回填 + TTL 对齐刷新周期 + 坏时间戳当过期。③**chatbot 质量住在分支里，零测试=裸奔**——防编造/降级/路由/触发词全是判定逻辑，最易被迭代改坏；正解=写不依赖 LLM/向量库/网络的纯逻辑单测（monkeypatch 把缓存/state 路径指向临时目录），26 测 <2s 兜底。④**长跑 bot 的 state 必须原子写**——游标/去重表用 `json.dump(open(...))` 崩溃会留半截文件破坏崩溃重试与自回复去重；正解=tempfile+os.replace。**通用箴言**：聊天机器人会对自己说话；任何快路径/缓存/早返回都可能绕过慢路径的安全/合规逻辑要补回；代码工艺好≠可上生产，独立 fail-closed reviewer 总能发现作者盲点。同步登记 `index.md` 第 2 层 + `engineering/README.md`。
 

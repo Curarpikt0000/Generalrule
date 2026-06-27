@@ -48,6 +48,7 @@ last_updated: 2026-05-28
 - [[hermes-profile-filesystem-discipline]] —— 任何 Hermes profile 写文件的纪律：~/hermesagent/<profile>/ 专属工作区 + 禁止染指 Documents/Desktop 等用户文件夹（2026-05-31）
 - [[hermes-genai-api-integration]] —— Hermes 接 Uber 内部 GenAI API（Claude Opus 4 / GPT-5.5）；Cerberus 隧道 + proxy v2（429 重试）+ dinit/crontab 24/7 持久化；SSH_AUTH_SOCK 踩坑；隧道 watchdog（系统 cron · 认证失败 Telegram 提醒）+ idle 掉线/端口漂移 `502 [Errno 99]` 踩坑（2026-06-12，更新 2026-06-17）
 - [[hermes-gateway-watchdog]] —— 【仅 Hermes】Gateway 24/7 cron watchdog 自动拉起；核心踩坑：必须同时匹配 run/restart 两种 cmdline，否则 false-DOWN 死循环（2026-06-15）
+- [[hermes-multi-profile-watchdog]] —— 【仅 Hermes】多 profile（default + u-dara/u-financer/u-consultant）并存运维：共用 8800 代理（单点，一挂全挂）、multi_watchdog 的 `OK alive` 只是进程 ping≠在干活（须查 agent.log 的 `API call #`）、profile 不热更新代码（打补丁后须逐个重启）；重启坑：token 锁在 `~/.local/state/hermes/gateway-locks/`、watchdog 抢重启撞 token（2026-06-27）
 
 ---
 

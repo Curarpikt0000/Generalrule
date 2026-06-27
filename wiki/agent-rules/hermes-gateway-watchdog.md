@@ -82,6 +82,7 @@ watchdog 只解决"进程被杀/崩溃 → 自愈"。**整台容器被重建/重
 
 ## 相关页面
 
+- [[hermes-multi-profile-watchdog]] —— 多 profile 并存时的运维与重启（本页是单 profile 基础；多 profile 另有 token 锁/watchdog 抢重启/"活着≠在干活"等坑）
 - [[hermes-genai-api-integration]] —— Hermes 接 Uber GenAI API + dinit/crontab 24/7 持久化（另一条 24/7 路径）
 - [[hermes-profile-filesystem-discipline]] —— Hermes profile 文件纪律
 - [[agent-config-matrix]] —— 各 agent 配置矩阵（gateway 是 Hermes 独有项）
