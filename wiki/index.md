@@ -79,6 +79,7 @@
 | 编码前先查 skill | [[engineering/skill-check-before-coding]] | skill, 五步链路 |
 | 容器重启服务恢复与开机持久化 | [[engineering/container-reboot-service-persistence]] | 容器, 重启, 临时/etc, 幂等 boot, setsid, watchdog |
 | 轮询式双向 bot + 单源硬超时隔离 | [[engineering/polling-bidirectional-bot-and-source-timeout-isolation]] | 轮询, 双向 bot, 游标, ThreadPoolExecutor 硬超时, shutdown(wait=False), os._exit, 多源管道 |
+| 首次构建 RAG 问答 Chatbot 的工程踩坑 | [[engineering/rag-chatbot-first-build-pitfalls]] | chatbot, RAG, 自回复死循环, 共享账号, 缓存丢来源/TTL, 纯逻辑单测, state 原子写 |
 | Notion API Token — ntn_ 格式与 shell 截断陷阱 | [[engineering/notion-api-token-ntn-trap]] | notion, api-token, shell, 截断 |
 | Cron Job — GUI 方案不可靠，优先 no_agent 纯脚本 | [[engineering/cron-no-gui-preference]] | cron, computer_use, no_agent, playwright |
 

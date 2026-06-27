@@ -10,6 +10,10 @@
 
 ## 记录
 
+### 2026-06-27 —— 首次构建 RAG 问答 chatbot 的工程踩坑（Hermes default, Opus 4.8 [UB]）
+
+- **[新增] `engineering/rag-chatbot-first-build-pitfalls.md`** —— 首次为内部 Slack 频道构建三层降级 RAG 问答 bot，上生产前做完整 code review（逐文件审 + 独立 reviewer subagent fail-closed 交叉验证 + 亲自复核最高危项），发现 3 个阻断上线的 Critical，提炼为脱平台通用知识（Slack/Telegram/Discord 均适用）。**4 大坑**：①**共享账号下的自回复死循环**（最隐蔽）——bot 与人类共用账号、回复走用户 OAuth token 发出故不带 `bot_id`，用 `m.get("bot_id")` 过滤自己的消息完全失效，当下不死循环纯属"回复恰不以触发词开头"的偶然；正解=用发送方追加的稳定签名（如 `*Sent using*`）判定自己的消息，且顶层+线程两个过滤点都要应用，上线前真实账号实测一轮。②**缓存是防编造逻辑的后门**——L1 缓存命中返回 `sources=[]`（违反"必带来源"）且永不过期（数据每日刷新后返回陈旧答案）；正解=缓存存 sources 命中回填 + TTL 对齐刷新周期 + 坏时间戳当过期。③**chatbot 质量住在分支里，零测试=裸奔**——防编造/降级/路由/触发词全是判定逻辑，最易被迭代改坏；正解=写不依赖 LLM/向量库/网络的纯逻辑单测（monkeypatch 把缓存/state 路径指向临时目录），26 测 <2s 兜底。④**长跑 bot 的 state 必须原子写**——游标/去重表用 `json.dump(open(...))` 崩溃会留半截文件破坏崩溃重试与自回复去重；正解=tempfile+os.replace。**通用箴言**：聊天机器人会对自己说话；任何快路径/缓存/早返回都可能绕过慢路径的安全/合规逻辑要补回；代码工艺好≠可上生产，独立 fail-closed reviewer 总能发现作者盲点。同步登记 `index.md` 第 2 层 + `engineering/README.md`。
+
 ### 2026-06-25 —— 搜索 wiki 正名为「搜索工具栈」，GenAI grounded 从"推荐主力"改写为"项目级辅助兜底"（Hermes default, Opus 4.8 [UB]）
 
 - **[迁移+重写] `engineering/uber-genai-gateway-web-search.md` → `engineering/uber-hermes-web-search-stack.md`** —— Chao 2026-06-25 拍板核心事实：**SearXNG 是公网搜索主力/默认兜底；GenAI Gateway grounded search 只是【项目级可选辅助兜底】，不是标准搜索步骤之一**（AI-Guard 对人名做 PII 匿名化，搜人名不可靠）。改写：①文件正名（不再以 GenAI 为题）；②标题/frontmatter 重写为「公网搜索工具栈与兜底层级」；③**置顶权威小节**明确标准层级（L1 SearXNG→L2 ddgs；GenAI 仅可选）+ 记录两条正在跑的真实降级链（usearch CLI：SearXNG→GenAI 辅助→ddgs；Economy-KOL backfill：Exa→Tavily→SearXNG→ddgs，已删 GenAI）；④删除原「Exa→GenAI→ddgs 推荐降级链」等把 GenAI 当主力的误导措辞，GenAI 教程段保留但加「历史/辅助方案，非标准步骤」横幅并说明 PII 局限为降级根因；⑤保留 usearch CLI / Cerberus idle 保活等技术事实内容（措辞对齐：GenAI 标注为辅助层）。**不管是谁写的，以最新事实对齐。** README 索引同步更新文件名与定位。
