@@ -28,7 +28,7 @@ tags: [economics, kol, macro, daily-update, notion, dashboard, opinion-tracking]
 2. **Daily/Weekly 只写「新增观点」**（需求①）——见 §三.4 观点新颖性判断。
 3. **每个 KOL 的丰富背景+历史汇总** 写在 Notion KOL List 的 **page 正文**（callout/heading 结构化，非纯 text）——见 §六。脚本 `scripts/write_kol_profile.py`。
 4. **可靠写入库** `scripts/notion_writer.py`：自动 L2去重 + select option 安全合并 + 建 page。
-5. **搜索源优先级**：Exa（主，语义+日期过滤）→ 真实浏览器（X/YT/博客动态页）→ Tavily（备）→ ddgs（免费兜底）。Uber 内部无公网搜索通道（usearch 是内部知识检索）。
+5. **搜索源优先级（本项目专属降级链）**：Exa（主，语义+日期过滤）→ Tavily（备）→ SearXNG（自托管元搜索 localhost:8888，免费不断粮、可搜真名无截断）→ ddgs（免费兜底）。`backfill_one.py` 内置：付费源(Exa+Tavily)命中=0 时自动 SearXNG，SearXNG 挂才到 ddgs。输出 json 四桶 `exa`/`tavily`/`searxng`/`ddgs`，**下游分析/cron prompt 四桶都读**。SearXNG/ddgs 的 publishedDate 常为空，时效靠 content 正文日期判断。> 注：此降级链是 Economy-KOL 项目专属设计，不外推到其他 Hermes 项目；SearXNG backend 设置由用户维护，勿改。**完整工程笔记+选型踩坑（含某 PII 匿名化 grounded-search 网关因人名匿名化弃用的教训、SearXNG 调用、降级链验证脚本）见 `references/multi-source-search-fallback.md`。**
 6. **真实浏览器已装**（agent-browser + Chrome），可抓 X 推文（未登录即可）、YouTube、个人博客。
 
 ---
@@ -65,10 +65,19 @@ tags: [economics, kol, macro, daily-update, notion, dashboard, opinion-tracking]
 | `Comments` | rich_text | 中文逻辑链 100-200字，用 → 连接，末尾附来源 |
 | `Suggestion` | rich_text | 中文操作建议，不放链接 |
 | `多空标的` | rich_text | 人类可读，如"🟢 GLD, PHYS \| 🔴 TLT" |
-| `方向明细` | rich_text | ⭐**结构化方向(JSON数组,按标的拆分)**：`[{"标的":"美债","板块":"Government Debt","方向":"看空"},...]`。dashboard 摊平成三元组统计真实多空。**写入用 `scripts/extract_direction.py` 的 write_direction()** |
+| `方向明细` | rich_text | ⭐**结构化方向(JSON数组,按标的拆分)**：`[{"标的":"美债","板块":"Government Debt","方向":"看空","期限":"短期"},...]`。dashboard 摊平成三元组统计真实多空。**写入用 `scripts/extract_direction.py` 的 write_direction()** |
 | `主导方向` | select | 6档：强烈看多/看多/中性/看空/强烈看空/分歧（该条最主要方向，快速筛选+加权用）|
 
 > ⭐**情绪/多空方向分析铁律（Chao 最高质量红线，2026-06-21）**：判方向【绝不可】用浅层文本/emoji 匹配或默认中性！必须逐条读懂 KOL 的【语言意味】。① 识别隐含看空（"美债泡沫/收益率飙升/抛长债/缩久期"=看空美债，即使无🔴；"科技泡沫/Mag7见顶/AI估值过高"=看空Equities；"美元购买力崩溃/去美元化"=看空美元）。② 一条发言常含多个标的、方向不同，**必须按标的拆分**，绝不整条简化（Luke Gromen 一条=🟢黄金强烈看多+🔴长久期美债强烈看空+🔴美元）。敷衍会导致"所有资产都看多/美债全看多"的荒谬结果。dashboard 必须读「方向明细」结构化字段，不靠文本现猜。详见项目 lessons §0。
+
+> ⭐**「期限」维度（短期/长期，Chao 2026-06 需求）**：方向明细每条腿必须带 `期限` 字段，取值只能 `"短期"` 或 `"长期"`。判定要读懂语言意味，不浅层匹配：
+> - **短期**：具体价位突破/回调、本周本月、技术面、某事件(Fed会议/数据/到期)驱动的近期方向、"反弹/盘整/洗盘"节奏判断。
+> - **长期**：结构性论点、"终将/未来数年/牛市周期/货币体系重构/泡沫终将破裂"、央行购金趋势、远期目标价(如金价$8000)。
+> - **同一条 comment 不同标的可不同期限**（如"短期看多黄金 + 长期看空美元"），按标的分别标。
+> - 拿不准：近期交易性判断→短期；宏观趋势性判断→长期。不默认，基于文本判。
+> - 方向取值不变（强烈看多/看多/中性/看空/强烈看空），期限是**新增**维度，不改方向判定逻辑。
+> - 旧记录(2026-06 前)无期限字段 → dashboard 聚合时**无期限默认归短期**（雷达图短期为主，用户口径）。存量回填期限：用子 agent 分批（每批 ≤4 KOL，写后读回），先做 1 个 KOL 样板给用户验收判法质量，OK 再全量。
+> - ⚠️**存量回填含人名记录 → 必走 redactor-safe 写回**：agent 只回传期限标签数组，由脚本(`add_term.py apply`)自读真字节合并+多重校验(leg数/标的板块方向逐字段不变/无ANONYMIZED)+写后读回，绝不让 agent 整条读改写回(会把脱敏占位符覆盖真名)。开工前先 `backup_direction_detail.py` 全量备份+`restore --check`兜底。完整 proven 工具链+并发节奏+自动推进/每小时雷达 cron 见 **`references/horizon-backfill-redactor-safe.md`**。
 
 ### KOL By Week DB `36b4...`
 Key Insight(title) / Date / Week Number(number) / Comments / Suggestion / Sector / Detail Sector / 多空标的
@@ -132,6 +141,7 @@ Key Insight(title) / Date / Week Number(number) / Comments / Suggestion / Sector
 聚合改进方向（brief 第八节）：按 ticker 聚合 > 按情绪计数；sector 评分制；stance_changes 反转检测；置信度标签。
 **⭐sector 多空必须读「方向明细」JSON 摊平成(板块,标的,方向)三元组**（`generate_dashboard_data.py` 的 parse_legs/sector_legs），sector_summary 输出 legs_bull/legs_bear/strong_bear；绝不用旧的 sentimentScore 文本匹配（会把看空吞成中性→所有资产都看多）。未结构化的旧记录回退文本法但标注。
 **⭐评分公式=共识度净占比（Chao 2026-06-21 重批，不可用 tanh）**：`score = 100×(加权看多−加权看空)/(加权看多+加权看空+分歧)`，强度加权（强烈±2/普通±1）。含义：**只有零反对才可能到±100，有一个相反立场就<100**，多空各半=0。tanh 那种"信号强度映射"会让几乎所有板块顶到±99，违背直觉（贵金属有113条看空却显示+99）。score 即"净多空倾向%"，consensus=|score|=共识度。
+**⭐双雷达图（短期/长期，Chao 2026-06）**：`generate_dashboard_data.py` 的腿级累加器(sector_legs/sector_pts/ticker_dir)按 `leg.get("期限")` 分流成 `_short`/`_long` 两套（无期限/异常值默认归短期）；sector_summary 生成逻辑抽成 `build_sector_summary(legs,pts,raw)` 调 3 次，输出 `sector_summary`(全量,向后兼容)+`sector_summary_short`+`sector_summary_long` 三个键。前端 index.html 雷达卡片放两个 canvas(`radarChartShort`/`radarChartLong`)，`renderRadar` 拆 `drawRadar(canvasId,summary,ref)` 直接读后端聚合好的 score（不再前端 sentimentScore 现猜），score(-100..100)→半径 `score/100*2+2`(沿用 0..4 区间)。配色/级别/其他卡片/判定逻辑全不动——用户口径"前台样式不需大改，就把短期长期分两个"。改完跑 generate 重生成 data.json，校验两键各有数据且短≠长，node --check 验 JS 语法。
 
 ---
 
@@ -208,6 +218,10 @@ cronjob(action='create', name='KOL Weekly Summary', schedule='0 9 * * 1',
 | 子 agent 批量回溯每批 >4 KOL 会超时 | 每批 3-4 个 KOL |
 | GitHub push | 走 gh CLI 凭证(已登录 Curarpikt0000)，无需 PAT |
 | 不编造 | 搜不到就少写/不写，预测类诚实标注风格 |
+| **付费搜索源(Exa/Tavily)断粮那天观点全丢** | backfill_one.py 内置降级链 Exa→Tavily→SearXNG(localhost:8888,免费可搜真名)→ddgs；输出4桶,下游必须全读。见 references/multi-source-search-fallback.md |
+| **别再用带 PII 匿名化的 grounded-search 网关搜 KOL 人名** | 试过,该网关对 prompt 人名 PII 匿名化→精确搜人不稳定(76人实测个别高频名被截断),"去空格"绕过非根治。已弃用换 SearXNG(搜真名零截断)。别走回头路 |
+| **搜索 backend 配置禁改** | SearXNG(localhost:8888)由 Chao 维护,cron prompt 和代码都不得擅自修改其设置 |
+| **大规模不可逆 Notion 写入(全库重判/新结构回填)** | 先做 1 个 KOL 完整闭环样板→用户验收判法+样式→OK 再后台全量(子agent分批 ≤4 KOL)。别一次全量几小时跑完才发现方向/期限判法不被认可要回滚。用户不在且关键口径(如期限颗粒度)是你替定时,不擅自启动大规模写库,先样板。每个 DB 写后必读回验证(API 自报OK不算证据) |
 
 ---
 
