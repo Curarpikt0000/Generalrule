@@ -10,6 +10,9 @@
 
 ## 记录
 
+### 2026-06-29 —— queryrunner-MCP 取数突破 50 行（fetch_rows）+ 后端排队拥堵应对（Hermes default, Opus 4.8 [UB]）
+
+- **[新增] `engineering/queryrunner-mcp-fetch-rows-and-queue.md`** —— Chao 纠正长期错误认知后沉淀。**核心知识**：①`get_execution_results` 的 50 行**不是硬上限**——请求参数 **`fetch_rows`**（如 `{"execution_uuids":[...],"fetch_rows":20000}`）可调高、无硬上限、传多少拿多少；之前误试的 `limit/offset/page_size/max_rows/row_limit` 确实被忽略，正确参数名是 `fetch_rows`。→ 常规全量提取直接走 MCP，**不必为破行数限制而绕 `queryrunner_client`+exeggutor（flaky 后端）**。②第二逃生通道=浏览器 querybuilder scratchpad「Download as CSV」+ 取消 Limit 复选框=无限制下载。③后端 `started_waiting_to_execute` 长时间不动=队列拥堵（环境侧波动，非并发槽，cancel 清空重提仍卡）→ 不干等，起静默重试 watchdog（background+notify）周期重提、成功落地、失败安静，同时把工作 pivot 到不依赖后端的部分；watchdog 区分确定性失败（列 CLAC 加密→不重试）vs 排队/duplicate（下轮重提）。同步登记 `engineering/README.md`（index.md 第一层无需改，engineering 域已存在）。同步纠正 skill `uber-gr-finance-analysis` 旧的「50 行硬上限」段。
 ### 2026-06-27 —— Hermes 多 profile 运维与重启 + antml/`call:` 本地补丁沉淀（Claude Code, Opus 4.8 [UB]）
 
 - **[新增] `agent-rules/hermes-multi-profile-watchdog.md`** —— 一次性修好 3 个 Uber profile（u-dara/u-financer/u-consultant 自 6/25 重启后实质空转、跑旧代码）后沉淀。**核心知识**：①架构=4 profile 各自独立 token/state.db/日志但**共用** `localhost:8800` LLM 代理（单点，隧道 `502 [Errno 99]` 一挂 4 个全挂）；②**最大陷阱「活着≠在干活」**——`multi_watchdog.log` 的 `OK alive` 只是进程级 ping，真健康要查该 profile `logs/agent.log` 最近有没有 `API call #`；③**profile 不热更新代码**，给 `~/.hermes/hermes-agent/` 打补丁后须**逐个重启**每个 profile 才生效（本次 3 个 Uber profile 一直跑 6/25 旧代码没吃到 antml/`call:` 补丁）；④**重启坑**：token-scoped 锁在 `~/.local/state/hermes/gateway-locks/telegram-bot-token-<hash>.lock`（不在 HERMES_HOME 下），删 HERMES_HOME 的 gateway.lock 不够；multi_watchdog cron 会和手动重启**抢着拉起同一 profile→撞 token 双双退出**（gateway.out 两次 "Gateway Starting" 即此），watchdog 是 token-conflict-aware 撞一次会让路；⑤正确手法=精确按 `/proc/<pid>/environ` 的 HERMES_HOME kill→等优雅退出清锁→逐个 `setsid env -i HERMES_HOME=... hermes gateway run` 起+逐个 verify。同步登记 `agent-rules/README.md`。

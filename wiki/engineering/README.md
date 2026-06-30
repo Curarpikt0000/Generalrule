@@ -19,3 +19,4 @@
 * [[polling-bidirectional-bot-and-source-timeout-isolation]] - 轮询式双向消息机器人（无事件回调时用读 API+游标）+ 多源管道单源硬超时隔离（ThreadPoolExecutor 硬超时陷阱、shutdown(wait=False)、僵线程拖住退出、os._exit）
 * [[rag-chatbot-first-build-pitfalls]] - 首次构建 RAG 问答 Chatbot 的工程踩坑（共享账号下的自回复死循环=最隐蔽、用发送方签名而非账号 ID 判定自己消息；缓存命中丢来源/永不过期=防编造后门；chatbot 质量住在分支里→纯逻辑单测；长跑 bot state 必须原子写）
 * [[uber-hermes-web-search-stack]] - 公网搜索工具栈与兜底层级（**SearXNG 主力**；usearch CLI 逐级 backup 封装；Cerberus idle 保活根治）。🔴 GenAI Gateway grounded **只是项目级可选辅助兜底、非标准搜索步骤**——AI-Guard 对人名做 PII 匿名化，搜人名不可靠，默认走 SearXNG。
+* [[queryrunner-mcp-fetch-rows-and-queue]] - queryrunner-MCP 取数突破 50 行（**`fetch_rows` 参数无硬上限**，非旧认知的硬限；浏览器 scratchpad 关 Limit 下 CSV）+ 后端 `started_waiting_to_execute` 排队拥堵的静默重试 watchdog 应对（ub-branch / Uber 内部）。
