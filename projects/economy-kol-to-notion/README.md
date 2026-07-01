@@ -7,6 +7,8 @@
 
 > 🔧 **运维/自动化如何运转**：见 [`ops/RUNBOOK.md`](ops/RUNBOOK.md) —— 每日时序、6 个 cron 逐一说明、更新顺序、数据流机制、如何在新环境重建。配套 `ops/cron-jobs.json`（可直接重建的 cron 定义）+ `ops/*.sh`。
 
+> 🐳 **Docker 知识包镜像**：见 [`docker/`](docker/) —— 未来 agent `docker run` 即拿到本项目全部知识（逻辑/历史/未来/Notion 坐标/运维/skill/脚本）。知识包镜像不含数据和密钥，agent 用自己的 `.env` 连真实 Notion。构建见 `docker/README.md`。
+
 ---
 
 ## 0. 一句话定位
