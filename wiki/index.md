@@ -82,6 +82,7 @@
 | 首次构建 RAG 问答 Chatbot 的工程踩坑 | [[engineering/rag-chatbot-first-build-pitfalls]] | chatbot, RAG, 自回复死循环, 共享账号, 缓存丢来源/TTL, 纯逻辑单测, state 原子写 |
 | Notion API Token — ntn_ 格式与 shell 截断陷阱 | [[engineering/notion-api-token-ntn-trap]] | notion, api-token, shell, 截断 |
 | Cron Job — GUI 方案不可靠，优先 no_agent 纯脚本 | [[engineering/cron-no-gui-preference]] | cron, computer_use, no_agent, playwright |
+| Presto/Quark 超重多表 join 与大表查询优化 | [[engineering/presto-quark-heavy-join-query]] | presto, quark, presto-on-spark, 30min超时, 分区裁剪, broadcast, shuffle, spill |
 
 ### llm（LLM 调用）
 

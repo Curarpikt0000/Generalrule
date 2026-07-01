@@ -21,3 +21,4 @@
 * [[uber-hermes-web-search-stack]] - 公网搜索工具栈与兜底层级（**SearXNG 主力**；usearch CLI 逐级 backup 封装；Cerberus idle 保活根治）。🔴 GenAI Gateway grounded **只是项目级可选辅助兜底、非标准搜索步骤**——AI-Guard 对人名做 PII 匿名化，搜人名不可靠，默认走 SearXNG。
 * [[queryrunner-mcp-fetch-rows-and-queue]] - queryrunner-MCP 取数突破 50 行（**`fetch_rows` 参数无硬上限**，非旧认知的硬限；浏览器 scratchpad 关 Limit 下 CSV）+ 后端 `started_waiting_to_execute` 排队拥堵的静默重试 watchdog 应对（ub-branch / Uber 内部）。
 * [[rag-incremental-index-refresh]] - RAG 向量索引增量重建（只 embed 新增/变更 chunk，per-chunk 缓存+per-doc 指纹）+ cron 双层拆分（detect-only 脚本 + agent 跑重活）避免定时刷新超时
+* [[presto-quark-heavy-join-query]] - Presto/Quark 超重多表 join 与大表查询优化（**集群 30min 硬超时改不了**→压回限额或换 presto-on-spark/Quark；join 优化清单、分区裁剪硬要求、基于 Spark 物理计划的重 join 改写、`hash_partition_count`、broadcast/shuffle/spill、Kryo buffer；BMO/SODA 调优 checklist；Uber 内部 Slack 检索）
