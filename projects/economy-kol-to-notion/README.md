@@ -3,7 +3,9 @@
 > 服务对象：Uber Eats Japan GR（Grocery & Retail）运营团队（Chao Jin / Sr Operations Manager, Japan Merchandising）。
 > 本目录是**通用知识沉淀**（代码 + 文档 + 接手指南），不含 KOL 言论数据、Notion 快照、密钥（IP 红线 + 安全铁律）。
 > 实际可运行的工程在 VM `~/Projects/Economy-KOL-to-Notion/`，数据在私人 Notion + 本地 `data/`。
-> 最后更新：2026-06-30（JST）。
+> 最后更新：2026-07-01（JST）。
+
+> 🔧 **运维/自动化如何运转**：见 [`ops/RUNBOOK.md`](ops/RUNBOOK.md) —— 每日时序、6 个 cron 逐一说明、更新顺序、数据流机制、如何在新环境重建。配套 `ops/cron-jobs.json`（可直接重建的 cron 定义）+ `ops/*.sh`。
 
 ---
 
