@@ -1,9 +1,0 @@
-{
-  "name": "context-compression",
-  "description": "每晚压缩 Telegraph HermesGroup 各 topic 的上下文到 context-log.md",
-  "schedule": "0 2 * * *",
-  "command": "cd /Users/chaojin/hermesagent/Anything-to-Notion && python3 scripts/cron_context_compress.py 2>> /tmp/atn-cron.log || echo 'cron_context_compress.py not found — manual compression needed' >> /tmp/atn-cron.log",
-  "enabled": true,
-  "created": "2026-06-13",
-  "notes": "确保 agent 不会丢失关键的 Notion 数据库信息（DB ID、核心规则等）"
-}
