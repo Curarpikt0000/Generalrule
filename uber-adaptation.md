@@ -8,6 +8,17 @@
 - 通用认知纪律 / 通用 Wiki 知识 → 切到 main 提交并 push，再切回 ub-branch merge main。
 - 本文件（Uber 适配）改动 → 直接在 ub-branch commit + push。
 
+## 🔴 强制规则：写 Uber query 必须先调 skill `jpgr-query-writer`
+
+> 叠加在 general rule 之上的 Uber 专属硬性流程。适用所有 Uber agent（Uber-vm / CC-vm / Codex / Cowork 等）。
+
+**任何 Uber agent 编写 / 复用 / 修改 Uber 内部分析 SQL（尤其日本 GR / Grocery & Retail）时，必须先加载并遵循 skill `jpgr-query-writer`。** 不允许绕过 skill 直接手写 query 或凭记忆猜表名/口径。
+
+- skill 完整目录随本 repo 分发在 `hermes-uber-skills/jpgr-query-writer/`（见下方「Hermes 本机专属 skill」节，标 ⭐必装）——`git pull` ub-branch 后按该节命令安装到本机。
+- skill 封装了：决策树路由、数据源优先级（SSOT 表 → Query Repo → **Notion Table/Query DB 兜底** → 其他库 last-resort）、WHERE 护栏（`Fulfillment_Type`/`datestr`/日本 scope/FX 铁律）、~20 张核心表、~130 条 vetted saved query、**schema 查证阶梯**（`datasource:presto`；`SHOW COLUMNS` failure→usearch 查改名；Databook local MCP 备选；PII 表 CLAC）、`/r/<id>` 反查真 SQL。
+- 背后原理与全部踩坑见共享 Wiki `wiki/engineering/uber-query-writing-and-schema-verification.md`。
+- **违反后果**：不调 skill 极易踩坑——用过时表名（如 `plan_fx_rates_japan_latest` 已废，现役 `plan_fx_rates_2026_v2`）、错集群参数（`cluster_name:secure` 致 SHOW COLUMNS 直接 failure）、漏 `Fulfillment_Type` 双重计数、用错口径（operational vs accounting-date）。
+
 ## 工具替换映射（Uber 机器上，重复就用公司的）
 - superpowers → Uber 原生 uberpowers（aifx plugin add uberpowers）
 - RTK token 压缩 → code-mode（aifx plugin add code-mode）
@@ -57,10 +68,13 @@
 ## Hermes 本机专属 skill（Uber-vm，IP 隔离不进 main）
 
 > 只登记 Uber 专属（依赖内部 gitolite / signingfx / 内网 host，脱离 Uber 不成立）的 Hermes skill。通用 skill 归 main 的 skill-register.md。
+>
+> **完整目录随 repo 分发的必装 skill**：标 ⭐必装 的 skill，其**完整内容**（SKILL.md + references）已 commit 进本 repo `hermes-uber-skills/<name>/`（ub-branch）。**每个 Uber agent（Uber-vm / CC-vm / Codex / Cowork 等）都必须安装**——`git pull` ub-branch 后 `cp -r hermes-uber-skills/<name> ~/.hermes/skills/devops/<name>`（Claude Code 用 `~/.claude/skills/`）。这样其他 agent 能拿到完整内容，不只是登记指针。ub-branch 允许含 Uber IP（内部表名/query link），故完整分发不破红线。
 
 | Skill | 位置 | 触发/用途 |
 |---|---|---|
 | **uber-internal-repo-packaging** | `~/.hermes/skills/devops/` | 把本地 Uber 项目打包 push 到内部 gitolite GitHub（`code.uber.internal`）供另一台 VM 续跑：跨 VM 交接 / monorepo 子目录归档 / 含内部数据入库。覆盖 gitolite create repo、host 字面量脱敏坑、signingfx x509 签名、.env/token 红线双层扫描、HANDOFF.md + Dockerfile 打包、push 后读回验证。首次沉淀 2026-07-01（Task-5-Go-Big-Geo 打包到 ChaoProjects）。|
+| **jpgr-query-writer** ⭐必装 | 完整目录 `hermes-uber-skills/jpgr-query-writer/`（本机装到 `~/.hermes/skills/devops/`） | **JPGR（日本零售/杂货 Grocery & Retail）SQL 编写核心能力，每个 Uber agent 必装。** 编写/复用 JPGR 分析 SQL：决策树路由 → 数据源优先级（SSOT 表 → Query Repo → **Notion Table/Query DB 兜底** → 其他库 last-resort）。含 ~20 张核心表 + WHERE 护栏（`Fulfillment_Type`/`datestr`/日本 scope 强制）、~120 条 vetted saved query、按报表富化的 metric/grain/filter 查找、FX 换算铁律、ward CTE、`/r/<id>` 报表反查真 SQL、Query Copilot 校验列。MCP 走 aifx 网关（queryrunner-mcp / usearch-backend），异步 submit→poll→results。**新增铁律：skill 内无线索时先遍历团队 Notion Table DB / Query DB 找已验证的表，非本 catalog 的表尽量不用（除非万不得已并标 last-resort）。** table + sample query 已全量录入团队 Notion（Table DB / Query DB，全 5 星，含 WHERE 与逐 field 查证）。|
 
 ## 双 GitHub 分流（各干各的，不混）
 - 个人仓库 Curarpikt0000/Generalrule：只放 general rule / workflow / wiki 总结

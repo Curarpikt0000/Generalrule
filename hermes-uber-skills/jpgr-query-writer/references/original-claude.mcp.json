@@ -1,0 +1,16 @@
+{
+  "mcp_dependencies": [
+    "omni-mcp",
+    "querybuilder-ui-v2"
+  ],
+  "policy": {
+    "file_access": "workspace_only",
+    "network_access": "restricted"
+  },
+  "tooling": {
+    "cursor": {
+      "enabled": true,
+      "entrypoint": "SKILL.md"
+    }
+  }
+}
