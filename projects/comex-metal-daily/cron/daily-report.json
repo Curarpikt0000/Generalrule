@@ -1,0 +1,12 @@
+{
+  "job_id": "6dc5b547934e",
+  "name": "COMEX 贵金属日报 - 每日",
+  "schedule": "0 8 * * *",
+  "model": "gemini-2.5-flash",
+  "provider": "google",
+  "deliver": "origin",
+  "enabled_toolsets": ["terminal", "file", "web"],
+  "workdir": "/Users/chaojin/hermesagent/Comex Metal Daily Issue Report",
+  "last_updated": "2026-07-02",
+  "notes": "2026-07-02 修复：移除 skill 引用防 truncation，切 Gemini-2.5-flash，加输出压缩规则"
+}

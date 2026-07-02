@@ -1,0 +1,9 @@
+{
+  "job_id": "c0151adeb107",
+  "name": "COMEX 项目上下文快照压缩 - 每晚",
+  "schedule": "30 2 * * *",
+  "deliver": "local",
+  "workdir": "/Users/chaojin/hermesagent/Comex Metal Daily Issue Report",
+  "last_updated": "2026-07-02",
+  "notes": "2026-07-02 修复：加 session_search limit=3 防 output truncation"
+}
