@@ -83,6 +83,7 @@
 | Notion API Token — ntn_ 格式与 shell 截断陷阱 | [[engineering/notion-api-token-ntn-trap]] | notion, api-token, shell, 截断 |
 | Cron Job — GUI 方案不可靠，优先 no_agent 纯脚本 | [[engineering/cron-no-gui-preference]] | cron, computer_use, no_agent, playwright |
 | Presto/Quark 超重多表 join 与大表查询优化 | [[engineering/presto-quark-heavy-join-query]] | presto, quark, presto-on-spark, 30min超时, 分区裁剪, broadcast, shuffle, spill |
+| Hindsight local_embedded 旧 glibc 三坑 | [[engineering/hindsight-local-embedded-pitfalls]] | hindsight, pgvector, glibc, vector.so 重编译, pg_config, uvx, HindsightEmbedded shim, daemon, 内嵌postgres, 记忆后端 |
 
 ### llm（LLM 调用）
 
