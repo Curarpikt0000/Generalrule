@@ -1,16 +1,20 @@
 ---
-title: SHFE 数据爬取 — WAF 绕过与 Playwright 方案
+title: SHFE 数据爬取 — WAF 绕过（首选 akshare 东财口径，Playwright 备用）
 domain: crawler
-keywords: [shfe, waf, playwright, stealth, datacenter-ip, residential-ip, js-challenge]
-source: hermes-crawler-lesson-20260620
+keywords: [shfe, waf, akshare, futures_inventory_em, eastmoney, playwright, stealth, datacenter-ip, js-challenge, sge, spot_hist_sge]
+source: hermes-crawler-lesson-20260620; akshare-eastmoney-fix-20260702
 created: 2026-06-20
-last_updated: 2026-06-20
+last_updated: 2026-07-02
+machine: UB
 ---
 
 # SHFE 数据爬取 — WAF 绕过方案
 
-> 目标：抓取上海期货交易所（SHFE）库存周报数据（黄金 + 白银），写入 Notion。
-> 需每周六定时执行。WAF 为长亭 SafeLine（JS challenge 模式），对 datacenter IP 严苛。
+> 目标：抓取上海期货交易所（SHFE）库存数据（黄金 + 白银），写入 Notion。
+> WAF 为长亭 SafeLine（JS challenge 模式），对 datacenter IP 严苛。
+>
+> **⭐ 首选方案（2026-07-02 更新）：akshare 东财口径 `futures_inventory_em`——纯 API、无浏览器、绕过 WAF、每日更新。见方案 2。**
+> Playwright stealth（方案 5）降级为备用。
 
 ## 方案演进（按尝试顺序）
 
@@ -22,15 +26,35 @@ curl https://www.shfe.com.cn/data/tradedata/future/weeklydata/{date}weeklystock.
 
 返回 `<!DOCTYPE html>` — WAF JS challenge 页面。需要浏览器执行 PoW SHA-1 哈希计算 + cookie 设置才能放行。纯 HTTP 请求无法跳过。
 
-### ❌ 方案 2：akshare 库
+### ⚠️ 方案 2：akshare 库 — 分接口，选对了就能绕过 WAF（2026-07-02 修正）
 
+**旧结论（2026-05）**：akshare 失败。**修正（2026-07-02 实测）：不是 akshare 不行，是接口选错了。akshare 有多个 SHFE 接口，走 SHFE 官网的被 WAF 拦，走第三方数据源（东方财富）的能绕过。**
+
+**❌ 官方口径接口（被 WAF 拦）**：
 ```python
-ak.futures_shfe_warehouse_receipt(date='20260619')
+ak.futures_shfe_warehouse_receipt(date='20260619')  # 内部直连 www.shfe.com.cn → WAF 拦截，JSONDecodeError
+ak.futures_stock_shfe_js()                            # 底层 datacenter-api.jin10.com，2026-06 起返空，已废弃
 ```
 
-akshare 内部也是 requests 直连 `www.shfe.com.cn/data/tradedata/future/dailydata/{date}dailystock.dat`，同样被 WAF 拦截。已在 2026-05 验证失败。
+**✅ 东财口径接口（绕过 WAF，每日更新，已验证 2026-07-02）**：
+```python
+import akshare as ak
+ak.futures_inventory_em(symbol="沪金")   # SHFE 黄金库存，走东方财富，不碰 SHFE 官网
+ak.futures_inventory_em(symbol="沪银")   # SHFE 白银库存
+# 返回 DataFrame: 日期 / 库存 / 增减，每日更新（比 SHFE 官方周库存还新鲜）
+# 实测 2026-07-01: 沪金 111648, 沪银 822698
+```
 
-金十数据接口 `ak.futures_stock_shfe_js()` 底层走 `datacenter-api.jin10.com`，但该接口 2026-06 起返回空数据（已废弃）。
+**为什么能绕过**：`futures_inventory_em` 走的是东方财富（eastmoney）的数据接口，东财自己维护了 SHFE 库存镜像，请求根本不发往 `www.shfe.com.cn`，因此 SHFE 的长亭 WAF 完全接触不到。**这是比 Playwright（方案 5）更优的解法**——纯 API、无浏览器、0 WAF 风险、每日更新。安装：`pip install akshare`（附带 curl-cffi + py-mini-racer 用于其它接口的 JS 求解）。
+
+> **教训（呼应 general rule 否定性结论要穷尽验证）**：一个库有多个数据接口时，别测一个接口失败就判整个库"不可用"。akshare 对同一交易所常有「官方口径」+「第三方镜像口径」两套接口，官方口径撞 WAF，第三方镜像口径畅通。SHFE 数据首选 `futures_inventory_em`，Playwright 方案降级为备用。
+
+同类可用（SIFO 的 S_phy 来源，也走 akshare，无 WAF）：
+```python
+ak.spot_hist_sge(symbol="Au99.99")   # SGE 黄金现货收盘（S_phy），实测 2026-07-01 close 868.80
+ak.spot_hist_sge(symbol="Ag(T+D)")   # SGE 白银现货
+ak.currency_boc_sina(symbol="美元")   # USDCNY（S_phy 换算用）
+```
 
 ### ❌ 方案 3：Gemini computer_use（操控本地 Chrome）
 
