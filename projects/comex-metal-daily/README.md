@@ -37,6 +37,9 @@ projects/comex-metal-daily/
 │   ├── test_sifo_calc.py        ← SIFO 计算单元测试
 │   └── comex_watchdog.py        ← 独立看门狗（检测日报是否产出）
 │
+├── shfe/                  ← SHFE 库存周报脚本（合作方）
+│   └── shfe_weekly_stock.py + shfe_weekly_notion.py
+│
 └── cron/                  ← cron 配置快照
     ├── daily-report.json
     ├── context-compression.json

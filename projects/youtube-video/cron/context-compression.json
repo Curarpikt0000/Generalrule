@@ -1,0 +1,15 @@
+{
+  "comment": "YouTube 项目上下文快照压缩 — 每晚自动更新 context-log.md",
+  "updated_at": "2026-07-02",
+  "jobs": [
+    {
+      "id": "a5eba8e83857",
+      "name": "Youtube 项目上下文快照压缩 - 每晚",
+      "schedule": "15 2 * * *",
+      "schedule_display": "15 2 * * *",
+      "timezone": "Asia/Tokyo",
+      "enabled": true,
+      "description": "搜索近 3 天与 YouTube 项目相关的 Hermes 会话，提取关键上下文更新到 docs/context-log.md"
+    }
+  ]
+}

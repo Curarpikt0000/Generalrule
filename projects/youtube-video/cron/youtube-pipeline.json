@@ -1,0 +1,15 @@
+{
+  "comment": "YouTube 杂志视频流水线 — cron 调度配置快照",
+  "updated_at": "2026-07-02",
+  "jobs": [
+    {
+      "id": "33265cef768d",
+      "name": "每周一把上周视频加入 Playlist",
+      "schedule": "0 9 * * 1",
+      "schedule_display": "0 9 * * 1",
+      "timezone": "Asia/Tokyo",
+      "enabled": true,
+      "description": "读取 processed.txt 找出上周上传的视频，按杂志名分配到对应的 YouTube Playlist"
+    }
+  ]
+}

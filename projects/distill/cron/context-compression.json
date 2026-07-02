@@ -1,0 +1,14 @@
+{
+  "cron": {
+    "schedule": "0 */4 * * *",
+    "description": "每 4 小时压缩上下文日志，控制 token 消耗",
+    "action": "compress_context_log",
+    "target": "/tmp/distill-docker/context-log.md",
+    "max_lines": 500,
+    "retention_days": 7,
+    "backup_dir": "/tmp/distill-docker/.backup/context-log/"
+  },
+  "max_tokens_per_session": 64000,
+  "compression_strategy": "sliding_window",
+  "enabled": true
+}
