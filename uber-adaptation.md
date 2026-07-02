@@ -54,11 +54,20 @@
 | **mcp-query-tools** | devpod / dsw / dsw+git | hive | `/mcp-query-tools`、"query hive"、"verify staging data" | 用 queryrunner-mcp（远程生产）与 query-mcp-server（本地，自然语言转 SQL）执行 Hive/Presto 查询。区分两者适用场景（生产大结果集异步 vs 快速探查）、配置自检、失败回退到 `ai query` CLI。含 MCP 安装/添加命令 |
 | **quickstart**（plugins/dsge，master 分支） | devpod / dsw | — | 首次环境搭建 | dsge 插件的快速上手 skill，引导新机器完成环境搭建（见 references/env-setup.md） |
 
+## Hermes 本机专属 skill（Uber-vm，IP 隔离不进 main）
+
+> 只登记 Uber 专属（依赖内部 gitolite / signingfx / 内网 host，脱离 Uber 不成立）的 Hermes skill。通用 skill 归 main 的 skill-register.md。
+
+| Skill | 位置 | 触发/用途 |
+|---|---|---|
+| **uber-internal-repo-packaging** | `~/.hermes/skills/devops/` | 把本地 Uber 项目打包 push 到内部 gitolite GitHub（`code.uber.internal`）供另一台 VM 续跑：跨 VM 交接 / monorepo 子目录归档 / 含内部数据入库。覆盖 gitolite create repo、host 字面量脱敏坑、signingfx x509 签名、.env/token 红线双层扫描、HANDOFF.md + Dockerfile 打包、push 后读回验证。首次沉淀 2026-07-01（Task-5-Go-Big-Geo 打包到 ChaoProjects）。|
+
 ## 双 GitHub 分流（各干各的，不混）
 - 个人仓库 Curarpikt0000/Generalrule：只放 general rule / workflow / wiki 总结
   - 通用认知纪律、通用 wiki → push main
   - Uber 适配（本文件）→ push ub-branch
 - 公司 GitHub（chao.jin@uber.com）：所有 Uber 项目代码，完全独立
+  - **主 monorepo：`code.uber.internal:not-production/ChaoProjects`**（gitolite host 从已有内部 repo remote 读、勿手打——聊天脱敏会破坏 host 字面量；建 repo=`ssh <host> create not-production/<name>`；commit 走 signingfx x509 自动签名 `/CN=chao.jin`）。各项目一个子目录（如 `Task-5-Go-Big-Geo/`）。打包/交接流程见 Hermes skill `uber-internal-repo-packaging`。
 - Antigravity 在本机产出的 Uber 项目代码 → 公司 GitHub（各项目目录单独 `git config user.email "chao.jin@uber.com"`）或本地存放；绝不进个人仓库
 
 ## 红线（Uber IP 保护，最重要）
