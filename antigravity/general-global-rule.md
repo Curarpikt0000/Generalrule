@@ -184,6 +184,7 @@ PLAN 阶段 AI 若判断某个本该 TDD 的任务不必如此复杂，可在硬
 - **公司项目代码绝不进本仓库**：Uber 项目代码一律走公司 GitHub（或本地存放），与本仓库完全隔离。knowledge / wiki / skill / 踩坑经验是通用的，统一管在本 repo。
 - **冲突时停下问用户**，不擅自 `git push --force` 或 merge。
 - Uber 机写 Wiki 时 frontmatter 标注 `machine: UB`，commit message 带 `[UB]`。
+- **项目知识每日灾备同步（Uber 机）**：Uber 项目**代码与数据**统一进 Uber 内网 monorepo `code.uber.internal:not-production/ChaoProjects`（gitolite，用前须 `ussh` 刷 cert；`SSH_AUTH_SOCK` 须指向 devpod active socket，否则 `asd-cli` pre-commit hook 失败）。机制：**每晚 6:00(JST) 自动全量增量 push**（cron `24e29c8f2cbc` / `~/.hermes/scripts/chaoprojects_nightly_push.sh`），**每早 9:00(JST) 自动 pull**（cron `49af88bb111e` / `chaoprojects_morning_pull.sh`）——让任一 VM 宕机后 clone 即恢复全部项目、所有 agent 共享最新项目知识。红线（守 §2/§7）：`.env`/token/secret 绝不进 repo（rsync 排除 + push 前红线扫描，扫到密钥中止）；git 吞不下的可重建大物（faiss.index/bm25.pkl/*.duckdb/scratch/ >2G）排除，靠脚本重建。已有独立 remote 的项目（AM-Chatbot / Economic-Dashboard 等）只每日 pull，不重复打包。**开工前除 pull Generalrule 外，也应确保 ChaoProjects 已 pull 到最新**（morning-pull cron 已覆盖，手动接手大任务时亦可先 pull）。
 
 ## §8 指针索引（场景知识入口）
 

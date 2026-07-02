@@ -95,6 +95,10 @@ Generalrule/
 
 ## 变更记录
 
+### 2026-07-02 [ub-branch] Hermes —— §7.5 新增「项目知识每日灾备同步」规则（ChaoProjects 每晚 push / 每早 pull）
+- **改了什么**：§7.5 多机同步纪律追加一条——Uber 项目代码与数据统一进内网 monorepo `ChaoProjects`，每晚 6:00 JST 自动全量增量 push（cron `24e29c8f2cbc`），每早 9:00 JST 自动 pull（cron `49af88bb111e`）；含红线（密钥绝不进 repo + push 前扫描）、大文件排除（faiss/bm25/duckdb/scratch 靠脚本重建）、A 组已有 remote 项目只 pull 不重复打包。
+- **为什么**：实现 VM 宕机后 clone 即恢复全部项目、所有 agent 共享最新项目知识（灾备 + 知识同步）。仅 Uber 机执行且含内网地址，故只入 ub-branch。
+
 ### 2026-06-22 [main+ub-branch] Hermes —— 新增认知纪律 §2.11 进度持久化（PROGRESS.md，抗中断）
 
 **改了什么**：`antigravity/general-global-rule.md` 新增 **§2.11 进度持久化（Progress-First，抗中断）**——执行命令前先写 `PROGRESS.md`（目标/步骤/验收/当前进度），长任务做阶段性分解、单阶段 ≤30 分钟、每阶段末把"已完成/已验证/下一步/中间产物路径"落盘；核心目的是抗中断：用户消息截断或会话被打断后，下一轮先读 `PROGRESS.md`（项目级读 `docs/context-log.md`）恢复最新状态。§2 标题「十条」→「十一条」，文件最后更新日期→2026-06-22，加一行指向 `five-step-pipeline.md` 的落地细节指针。
